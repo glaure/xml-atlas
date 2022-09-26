@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.Controls 2.2
 import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
 
@@ -9,11 +10,12 @@ Window {
 
     ColumnLayout {
         anchors.fill: parent
-        MyItem {
-            name: "Alice"
+
+        CheckBox {
+            text: "Checkbox for " + "AB"
         }
-        MyItem {
-            name: "Bob"
+        Button {
+            text: "Hi!"
         }
     }
 }
