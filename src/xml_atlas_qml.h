@@ -1,6 +1,6 @@
 /* 
- * This file is part of the AppUpdate (https://github.com/DEWETRON/AppUpdate)
- * Copyright (c) DEWETRON GmbH 2020.
+ * This file is part of XMLAtlas (https://github.com/glaure/xml-atlas)
+ * Copyright (c) 2022 Gunther Laure <gunther.laure@gmail.com>.
  * 
  * This program is free software: you can redistribute it and/or modify  
  * it under the terms of the GNU General Public License as published by  
