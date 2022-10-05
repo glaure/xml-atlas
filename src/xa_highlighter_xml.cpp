@@ -18,104 +18,92 @@
 #include "xa_highlighter_xml.h"
 
 
-XAHighlighter_XML::XAHighlighter_XML(QTextDocument *parent)
-    : QSyntaxHighlighter(parent)
+XAHighlighter_XML::XAHighlighter_XML(QObject* parent) :
+    QSyntaxHighlighter(parent)
 {
-    HighlightingRule rule;
-
-    keywordFormat.setForeground(Qt::darkBlue);
-    keywordFormat.setFontWeight(QFont::Bold);
-    const QString keywordPatterns[] = {
-        QStringLiteral("\\bchar\\b"), QStringLiteral("\\bclass\\b"), QStringLiteral("\\bconst\\b"),
-        QStringLiteral("\\bdouble\\b"), QStringLiteral("\\benum\\b"), QStringLiteral("\\bexplicit\\b"),
-        QStringLiteral("\\bfriend\\b"), QStringLiteral("\\binline\\b"), QStringLiteral("\\bint\\b"),
-        QStringLiteral("\\blong\\b"), QStringLiteral("\\bnamespace\\b"), QStringLiteral("\\boperator\\b"),
-        QStringLiteral("\\bprivate\\b"), QStringLiteral("\\bprotected\\b"), QStringLiteral("\\bpublic\\b"),
-        QStringLiteral("\\bshort\\b"), QStringLiteral("\\bsignals\\b"), QStringLiteral("\\bsigned\\b"),
-        QStringLiteral("\\bslots\\b"), QStringLiteral("\\bstatic\\b"), QStringLiteral("\\bstruct\\b"),
-        QStringLiteral("\\btemplate\\b"), QStringLiteral("\\btypedef\\b"), QStringLiteral("\\btypename\\b"),
-        QStringLiteral("\\bunion\\b"), QStringLiteral("\\bunsigned\\b"), QStringLiteral("\\bvirtual\\b"),
-        QStringLiteral("\\bvoid\\b"), QStringLiteral("\\bvolatile\\b"), QStringLiteral("\\bbool\\b")
-    };
-    for (const QString &pattern : keywordPatterns) {
-        rule.pattern = QRegularExpression(pattern);
-        rule.format = keywordFormat;
-        highlightingRules.append(rule);
-    }
-
-
-
-
-    classFormat.setFontWeight(QFont::Bold);
-    classFormat.setForeground(Qt::darkMagenta);
-    rule.pattern = QRegularExpression(QStringLiteral("\\bQ[A-Za-z]+\\b"));
-    rule.format = classFormat;
-    highlightingRules.append(rule);
-
-
-
-    singleLineCommentFormat.setForeground(Qt::red);
-    rule.pattern = QRegularExpression(QStringLiteral("//[^\n]*"));
-    rule.format = singleLineCommentFormat;
-    highlightingRules.append(rule);
-
-    multiLineCommentFormat.setForeground(Qt::red);
-
-
-
-    quotationFormat.setForeground(Qt::darkGreen);
-    rule.pattern = QRegularExpression(QStringLiteral("\".*\""));
-    rule.format = quotationFormat;
-    highlightingRules.append(rule);
-
-
-
-    functionFormat.setFontItalic(true);
-    functionFormat.setForeground(Qt::blue);
-    rule.pattern = QRegularExpression(QStringLiteral("\\b[A-Za-z0-9_]+(?=\\()"));
-    rule.format = functionFormat;
-    highlightingRules.append(rule);
-
-
-
-    commentStartExpression = QRegularExpression(QStringLiteral("/\\*"));
-    commentEndExpression = QRegularExpression(QStringLiteral("\\*/"));
+    setRegexes();
+    setFormats();
 }
 
-
-
-void XAHighlighter_XML::highlightBlock(const QString &text)
+XAHighlighter_XML::XAHighlighter_XML(QTextDocument* parent) :
+    QSyntaxHighlighter(parent)
 {
-    for (const HighlightingRule &rule : qAsConst(highlightingRules)) {
-        QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
-        while (matchIterator.hasNext()) {
-            QRegularExpressionMatch match = matchIterator.next();
-            setFormat(match.capturedStart(), match.capturedLength(), rule.format);
-        }
+    setRegexes();
+    setFormats();
+}
+
+//XAHighlighter_XML::XAHighlighter_XML(QTextEdit* parent) :
+//    QSyntaxHighlighter(parent)
+//{
+//    setRegexes();
+//    setFormats();
+//}
+
+void XAHighlighter_XML::highlightBlock(const QString& text)
+{
+    // Special treatment for xml element regex as we use captured text to emulate lookbehind
+    int xmlElementIndex = m_xmlElementRegex.indexIn(text);
+    while (xmlElementIndex >= 0)
+    {
+        int matchedPos = m_xmlElementRegex.pos(1);
+        int matchedLength = m_xmlElementRegex.cap(1).length();
+        setFormat(matchedPos, matchedLength, m_xmlElementFormat);
+
+        xmlElementIndex = m_xmlElementRegex.indexIn(text, matchedPos + matchedLength);
     }
 
-    setCurrentBlockState(0);
-
-
-
-    int startIndex = 0;
-    if (previousBlockState() != 1)
-        startIndex = text.indexOf(commentStartExpression);
-
-
-    while (startIndex >= 0) {
-
-        QRegularExpressionMatch match = commentEndExpression.match(text, startIndex);
-        int endIndex = match.capturedStart();
-        int commentLength = 0;
-        if (endIndex == -1) {
-            setCurrentBlockState(1);
-            commentLength = text.length() - startIndex;
-        } else {
-            commentLength = endIndex - startIndex
-                            + match.capturedLength();
-        }
-        setFormat(startIndex, commentLength, multiLineCommentFormat);
-        startIndex = text.indexOf(commentStartExpression, startIndex + commentLength);
+    // Highlight xml keywords *after* xml elements to fix any occasional / captured into the enclosing element
+    typedef QList<QRegExp>::const_iterator Iter;
+    Iter xmlKeywordRegexesEnd = m_xmlKeywordRegexes.end();
+    for (Iter it = m_xmlKeywordRegexes.begin(); it != xmlKeywordRegexesEnd; ++it) {
+        const QRegExp& regex = *it;
+        highlightByRegex(m_xmlKeywordFormat, regex, text);
     }
+
+    highlightByRegex(m_xmlAttributeFormat, m_xmlAttributeRegex, text);
+    highlightByRegex(m_xmlCommentFormat, m_xmlCommentRegex, text);
+    highlightByRegex(m_xmlValueFormat, m_xmlValueRegex, text);
+}
+
+void XAHighlighter_XML::highlightByRegex(const QTextCharFormat& format,
+    const QRegExp& regex, const QString& text)
+{
+    int index = regex.indexIn(text);
+
+    while (index >= 0)
+    {
+        int matchedLength = regex.matchedLength();
+        setFormat(index, matchedLength, format);
+
+        index = regex.indexIn(text, index + matchedLength);
+    }
+}
+
+void XAHighlighter_XML::setRegexes()
+{
+    m_xmlElementRegex.setPattern("<[?\\s]*[/]?[\\s]*([^\\n][^>]*)(?=[\\s/>])");
+    m_xmlAttributeRegex.setPattern("\\w+(?=\\=)");
+    m_xmlValueRegex.setPattern("\"[^\\n\"]+\"(?=[?\\s/>])");
+    m_xmlCommentRegex.setPattern("<!--[^\\n]*-->");
+
+    m_xmlKeywordRegexes = QList<QRegExp>() << QRegExp("<\\?") << QRegExp("/>")
+        << QRegExp(">") << QRegExp("<") << QRegExp("</")
+        << QRegExp("\\?>");
+}
+
+void XAHighlighter_XML::setFormats()
+{
+    m_xmlKeywordFormat.setForeground(Qt::blue);
+    m_xmlKeywordFormat.setFontWeight(QFont::Bold);
+
+    m_xmlElementFormat.setForeground(Qt::darkBlue);
+    m_xmlElementFormat.setFontWeight(QFont::Bold);
+
+    m_xmlAttributeFormat.setForeground(Qt::darkGreen);
+    m_xmlAttributeFormat.setFontWeight(QFont::Bold);
+    m_xmlAttributeFormat.setFontItalic(true);
+
+    m_xmlValueFormat.setForeground(Qt::darkRed);
+
+    m_xmlCommentFormat.setForeground(Qt::gray);
 }

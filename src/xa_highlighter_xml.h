@@ -24,6 +24,7 @@
 
 
 class QTextDocument;
+class QTextEdit;
 
 
 class XAHighlighter_XML : public QSyntaxHighlighter
@@ -31,26 +32,30 @@ class XAHighlighter_XML : public QSyntaxHighlighter
     Q_OBJECT
 
 public:
+    XAHighlighter_XML(QObject* parent);
     XAHighlighter_XML(QTextDocument *parent = nullptr);
+    //XAHighlighter_XML(QTextEdit* parent);
 
 protected:
-    void highlightBlock(const QString &text) override;
+    virtual void highlightBlock(const QString& text);
 
 private:
-    struct HighlightingRule
-    {
-        QRegularExpression pattern;
-        QTextCharFormat format;
-    };
-    QList<HighlightingRule> highlightingRules;
+    void highlightByRegex(const QTextCharFormat& format,
+        const QRegExp& regex, const QString& text);
 
-    QRegularExpression commentStartExpression;
-    QRegularExpression commentEndExpression;
+    void setRegexes();
+    void setFormats();
 
-    QTextCharFormat keywordFormat;
-    QTextCharFormat classFormat;
-    QTextCharFormat singleLineCommentFormat;
-    QTextCharFormat multiLineCommentFormat;
-    QTextCharFormat quotationFormat;
-    QTextCharFormat functionFormat;
+private:
+    QTextCharFormat     m_xmlKeywordFormat;
+    QTextCharFormat     m_xmlElementFormat;
+    QTextCharFormat     m_xmlAttributeFormat;
+    QTextCharFormat     m_xmlValueFormat;
+    QTextCharFormat     m_xmlCommentFormat;
+
+    QList<QRegExp>      m_xmlKeywordRegexes;
+    QRegExp             m_xmlElementRegex;
+    QRegExp             m_xmlAttributeRegex;
+    QRegExp             m_xmlValueRegex;
+    QRegExp             m_xmlCommentRegex;
 };
