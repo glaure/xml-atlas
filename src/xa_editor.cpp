@@ -15,24 +15,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "xml_atlas_editor.h"
+#include "xa_editor.h"
 #include <QPainter>
 #include <QTextBlock>
 
 
-XMLAtlasEditor::XMLAtlasEditor(QWidget *parent) : QPlainTextEdit(parent)
+XAEditor::XAEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
 
-    connect(this, &XMLAtlasEditor::blockCountChanged, this, &XMLAtlasEditor::updateLineNumberAreaWidth);
-    connect(this, &XMLAtlasEditor::updateRequest, this, &XMLAtlasEditor::updateLineNumberArea);
-    connect(this, &XMLAtlasEditor::cursorPositionChanged, this, &XMLAtlasEditor::highlightCurrentLine);
+    connect(this, &XAEditor::blockCountChanged, this, &XAEditor::updateLineNumberAreaWidth);
+    connect(this, &XAEditor::updateRequest, this, &XAEditor::updateLineNumberArea);
+    connect(this, &XAEditor::cursorPositionChanged, this, &XAEditor::highlightCurrentLine);
 
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
 }
 
-int XMLAtlasEditor::lineNumberAreaWidth()
+int XAEditor::lineNumberAreaWidth()
 {
     int digits = 1;
     int max = qMax(1, blockCount());
@@ -46,12 +46,12 @@ int XMLAtlasEditor::lineNumberAreaWidth()
     return space;
 }
 
-void XMLAtlasEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
+void XAEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 {
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
 }
 
-void XMLAtlasEditor::updateLineNumberArea(const QRect &rect, int dy)
+void XAEditor::updateLineNumberArea(const QRect &rect, int dy)
 {
     if (dy)
         lineNumberArea->scroll(0, dy);
@@ -62,7 +62,7 @@ void XMLAtlasEditor::updateLineNumberArea(const QRect &rect, int dy)
         updateLineNumberAreaWidth(0);
 }
 
-void XMLAtlasEditor::resizeEvent(QResizeEvent *e)
+void XAEditor::resizeEvent(QResizeEvent *e)
 {
     QPlainTextEdit::resizeEvent(e);
 
@@ -70,7 +70,7 @@ void XMLAtlasEditor::resizeEvent(QResizeEvent *e)
     lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
 
-void XMLAtlasEditor::highlightCurrentLine()
+void XAEditor::highlightCurrentLine()
 {
     QList<QTextEdit::ExtraSelection> extraSelections;
 
@@ -89,7 +89,7 @@ void XMLAtlasEditor::highlightCurrentLine()
     setExtraSelections(extraSelections);
 }
 
-void XMLAtlasEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
+void XAEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(lineNumberArea);
     painter.fillRect(event->rect(), Qt::lightGray);

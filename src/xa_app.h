@@ -20,20 +20,20 @@
 #include <QApplication>
 #include <QObject>
 
-class XmlAtlasData;
-class XmlAtlasQml;
-class XMLAtlasEditor;
+class XAData;
+class XAEditor;
+class XAMainWindow;
 
 /**
  * Initializes the application and manages the GUI
  */
-class XmlAtlasApp : public QObject
+class XAApp : public QObject
 {
     Q_OBJECT;
 
 public:
-    XmlAtlasApp(int& argc, char** argv);
-    ~XmlAtlasApp();
+    XAApp(int& argc, char** argv);
+    ~XAApp();
 
     bool init();
     bool initGui();
@@ -48,7 +48,8 @@ private:
 
 
 private:
-    QApplication            m_app;
-    XmlAtlasData*           m_app_data;
-    XMLAtlasEditor*         m_editor;
+    QApplication      m_app;
+    XAData*           m_app_data;
+    XAEditor*         m_editor;
+    XAMainWindow*     m_window;
 };

@@ -15,9 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "xml_atlas_app.h"
-#include "xml_atlas_data.h"
-#include "xml_atlas_editor.h"
+#include "xa_app.h"
+#include "xa_data.h"
+#include "xa_editor.h"
+#include "xa_window.h"
 
 #include "QFile"
 #include <QFileInfo>
@@ -25,7 +26,7 @@
 #include <QQmlEngine>
 
 
-XmlAtlasApp::XmlAtlasApp(int& argc, char** argv)
+XAApp::XAApp(int& argc, char** argv)
     : QObject(nullptr)
     , m_app(argc, argv)
     , m_app_data(nullptr)
@@ -33,29 +34,32 @@ XmlAtlasApp::XmlAtlasApp(int& argc, char** argv)
 
 }
 
-XmlAtlasApp::~XmlAtlasApp()
+XAApp::~XAApp()
 {
     delete m_app_data;
+    delete m_editor;
+    delete m_window;
 }
 
-bool XmlAtlasApp::init()
+bool XAApp::init()
 {
-    m_app_data = new XmlAtlasData;
-    m_editor = new XMLAtlasEditor;
+    m_app_data = new XAData;
+    m_editor = new XAEditor;
+    m_window = new XAMainWindow;
 
     if (!initGui()) return false;
 
     return true;
 }
 
-bool XmlAtlasApp::initGui()
+bool XAApp::initGui()
 {
     // m_main_window = new XmlAtlasQml;
     // m_main_window->connect(m_main_window->engine(), &QQmlEngine::quit, &m_app, &QCoreApplication::quit);
     // m_main_window->setSource(QUrl(m_qml_main_file));
 
-    // // connect(m_app_data, &XmlAtlasData::doShowNotification, m_main_window, &XmlAtlasQml::showNotification);
-    // // connect(m_app_data, &XmlAtlasData::resetAlertIcon, m_main_window, &XmlAtlasQml::resetAlertIcon);
+    // // connect(m_app_data, &XAData::doShowNotification, m_main_window, &XmlAtlasQml::showNotification);
+    // // connect(m_app_data, &XAData::resetAlertIcon, m_main_window, &XmlAtlasQml::resetAlertIcon);
 
 
     // if (m_main_window->status() == QQuickView::Error)
@@ -73,11 +77,12 @@ bool XmlAtlasApp::initGui()
     // }
 
     m_editor->show();
+    m_window->show();
 
     return true;
 }
 
-int XmlAtlasApp::run()
+int XAApp::run()
 {
     int ret = 0;
 

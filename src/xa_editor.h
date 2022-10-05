@@ -27,12 +27,12 @@ class QWidget;
 class LineNumberArea;
 
 
-class XMLAtlasEditor : public QPlainTextEdit
+class XAEditor : public QPlainTextEdit
 {
     Q_OBJECT
 
 public:
-    XMLAtlasEditor(QWidget *parent = nullptr);
+    XAEditor(QWidget *parent = nullptr);
 
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
@@ -53,7 +53,7 @@ private:
 class LineNumberArea : public QWidget
 {
 public:
-    LineNumberArea(XMLAtlasEditor *editor) : QWidget(editor), xmlEditor(editor)
+    LineNumberArea(XAEditor *editor) : QWidget(editor), xmlEditor(editor)
     {}
 
     QSize sizeHint() const override
@@ -68,6 +68,6 @@ protected:
     }
 
 private:
-    XMLAtlasEditor *xmlEditor;
+    XAEditor *xmlEditor;
 };
 

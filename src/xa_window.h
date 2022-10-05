@@ -17,19 +17,30 @@
 
 #pragma once
 
-#include <QObject>
+#include "xa_highlighter_xml.h"
+#include <QMainWindow>
 
- /**
-  * Application main model
-  */
-class XmlAtlasData : public QObject
+
+class QTextEdit;
+
+
+class XAMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    XmlAtlasData();
-    ~XmlAtlasData();
+    XAMainWindow(QWidget *parent = nullptr);
+
+public slots:
+    void about();
+    void newFile();
+    void openFile(const QString &path = QString());
 
 private:
+    void setupEditor();
+    void setupFileMenu();
+    void setupHelpMenu();
 
+    QTextEdit *editor;
+    XAHighlighter_XML *m_xml_highlighter;
 };

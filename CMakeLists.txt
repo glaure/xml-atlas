@@ -3,6 +3,10 @@
 #
 cmake_minimum_required(VERSION 3.14)
 
+#
+# C++17 or better
+set(CMAKE_CXX_STANDARD 17)
+
 set(APPNAME XMLAtlas)
 project(${APPNAME})
 
@@ -24,18 +28,21 @@ set(CMAKE_AUTORCC ON)
 
 include(QtSettings)
 find_package(Qt5Core REQUIRED)
-find_package(Qt5Quick)
 find_package(Qt5Widgets)
 
 
 set(XA_SOURCE_FILES
+  src/xa_app.cpp
+  src/xa_app.h
+  src/xa_data.cpp
+  src/xa_data.h
+  src/xa_editor.cpp
+  src/xa_editor.h
+  src/xa_highlighter_xml.cpp
+  src/xa_highlighter_xml.h
+  src/xa_window.cpp
+  src/xa_window.h
   src/xml_atlas.cpp
-  src/xml_atlas_app.cpp
-  src/xml_atlas_app.h
-  src/xml_atlas_data.cpp
-  src/xml_atlas_data.h
-  src/xml_atlas_editor.cpp
-  src/xml_atlas_editor.h
 )
 
 

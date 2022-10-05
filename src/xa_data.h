@@ -15,15 +15,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "xml_atlas_data.h"
+#pragma once
 
+#include <QObject>
 
-XmlAtlasData::XmlAtlasData()
+ /**
+  * Application main model
+  */
+class XAData : public QObject
 {
+    Q_OBJECT
 
-}
+public:
+    XAData();
+    ~XAData();
 
-XmlAtlasData::~XmlAtlasData()
-{
+private:
 
-}
+};

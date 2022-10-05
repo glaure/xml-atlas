@@ -15,19 +15,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QApplication>
-#include "xa_app.h"
+#include "xa_data.h"
 
 
-int main(int argc, char* argv[])
+XAData::XAData()
 {
-    //Q_INIT_RESOURCE(xa_resources);
 
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+}
 
-    XAApp app(argc, argv);
+XAData::~XAData()
+{
 
-    if (!app.init()) return -1;
-    return app.run();
 }
