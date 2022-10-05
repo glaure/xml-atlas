@@ -82,7 +82,7 @@ void XAHighlighter_XML::highlightByRegex(const QTextCharFormat& format,
 void XAHighlighter_XML::setRegexes()
 {
     m_xmlElementRegex.setPattern("<[?\\s]*[/]?[\\s]*([^\\n][^>]*)(?=[\\s/>])");
-    m_xmlAttributeRegex.setPattern("\\w+(?=\\=)");
+    m_xmlAttributeRegex.setPattern("\\w+\\s*(?=\\=)\\s*");
     m_xmlValueRegex.setPattern("\"[^\\n\"]+\"(?=[?\\s/>])");
     m_xmlCommentRegex.setPattern("<!--[^\\n]*-->");
 

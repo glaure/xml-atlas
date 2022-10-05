@@ -71,9 +71,6 @@ void XAMainWindow::setupEditor()
 
     m_xml_highlighter = new XAHighlighter_XML(editor->document());
 
-    QFile file("XAMainWindow.h");
-    if (file.open(QFile::ReadOnly | QFile::Text))
-        editor->setPlainText(file.readAll());
 }
 
 

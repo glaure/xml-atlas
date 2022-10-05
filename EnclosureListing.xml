@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EnclosureListing>
+    <BaseRevision>$$SubVersion: $Revision</BaseRevision>
+    <HGHash>$HG_HASH</HGHash>
+    <XMLDescription>DEWETRON Enclosure Information</XMLDescription>
+<!--
+    The lower 4 bits of  EncName are reserved and must not be used. Must set to 0
+-->
+    <Key2Name Count = "19">
+        <KEY EncName = "FFFFFFF1">
+            <Name>Empty-Enclosure</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>0</UserSlotCnt>
+            <SlotNoOffset>0</SlotNoOffset>
+            <StarHubSlot>2</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "FFFFFFF0">
+            <Name>Standard-Enclosure</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>18</UserSlotCnt>
+            <SlotNoOffset>0</SlotNoOffset>
+            <StarHubSlot>2</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01FFFFF0" Visible = "false">
+            <Name>DEWE2-Unknown</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>18</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01010400">
+            <Name>DEWE2-A4</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01020400">
+            <Name>DEWE2-M4</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01020410">
+            <Name>DEWE2-M4s</Name>
+            <SubVersion>1</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01020710">
+            <Name>DEWE2-M7s</Name>
+            <SubVersion>1</SubVersion>
+            <UserSlotCnt>7</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01020D10">
+            <Name>DEWE2-M13s</Name>
+            <SubVersion>1</SubVersion>
+            <UserSlotCnt>13</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01020D00">
+            <Name>DEWE2-M13</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>13</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01021200">
+            <Name>DEWE2-M18</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>18</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01010700">
+            <Name>DEWE2-A7</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>7</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01010D00">
+            <Name>DEWE2-A13</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>13</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01031200" Visible = "false">
+            <Name>DEWE2-F18</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>18</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01030D10" Visible = "false">
+            <Name>DEWE2-F13s</Name>
+            <SubVersion>1</SubVersion>
+            <UserSlotCnt>13</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01030D00" Visible = "false">
+            <Name>DEWE2-F13</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>13</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01030710" Visible = "false">
+            <Name>DEWE2-F7s</Name>
+            <SubVersion>1</SubVersion>
+            <UserSlotCnt>7</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01030410" Visible = "false">
+            <Name>DEWE2-F4s</Name>
+            <SubVersion>1</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01030420" Visible = "false">
+            <Name>DEWE2-F4</Name>
+            <SubVersion>1</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "04020400" Visible = "false">
+            <Name>TrendCorder</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01020720">
+            <Name>DEWE2-M7</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>7</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "05020200">
+            <Name>TRIONet</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>2</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01010420">
+            <Name>DEWE2-A4L</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01010430">
+            <Name>PUREC-200</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>1</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <EncFamily>PUREC</EncFamily>
+            <SimSetup>
+                <Board Slot = "0" ConnectorBlock = "PUREC-16D">PUREC-200</Board>
+            </SimSetup>
+        </KEY>
+        <KEY EncName = "01010440">
+            <Name>PUREC-50</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>1</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <EncFamily>PUREC</EncFamily>
+            <SimSetup>
+                <Board Slot = "0" ConnectorBlock = "PUREC-16D">PUREC-50</Board>
+            </SimSetup>
+        </KEY>
+        <KEY EncName = "01040700">
+            <Name>DEWE2-PA7</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>7</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+        </KEY>
+        <KEY EncName = "01040899" Visible = "false">
+            <!--Hartmann PXIe backplane -->
+            <Name>DEWE3-Unknown</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <Controller>1</Controller>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "01040800" Visible = "false">
+            <!--NI PXIe backplane -->
+            <Name>DEWE3-PA8</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>7</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>4</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "01040810">
+            <!--Hartmann PXIe backplane -->
+            <Name>DEWE3-PA8</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>8</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <Controller>2</Controller>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "01040880" Visible = "true">
+            <!--Hartmann PXIe backplane -->
+            <Name>DEWE3-M4</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <Controller>1</Controller>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "01040900" Visible = "false">
+            <!--Hartmann PXIe backplane -->
+            <Name>DEWE3-M8</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>8</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <Controller>2</Controller>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "01040A00" Visible = "false">
+            <!--Hartmann PXIe backplane -->
+            <Name>DEWE3-M12</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>12</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <Controller>3</Controller>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "01040B00" Visible = "true">
+            <!--Hartmann PXIe backplane -->
+            <Name>DEWE3-A4</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <Controller>1</Controller>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "01040C00" Visible = "true">
+            <!--Hartmann PXIe backplane -->
+            <Name>DEWE3-RM4</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <Controller>1</Controller>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "01040D00" Visible = "true">
+            <!--Hartmann PXIe backplane -->
+            <Name>DEWE3-RM8</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>8</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <Controller>2</Controller>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "01040E00" Visible = "true">
+            <!--Hartmann PXIe backplane -->
+            <Name>DEWE3-RM12</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>12</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <Controller>3</Controller>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "01040F00" Visible = "true">
+            <!--Hartmann PXIe backplane -->
+            <Name>DEWE3-RM16</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>16</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <Controller>4</Controller>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "01041000" Visible = "true">
+            <Name>DEWE3-A4L</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>4</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <Controller>1</Controller>
+            <EncFamily>DEWE3</EncFamily>
+        </KEY>
+        <KEY EncName = "40000000" Visible = "false">
+            <Name>NEXIO</Name>
+            <SubVersion>0</SubVersion>
+            <UserSlotCnt>1</UserSlotCnt>
+            <SlotNoOffset>-1</SlotNoOffset>
+            <StarHubSlot>1</StarHubSlot>
+            <SystemInfo></SystemInfo>
+            <EncFamily>NEXIO</EncFamily>
+            <SimSetup>
+                <Board Slot = "0">NEXIO</Board>
+            </SimSetup>
+        </KEY>
+    </Key2Name>
+    <EnclosureOptions>
+        <!--The Type attribute is the value of the lowest 4 bits of the EncName EEPROM word -->
+        <!--The Version attribute is the value of the former EncOptions EEPROM word -->
+        <Table Type = "0" Version = "0">
+            <Option Value = "0" Tag = "Interface" Default = "0">
+                <Key Value = "0"/>
+                <Key Value = "1">LAN</Key>
+                <Key Value = "2">PCIe</Key>
+            </Option>
+            <Option Value = "1" Tag = "Sync" Default = "0">
+                <Key Value = "0"/>
+                <Key Value = "1">SYNC I/O</Key>
+                <Key Value = "2">IRIG</Key>
+                <Key Value = "3">PTP</Key>
+            </Option>
+            <Option Value = "2" Tag = "CPU" Default = "0">
+                <Key Value = "0"/>
+                <Key Value = "1">FW</Key>
+                <Key Value = "2">LAN</Key>
+                <Key Value = "3">C2D</Key>
+            </Option>
+            <Option Value = "3" Tag = "Supply" Default = "0">
+                <Key Value = "0"/>
+                <Key Value = "1">DC (9..36)</Key>
+                <Key Value = "2">DC (9..18)</Key>
+                <Key Value = "3">DC (18..36)</Key>
+                <Key Value = "4">DC Batt</Key>
+                <Key Value = "5">AC (300W)</Key>
+                <Key Value = "6">AC (400W)</Key>
+            </Option>
+            <Option Value = "4" Tag = "SupOpt" Default = "0">
+                <Key Value = "0"/>
+                <Key Value = "1">RED</Key><!--don't we want to actually write Redundant for readability? -->
+                <Key Value = "2">UPS</Key>
+            </Option>
+        </Table>
+        <Table Type = "1" Version = "0">
+            <Option Value = "1" Tag = "Sync" Default = "0">
+                <Key Value = "0"/>
+                <Key Value = "1">SYNC I/O</Key>
+            </Option>
+            <Option Value = "3" Tag = "Supply" Default = "0">
+                <Key Value = "0">AC</Key>
+                <Key Value = "1">DC</Key>
+            </Option>
+            <Option Value = "4" Tag = "SupOpt" Default = "0">
+                <Key Value = "0"/>
+                <Key Value = "1">RED</Key><!--don't we want to actually write Redundant for readability? -->
+                <Key Value = "2">UPS</Key>
+                <Key Value = "3">BAT</Key>
+            </Option>
+        </Table>
+        <Table Type = "1" Version = "2">
+            <Option Value = "1" Tag = "Sync" Default = "0">
+                <Key Value = "0"/>
+                <Key Value = "1">SYNC I/O</Key>
+            </Option>
+            <Option Value = "3" Tag = "Supply" Default = "0">
+                <Key Value = "0">AC</Key>
+                <Key Value = "1">DC</Key>
+            </Option>
+            <Option Value = "4" Tag = "SupOpt" Default = "0">
+                <Key Value = "0"/>
+                <Key Value = "1">RED</Key><!--don't we want to actually write Redundant for readability? -->
+                <Key Value = "2">UPS</Key>
+                <Key Value = "3">BAT</Key>
+            </Option>
+            <Option Value = "5" Tag = "SpecOpt" Default = "0">
+                <Key Value = "0"/>
+                <Key Value = "1">FIBER</Key>
+                <Key Value = "2">THUNDER</Key>
+            </Option>
+        </Table>
+    </EnclosureOptions>
+</EnclosureListing>
