@@ -34,17 +34,15 @@ set(XA_SOURCE_FILES
   src/xml_atlas_app.h
   src/xml_atlas_data.cpp
   src/xml_atlas_data.h
-  src/xml_atlas_qml.cpp
-  src/xml_atlas_qml.h
-  src/qml_reloader.cpp
-  src/qml_reloader.h
+  src/xml_atlas_editor.cpp
+  src/xml_atlas_editor.h
 )
 
 
-set(XA_RESOURCE_FILES
-  xa_resources.qrc
-)
-qt5_add_resources(XA_RESOURCES ${QT_RESOURCE_FILES})
+# set(XA_RESOURCE_FILES
+#   xa_resources.qrc
+# )
+# qt5_add_resources(XA_RESOURCES ${QT_RESOURCE_FILES})
 
 
 add_executable(${APPNAME} WIN32

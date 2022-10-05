@@ -21,7 +21,7 @@
 
 int main(int argc, char* argv[])
 {
-    Q_INIT_RESOURCE(xa_resources);
+    //Q_INIT_RESOURCE(xa_resources);
 
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

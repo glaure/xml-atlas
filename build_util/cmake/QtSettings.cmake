@@ -33,8 +33,8 @@ endif()
 
 if(NOT QT_VERSION)
   
-  # set default
-  set(QT_VERSION "5.12.5")
+  # set default (last lts)
+  set(QT_VERSION "5.15.2")
 
   if (WIN32)
     if (MSVC_VERSION EQUAL 1800)
@@ -80,6 +80,7 @@ if(NOT QT_BASE_PATH)
       $ENV{HOME}/Qt${QT_VERSION}/${QT_VERSION}/gcc_64
       /opt/Qt/${QT_VERSION}/gcc_64
       $ENV{HOME}/Qt/${QT_VERSION}/gcc_64
+      C:/_Qt/${QT_VERSION}/msvc2019_64
       )
                 
     message("Qt Discovery: Testing ${_QT_PATH}")

@@ -19,10 +19,10 @@
 
 #include <QApplication>
 #include <QObject>
-#include "qml_reloader.h"
 
 class XmlAtlasData;
 class XmlAtlasQml;
+class XMLAtlasEditor;
 
 /**
  * Initializes the application and manages the GUI
@@ -50,7 +50,5 @@ private:
 private:
     QApplication            m_app;
     XmlAtlasData*           m_app_data;
-    XmlAtlasQml*            m_main_window;
-    QString                 m_qml_main_file;
-    QmlReloader*            m_qml_reloader;
+    XMLAtlasEditor*         m_editor;
 };
