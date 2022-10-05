@@ -197,7 +197,7 @@ set(CMAKE_PREFIX_PATH
 #
 #endif() #win32
 
-add_definitions(-DQT_NO_KEYWORDS)
+#add_definitions(-DQT_NO_KEYWORDS)
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_definitions(-DQT_NO_DEBUG )
