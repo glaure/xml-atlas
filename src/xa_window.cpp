@@ -66,7 +66,7 @@ void XAMainWindow::setupEditor()
     font.setFixedPitch(true);
     font.setPointSize(10);
 
-    editor = new QTextEdit;
+    editor = new QPlainTextEdit;
     editor->setFont(font);
 
     m_xml_highlighter = new XAHighlighter_XML(editor->document());

@@ -21,7 +21,7 @@
 #include <QMainWindow>
 
 
-class QTextEdit;
+class QPlainTextEdit;
 
 
 class XAMainWindow : public QMainWindow
@@ -41,6 +41,6 @@ private:
     void setupFileMenu();
     void setupHelpMenu();
 
-    QTextEdit *editor;
+    QPlainTextEdit *editor;
     XAHighlighter_XML *m_xml_highlighter;
 };
