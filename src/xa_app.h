@@ -50,6 +50,6 @@ private:
 private:
     QApplication      m_app;
     XAData*           m_app_data;
-    XAEditor*         m_editor;
+    //XAEditor*         m_editor;
     XAMainWindow*     m_window;
 };

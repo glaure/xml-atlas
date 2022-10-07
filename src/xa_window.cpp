@@ -16,6 +16,7 @@
  */
 
 #include "xa_window.h"
+#include "xa_editor.h"
 #include <QtWidgets>
 
 
@@ -66,7 +67,8 @@ void XAMainWindow::setupEditor()
     font.setFixedPitch(true);
     font.setPointSize(10);
 
-    editor = new QPlainTextEdit;
+    //editor = new QPlainTextEdit;
+    editor = new XAEditor;
     editor->setFont(font);
 
     m_xml_highlighter = new XAHighlighter_XML(editor->document());

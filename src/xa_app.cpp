@@ -37,14 +37,14 @@ XAApp::XAApp(int& argc, char** argv)
 XAApp::~XAApp()
 {
     delete m_app_data;
-    delete m_editor;
+//    delete m_editor;
     delete m_window;
 }
 
 bool XAApp::init()
 {
     m_app_data = new XAData;
-    m_editor = new XAEditor;
+//    m_editor = new XAEditor;
     m_window = new XAMainWindow;
 
     if (!initGui()) return false;
@@ -76,7 +76,7 @@ bool XAApp::initGui()
     //     m_qml_reloader->addView(m_main_window);
     // }
 
-    m_editor->show();
+    //m_editor->show();
     m_window->show();
 
     return true;
