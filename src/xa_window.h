@@ -35,6 +35,7 @@ public slots:
     void about();
     void newFile();
     void openFile(const QString &path = QString());
+    void saveFile(const QString& path = QString());
 
 private:
     void setupEditor();

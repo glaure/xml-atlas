@@ -22,9 +22,6 @@
 
 #include "QFile"
 #include <QFileInfo>
-#include <QQmlContext>
-#include <QQmlEngine>
-
 
 XAApp::XAApp(int& argc, char** argv)
     : QObject(nullptr)
@@ -37,14 +34,12 @@ XAApp::XAApp(int& argc, char** argv)
 XAApp::~XAApp()
 {
     delete m_app_data;
-//    delete m_editor;
     delete m_window;
 }
 
 bool XAApp::init()
 {
     m_app_data = new XAData;
-//    m_editor = new XAEditor;
     m_window = new XAMainWindow;
 
     if (!initGui()) return false;
@@ -54,31 +49,7 @@ bool XAApp::init()
 
 bool XAApp::initGui()
 {
-    // m_main_window = new XmlAtlasQml;
-    // m_main_window->connect(m_main_window->engine(), &QQmlEngine::quit, &m_app, &QCoreApplication::quit);
-    // m_main_window->setSource(QUrl(m_qml_main_file));
-
-    // // connect(m_app_data, &XAData::doShowNotification, m_main_window, &XmlAtlasQml::showNotification);
-    // // connect(m_app_data, &XAData::resetAlertIcon, m_main_window, &XmlAtlasQml::resetAlertIcon);
-
-
-    // if (m_main_window->status() == QQuickView::Error)
-    //     return false;
-
-    // m_main_window->setResizeMode(QQuickView::SizeRootObjectToView);
-    
-    // m_main_window->rootContext()->setContextProperty("app", m_app_data);
-
-
-    // m_main_window->hide();
-    // if (m_qml_reloader) 
-    // {
-    //     m_qml_reloader->addView(m_main_window);
-    // }
-
-    //m_editor->show();
     m_window->show();
-
     return true;
 }
 

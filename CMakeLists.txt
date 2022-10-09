@@ -45,17 +45,26 @@ set(XA_SOURCE_FILES
   src/xml_atlas.cpp
 )
 
+set(XA_RESOURCE_FILES
+  xa_resources.qrc
+)
 
-# set(XA_RESOURCE_FILES
-#   xa_resources.qrc
-# )
-# qt5_add_resources(XA_RESOURCES ${QT_RESOURCE_FILES})
-
+qt5_add_resources(XA_RESOURCE ${XA_RESOURCE_FILES})
 
 add_executable(${APPNAME} WIN32
   ${XA_SOURCE_FILES}
-  ${XA_RESOURCE_FILES}
-  ${XA_RESOURCES}
+  ${XA_RESOURCE}
 )
 
-qt5_use_modules(${APPNAME} Widgets Quick)
+set_target_properties(${APPNAME} PROPERTIES
+    WIN32_EXECUTABLE TRUE
+    MACOSX_BUNDLE TRUE
+)
+
+target_link_libraries(${APPNAME} PUBLIC
+    Qt::Core
+    Qt::Gui
+    Qt::Widgets
+)
+
+

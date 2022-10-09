@@ -59,6 +59,19 @@ void XAMainWindow::openFile(const QString &path)
     }
 }
 
+void XAMainWindow::saveFile(const QString& path)
+{
+    //QString fileName = path;
+
+    //if (fileName.isNull())
+    //    fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", "C++ Files (*.xml *.XML)");
+
+    //if (!fileName.isEmpty()) {
+    //    QFile file(fileName);
+    //    if (file.open(QFile::ReadOnly | QFile::Text))
+    //        editor->setPlainText(file.readAll());
+    //}
+}
 
 void XAMainWindow::setupEditor()
 {
@@ -81,9 +94,44 @@ void XAMainWindow::setupFileMenu()
     QMenu *fileMenu = new QMenu(tr("&File"), this);
     menuBar()->addMenu(fileMenu);
 
-    fileMenu->addAction(tr("&New"), this, &XAMainWindow::newFile, QKeySequence::New);
-    fileMenu->addAction(tr("&Open..."), this, [this]() { openFile(); },QKeySequence::Open);
+    QToolBar* fileToolBar = addToolBar(tr("File"));   
+    {
+        const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/images/new.png"));
+        QAction* newAct = new QAction(newIcon, tr("&New"), this);
+        newAct->setShortcuts(QKeySequence::New);
+        newAct->setStatusTip(tr("Create a new file"));
+        connect(newAct, &QAction::triggered, this, &XAMainWindow::newFile);
+        fileMenu->addAction(newAct);
+        fileToolBar->addAction(newAct);
+    }
+
+
+    {
+        const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open.png"));
+        QAction* openAct = new QAction(openIcon, tr("&Open..."), this);
+        openAct->setShortcuts(QKeySequence::Open);
+        openAct->setStatusTip(tr("Open an existing file"));
+        //connect(openAct, &QAction::triggered, this, &XAMainWindow::open);
+        connect(openAct, &QAction::triggered, this, [this]() { openFile(); });
+        fileMenu->addAction(openAct);
+        fileToolBar->addAction(openAct);
+    }
+
+    {
+        const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));
+        QAction* saveAct = new QAction(saveIcon, tr("&Save"), this);
+        saveAct->setShortcuts(QKeySequence::Save);
+        saveAct->setStatusTip(tr("Save the document to disk"));
+        //connect(saveAct, &QAction::triggered, this, &XAMainWindow::save);
+        connect(saveAct, &QAction::triggered, this, [this]() { saveFile(); });
+        fileMenu->addAction(saveAct);
+        fileToolBar->addAction(saveAct);
+    }
+
+    //fileMenu->addAction(tr("&New"), this, &XAMainWindow::newFile, QKeySequence::New);
+    //fileMenu->addAction(tr("&Open..."), this, [this]() { openFile(); },QKeySequence::Open);
     fileMenu->addAction(tr("E&xit"), qApp, &QApplication::quit, QKeySequence::Quit);
+
 }
 
 void XAMainWindow::setupHelpMenu()
@@ -94,3 +142,5 @@ void XAMainWindow::setupHelpMenu()
     helpMenu->addAction(tr("&About"), this, &XAMainWindow::about);
     helpMenu->addAction(tr("About &Qt"), qApp, &QApplication::aboutQt);
 }
+
+
