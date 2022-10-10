@@ -25,6 +25,7 @@ XAXMLTreeItem::XAXMLTreeItem(XAXMLTreeItem* parent_item)
 }
 
 
+
 XAXMLTreeModel::XAXMLTreeModel(QObject* parent)
     : QAbstractItemModel(parent)
 {
