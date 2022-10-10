@@ -27,8 +27,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 include(QtSettings)
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 
 
 set(XA_SOURCE_FILES
@@ -62,9 +61,8 @@ set_target_properties(${APPNAME} PROPERTIES
 )
 
 target_link_libraries(${APPNAME} PUBLIC
-    Qt::Core
-    Qt::Gui
-    Qt::Widgets
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
 )
-
 
