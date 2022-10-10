@@ -17,6 +17,8 @@
 
 #include "xa_window.h"
 #include "xa_editor.h"
+#include "xa_tree_dock.h"
+#include "xa_xml_tree_model.h"
 #include <QtWidgets>
 
 
@@ -27,10 +29,8 @@ XAMainWindow::XAMainWindow(QWidget *parent)
     setupHelpMenu();
     setupEditor();
 
-    setCentralWidget(editor);
+    setCentralWidget(m_editor);
     setWindowTitle(tr("XML Atlas"));
-
-
 }
 
 
@@ -49,7 +49,7 @@ void XAMainWindow::about()
 
 void XAMainWindow::newFile()
 {
-    editor->clear();
+    m_editor->clear();
 }
 
 void XAMainWindow::openFile(const QString &path)
@@ -62,7 +62,7 @@ void XAMainWindow::openFile(const QString &path)
     if (!fileName.isEmpty()) {
         QFile file(fileName);
         if (file.open(QFile::ReadOnly | QFile::Text))
-            editor->setPlainText(file.readAll());
+            m_editor->setPlainText(file.readAll());
     }
 }
 
@@ -87,12 +87,18 @@ void XAMainWindow::setupEditor()
     font.setFixedPitch(true);
     font.setPointSize(10);
 
-    //editor = new QPlainTextEdit;
-    editor = new XAEditor;
-    editor->setFont(font);
+    m_editor = new XAEditor;
+    m_editor->setFont(font);
 
-    m_xml_highlighter = new XAHighlighter_XML(editor->document());
+    m_xml_highlighter = new XAHighlighter_XML(m_editor->document());
 
+    m_xml_tree_model = new XAXMLTreeModel;
+    auto tv = new QTreeView;
+    tv->setModel(m_xml_tree_model);
+
+    m_tree_dock = new XATreeDock("DuuDuu");
+    m_tree_dock->setWidget(tv);
+    addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea, m_tree_dock);
 }
 
 

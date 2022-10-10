@@ -15,38 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "xa_tree_dock.h"
 
-#include "xa_highlighter_xml.h"
-#include <QMainWindow>
-
-
-class XAEditor;
-class XATreeDock;
-class XAXMLTreeModel;
-
-class XAMainWindow : public QMainWindow
+XATreeDock::XATreeDock(const QString &title, QWidget *parent, Qt::WindowFlags flags)
+    : QDockWidget(title, parent, flags)
 {
-    Q_OBJECT
 
-public:
-    XAMainWindow(QWidget *parent = nullptr);
-
-public slots:
-    void about();
-    void newFile();
-    void openFile(const QString &path = QString());
-    void saveFile(const QString& path = QString());
-
-
-    virtual QSize sizeHint() const;
-private:
-    void setupEditor();
-    void setupFileMenu();
-    void setupHelpMenu();
-
-    XAEditor*           m_editor;
-    XAHighlighter_XML*  m_xml_highlighter;
-    XATreeDock*         m_tree_dock;
-    XAXMLTreeModel*     m_xml_tree_model;
-};
+}

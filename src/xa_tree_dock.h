@@ -17,36 +17,17 @@
 
 #pragma once
 
-#include "xa_highlighter_xml.h"
-#include <QMainWindow>
+#include <QDockWidget>
 
 
-class XAEditor;
-class XATreeDock;
 class XAXMLTreeModel;
 
-class XAMainWindow : public QMainWindow
+
+class XATreeDock : public QDockWidget
 {
-    Q_OBJECT
-
 public:
-    XAMainWindow(QWidget *parent = nullptr);
+    XATreeDock(const QString &title, QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
-public slots:
-    void about();
-    void newFile();
-    void openFile(const QString &path = QString());
-    void saveFile(const QString& path = QString());
-
-
-    virtual QSize sizeHint() const;
 private:
-    void setupEditor();
-    void setupFileMenu();
-    void setupHelpMenu();
-
-    XAEditor*           m_editor;
-    XAHighlighter_XML*  m_xml_highlighter;
-    XATreeDock*         m_tree_dock;
-    XAXMLTreeModel*     m_xml_tree_model;
+    XAXMLTreeModel*     m_xml_model;
 };
