@@ -37,6 +37,8 @@ public slots:
     void openFile(const QString &path = QString());
     void saveFile(const QString& path = QString());
 
+
+    virtual QSize sizeHint() const;
 private:
     void setupEditor();
     void setupFileMenu();

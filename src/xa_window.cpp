@@ -29,8 +29,15 @@ XAMainWindow::XAMainWindow(QWidget *parent)
 
     setCentralWidget(editor);
     setWindowTitle(tr("XML Atlas"));
+
+
 }
 
+
+QSize XAMainWindow::sizeHint() const
+{
+    return QSize{640, 480};
+}
 
 void XAMainWindow::about()
 {
