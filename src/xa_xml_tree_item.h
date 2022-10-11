@@ -17,32 +17,27 @@
 
 #pragma once
 
-#include <QAbstractItemModel>
+#include <QVariant>
 #include <QVector>
 
 
-class XAXMLTreeItem;
-
-
-class XAXMLTreeModel : public QAbstractItemModel
+class XAXMLTreeItem
 {
-    Q_OBJECT
-
 public:
-    XAXMLTreeModel(QObject* parent = nullptr);
-    ~XAXMLTreeModel();
+    explicit XAXMLTreeItem(XAXMLTreeItem* parent_item = nullptr);
+    explicit XAXMLTreeItem(const std::string& value, XAXMLTreeItem* parent_item = nullptr);
+    ~XAXMLTreeItem();
 
-    QVariant data(const QModelIndex& index, int role) const override;
-    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    XAXMLTreeItem* appendChild(XAXMLTreeItem* child);
+    XAXMLTreeItem* child(int row);
+    int childCount() const;
+    int columnCount() const;
+    QVariant data(int column) const;
+    int row() const;
+    XAXMLTreeItem* parentItem();
 
-    QModelIndex index(int row, int column,
-        const QModelIndex& parent = QModelIndex()) const override;
-
-    QModelIndex parent(const QModelIndex& index) const override;
-
-    int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 private:
-
-    XAXMLTreeItem* m_root_item;
+    QVector<XAXMLTreeItem*> m_child_items;
+    XAXMLTreeItem* m_parent_item;
+    std::string m_value;
 };

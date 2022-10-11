@@ -17,24 +17,27 @@
 
 
 #include "xa_xml_tree_model.h"
-
-
-XAXMLTreeItem::XAXMLTreeItem(XAXMLTreeItem* parent_item)
-{
-
-}
+#include "xa_xml_tree_item.h"
 
 
 
 XAXMLTreeModel::XAXMLTreeModel(QObject* parent)
     : QAbstractItemModel(parent)
 {
+    m_root_item = new XAXMLTreeItem{ "ROOT" };
+    
+    // Debug Tree Data:
 
+    m_root_item->appendChild(new XAXMLTreeItem{ "A", m_root_item});
+    auto n = m_root_item->appendChild(new XAXMLTreeItem{ "B", m_root_item});
+
+    n = n->appendChild(new XAXMLTreeItem{ "C", m_root_item});
+    n->appendChild(new XAXMLTreeItem{ "D",n});
 }
 
 XAXMLTreeModel::~XAXMLTreeModel()
 {
-
+    delete m_root_item;
 }
 
 QVariant XAXMLTreeModel::data(const QModelIndex& index, int role) const
@@ -45,10 +48,9 @@ QVariant XAXMLTreeModel::data(const QModelIndex& index, int role) const
     if (role != Qt::DisplayRole)
         return QVariant();
 
-    //TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+    auto item = static_cast<XAXMLTreeItem*>(index.internalPointer());
 
-    //return item->data(index.column());
-    return {};
+    return item->data(index.column());
 }
 
 Qt::ItemFlags XAXMLTreeModel::flags(const QModelIndex& index) const
@@ -65,16 +67,16 @@ QModelIndex XAXMLTreeModel::index(int row, int column,
     if (!hasIndex(row, column, parent))
         return QModelIndex();
 
-    //TreeItem* parentItem;
+    XAXMLTreeItem* parent_item;
 
-    //if (!parent.isValid())
-    //    parentItem = rootItem;
-    //else
-    //    parentItem = static_cast<TreeItem*>(parent.internalPointer());
+    if (!parent.isValid())
+        parent_item = m_root_item;
+    else
+        parent_item = static_cast<XAXMLTreeItem*>(parent.internalPointer());
 
-    //TreeItem* childItem = parentItem->child(row);
-    //if (childItem)
-    //    return createIndex(row, column, childItem);
+    auto* child_item = parent_item->child(row);
+    if (child_item)
+        return createIndex(row, column, child_item);
     return QModelIndex();
 }
 
@@ -83,7 +85,13 @@ QModelIndex XAXMLTreeModel::parent(const QModelIndex& index) const
     if (!index.isValid())
         return QModelIndex();
 
-    return {};
+    auto child_item = static_cast<XAXMLTreeItem*>(index.internalPointer());
+    auto parent_item = child_item->parentItem();
+
+    if (parent_item == m_root_item)
+        return QModelIndex();
+
+    return createIndex(parent_item->row(), 0, parent_item);
 }
 
 int XAXMLTreeModel::rowCount(const QModelIndex& parent) const
@@ -91,10 +99,19 @@ int XAXMLTreeModel::rowCount(const QModelIndex& parent) const
     if (parent.column() > 0)
         return 0;
 
-    return 0;
+    XAXMLTreeItem* parent_item;
+
+    if (!parent.isValid())
+        parent_item = m_root_item;
+    else
+        parent_item = static_cast<XAXMLTreeItem*>(parent.internalPointer());
+
+    return parent_item->childCount();
 }
 
 int XAXMLTreeModel::columnCount(const QModelIndex& parent) const
 {
-    return 0;
+    if (parent.isValid())
+        return static_cast<XAXMLTreeItem*>(parent.internalPointer())->columnCount();
+    return m_root_item->columnCount();
 }

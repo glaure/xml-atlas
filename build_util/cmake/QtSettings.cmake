@@ -73,14 +73,8 @@ set(QT_BUILD "${QT_BUILD_SYSTEM}${QT_BUILD_BITS}${QT_BUILD_SUFFIX}")
 message("=Qt==================================================================")
 if(NOT QT_BASE_PATH)
   foreach(_QT_PATH
-      ${OPT_ROOT}/qt/${QT_VERSION}_${QT_BUILD}
-      ${SW_APP_ROOT}/3rdparty/qt/${QT_VERSION}_${QT_BUILD}
-      /opt/qt/${QT_VERSION}_${QT_BUILD}
-      /opt/Qt${QT_VERSION}/${QT_VERSION}/gcc_64
-      $ENV{HOME}/Qt${QT_VERSION}/${QT_VERSION}/gcc_64
-      /opt/Qt/${QT_VERSION}/gcc_64
-      $ENV{HOME}/Qt/${QT_VERSION}/gcc_64
-      C:/_Qt/${QT_VERSION}/msvc2019_64
+      $ENV{QT_BASE_PATH}
+      C:/Qt/${QT_VERSION}/msvc2019_64
       )
                 
     message("Qt Discovery: Testing ${_QT_PATH}")

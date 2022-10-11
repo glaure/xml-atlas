@@ -43,6 +43,8 @@ set(XA_SOURCE_FILES
   src/xa_window.h
   src/xa_tree_dock.cpp
   src/xa_tree_dock.h
+  src/xa_xml_tree_item.cpp
+  src/xa_xml_tree_item.h
   src/xa_xml_tree_model.cpp
   src/xa_xml_tree_model.h
   src/xml_atlas.cpp
