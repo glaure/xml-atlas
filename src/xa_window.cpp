@@ -95,6 +95,7 @@ void XAMainWindow::setupEditor()
     m_xml_tree_model = new XAXMLTreeModel;
     auto tv = new QTreeView;
     tv->setModel(m_xml_tree_model);
+    tv->setHeaderHidden(true);
 
     m_tree_dock = new XATreeDock("DuuDuu");
     m_tree_dock->setWidget(tv);

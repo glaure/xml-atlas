@@ -31,7 +31,7 @@ XAXMLTreeModel::XAXMLTreeModel(QObject* parent)
     m_root_item->appendChild(new XAXMLTreeItem{ "A", m_root_item});
     auto n = m_root_item->appendChild(new XAXMLTreeItem{ "B", m_root_item});
 
-    n = n->appendChild(new XAXMLTreeItem{ "C", m_root_item});
+    n = n->appendChild(new XAXMLTreeItem{ "C", n});
     n->appendChild(new XAXMLTreeItem{ "D",n});
 }
 
@@ -49,8 +49,8 @@ QVariant XAXMLTreeModel::data(const QModelIndex& index, int role) const
         return QVariant();
 
     auto item = static_cast<XAXMLTreeItem*>(index.internalPointer());
-
-    return item->data(index.column());
+    auto data_value = item->data(index.column());
+    return data_value;
 }
 
 Qt::ItemFlags XAXMLTreeModel::flags(const QModelIndex& index) const
@@ -69,10 +69,14 @@ QModelIndex XAXMLTreeModel::index(int row, int column,
 
     XAXMLTreeItem* parent_item;
 
-    if (!parent.isValid())
+    if (!parent.isValid()) 
+    {
         parent_item = m_root_item;
-    else
+    }
+    else 
+    {
         parent_item = static_cast<XAXMLTreeItem*>(parent.internalPointer());
+    }
 
     auto* child_item = parent_item->child(row);
     if (child_item)
