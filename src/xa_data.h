@@ -19,6 +19,8 @@
 
 #include <QObject>
 
+class XAXMLTreeModel;
+
  /**
   * Application main model
   */
@@ -30,6 +32,14 @@ public:
     XAData();
     ~XAData();
 
-private:
+    XAXMLTreeModel* getXMLTreeModel() const;
 
+    void setContent(const QString& content);
+
+private:
+    void buildTreeModelFromContent();
+
+private:
+    XAXMLTreeModel*     m_xml_tree_model;
+    QString             m_content;
 };

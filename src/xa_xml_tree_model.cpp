@@ -27,12 +27,11 @@ XAXMLTreeModel::XAXMLTreeModel(QObject* parent)
     m_root_item = new XAXMLTreeItem{ "ROOT" };
     
     // Debug Tree Data:
+    //m_root_item->appendChild(new XAXMLTreeItem{ "A", m_root_item});
+    //auto n = m_root_item->appendChild(new XAXMLTreeItem{ "B", m_root_item});
 
-    m_root_item->appendChild(new XAXMLTreeItem{ "A", m_root_item});
-    auto n = m_root_item->appendChild(new XAXMLTreeItem{ "B", m_root_item});
-
-    n = n->appendChild(new XAXMLTreeItem{ "C", n});
-    n->appendChild(new XAXMLTreeItem{ "D",n});
+    //n = n->appendChild(new XAXMLTreeItem{ "C", n});
+    //n->appendChild(new XAXMLTreeItem{ "D",n});
 }
 
 XAXMLTreeModel::~XAXMLTreeModel()
@@ -118,4 +117,9 @@ int XAXMLTreeModel::columnCount(const QModelIndex& parent) const
     if (parent.isValid())
         return static_cast<XAXMLTreeItem*>(parent.internalPointer())->columnCount();
     return m_root_item->columnCount();
+}
+
+XAXMLTreeItem* XAXMLTreeModel::getRoot() const
+{
+    return m_root_item;
 }

@@ -18,12 +18,14 @@
 #include "xa_window.h"
 #include "xa_editor.h"
 #include "xa_tree_dock.h"
+#include "xa_data.h"
 #include "xa_xml_tree_model.h"
 #include <QtWidgets>
 
 
-XAMainWindow::XAMainWindow(QWidget *parent)
+XAMainWindow::XAMainWindow(XAData* app_data, QWidget *parent)
     : QMainWindow(parent)
+    , m_app_data(app_data)
 {
     setupFileMenu();
     setupHelpMenu();
@@ -57,12 +59,15 @@ void XAMainWindow::openFile(const QString &path)
     QString fileName = path;
 
     if (fileName.isNull())
-        fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", "C++ Files (*.xml *.XML)");
+        fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", "XML Files (*.xml *.XML)");
 
     if (!fileName.isEmpty()) {
         QFile file(fileName);
-        if (file.open(QFile::ReadOnly | QFile::Text))
-            m_editor->setPlainText(file.readAll());
+        if (file.open(QFile::ReadOnly | QFile::Text)) {
+            auto content = file.readAll();
+            m_app_data->setContent(content);
+            m_editor->setPlainText(content);
+        }
     }
 }
 
@@ -92,9 +97,8 @@ void XAMainWindow::setupEditor()
 
     m_xml_highlighter = new XAHighlighter_XML(m_editor->document());
 
-    m_xml_tree_model = new XAXMLTreeModel;
     auto tv = new QTreeView;
-    tv->setModel(m_xml_tree_model);
+    tv->setModel(m_app_data->getXMLTreeModel());
     tv->setHeaderHidden(true);
 
     m_tree_dock = new XATreeDock("DuuDuu");

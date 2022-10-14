@@ -30,6 +30,9 @@ include(QtSettings)
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 
 
+add_subdirectory(3rdparty/pugixml-1.12)
+
+
 set(XA_SOURCE_FILES
   src/xa_app.cpp
   src/xa_app.h
@@ -70,5 +73,6 @@ target_link_libraries(${APPNAME} PUBLIC
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
+    pugixml-static
 )
 

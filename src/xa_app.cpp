@@ -40,7 +40,7 @@ XAApp::~XAApp()
 bool XAApp::init()
 {
     m_app_data = new XAData;
-    m_window = new XAMainWindow;
+    m_window = new XAMainWindow(m_app_data);
 
     if (!initGui()) return false;
 

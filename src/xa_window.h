@@ -23,14 +23,15 @@
 
 class XAEditor;
 class XATreeDock;
-class XAXMLTreeModel;
+class XAData;
+
 
 class XAMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    XAMainWindow(QWidget *parent = nullptr);
+    XAMainWindow(XAData* app_data, QWidget *parent = nullptr);
 
 public slots:
     void about();
@@ -38,15 +39,17 @@ public slots:
     void openFile(const QString &path = QString());
     void saveFile(const QString& path = QString());
 
-
     virtual QSize sizeHint() const;
+
 private:
     void setupEditor();
     void setupFileMenu();
     void setupHelpMenu();
 
+private:
+    XAData*             m_app_data;
     XAEditor*           m_editor;
     XAHighlighter_XML*  m_xml_highlighter;
     XATreeDock*         m_tree_dock;
-    XAXMLTreeModel*     m_xml_tree_model;
+
 };
