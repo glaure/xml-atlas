@@ -23,6 +23,16 @@
 
 namespace
 {
+
+    void appendAttributes(XAXMLTreeItem* item, const pugi::xml_node& node)
+    {
+        const auto& attributes = node.attributes();
+        for (const auto& attr : attributes)
+        {
+            item->appendChild(new XAXMLTreeItem{ attr.name(), item });
+        }
+    }
+
     class XmlTreeBuilder : public pugi::xml_tree_walker
     {
     public:
@@ -57,12 +67,14 @@ namespace
                     // m_last_node is the parent for this node
                     m_current_parent = m_last_node;
                     auto new_node = new XAXMLTreeItem(node.name(), m_current_parent);
+                    appendAttributes(new_node, node);
                     m_current_parent->appendChild(new_node);
                     m_last_node = new_node;
                 }
                 else if (m_last_depth == current_depth) {
                     // node is a sibling to the previous node
                     auto new_node = new XAXMLTreeItem(node.name(), m_current_parent);
+                    appendAttributes(new_node, node);
                     m_current_parent->appendChild(new_node);
                     m_last_node = new_node;
                 }
@@ -74,6 +86,7 @@ namespace
                         --last_depth;
                     }
                     auto new_node = new XAXMLTreeItem(node.name(), m_current_parent);
+                    appendAttributes(new_node, node);
                     m_current_parent->appendChild(new_node);
                     m_last_node = new_node;
 

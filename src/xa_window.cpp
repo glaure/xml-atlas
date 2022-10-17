@@ -38,7 +38,7 @@ XAMainWindow::XAMainWindow(XAData* app_data, QWidget *parent)
 
 QSize XAMainWindow::sizeHint() const
 {
-    return QSize{640, 480};
+    return QSize{1024, 800};
 }
 
 void XAMainWindow::about()
