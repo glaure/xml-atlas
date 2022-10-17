@@ -68,9 +68,10 @@ namespace
                 }
                 else {
                     // node is child on another branch
-                    while (current_depth < m_last_depth) {
+                    auto last_depth = m_last_depth;
+                    while (current_depth < last_depth) {
                         m_current_parent = m_current_parent->parentItem();
-                        --m_last_depth;
+                        --last_depth;
                     }
                     auto new_node = new XAXMLTreeItem(node.name(), m_current_parent);
                     m_current_parent->appendChild(new_node);
