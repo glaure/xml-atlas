@@ -47,6 +47,9 @@ public:
 
     void updateAll();
 
+    void beginFillModel();
+    void endFillModel();
+
 private:
 
     XAXMLTreeItem* m_root_item;

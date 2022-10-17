@@ -89,6 +89,9 @@ QModelIndex XAXMLTreeModel::parent(const QModelIndex& index) const
         return QModelIndex();
 
     auto child_item = static_cast<XAXMLTreeItem*>(index.internalPointer());
+    if (!child_item)
+        return QModelIndex();
+
     auto parent_item = child_item->parentItem();
 
     if (parent_item == m_root_item)
@@ -126,7 +129,18 @@ XAXMLTreeItem* XAXMLTreeModel::getRoot() const
 
 void XAXMLTreeModel::updateAll()
 {
-    QModelIndex topLeft = createIndex(0, 0);
-    QModelIndex bottomRight = createIndex(this->rowCount(), 0);
+    //QModelIndex topLeft = createIndex(1, 0);
+    //QModelIndex bottomRight = createIndex(3, 0);
     //emit dataChanged(topLeft, bottomRight);
 }
+
+void XAXMLTreeModel::beginFillModel()
+{
+    beginResetModel();
+}
+
+void XAXMLTreeModel::endFillModel()
+{
+    endResetModel();
+}
+

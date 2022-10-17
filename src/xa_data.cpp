@@ -133,8 +133,11 @@ void XAData::buildTreeModelFromContent()
     if (parse_result.status == pugi::status_ok)
     {
         XmlTreeBuilder tb(m_xml_tree_model);
+
+        m_xml_tree_model->beginFillModel();
         doc.traverse(tb);
+        m_xml_tree_model->endFillModel();
         
-        m_xml_tree_model->updateAll();
+        //m_xml_tree_model->updateAll();
     }
 }
