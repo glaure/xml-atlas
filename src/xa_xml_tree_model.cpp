@@ -123,3 +123,10 @@ XAXMLTreeItem* XAXMLTreeModel::getRoot() const
 {
     return m_root_item;
 }
+
+void XAXMLTreeModel::updateAll()
+{
+    QModelIndex topLeft = createIndex(0, 0);
+    QModelIndex bottomRight = createIndex(this->rowCount(), 0);
+    //emit dataChanged(topLeft, bottomRight);
+}

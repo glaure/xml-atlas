@@ -28,10 +28,14 @@ namespace
     public:
         XmlTreeBuilder(XAXMLTreeModel* model)
             : m_model(model)
+            , m_tree_root(nullptr)
+            , m_current_parent(nullptr)
+            , m_last_node(nullptr)
+            , m_last_depth(-1)
         {
             m_tree_root = m_model->getRoot();
-            m_parents.push_back(m_tree_root);
-            m_last_depth = -1;
+            m_current_parent = m_tree_root;
+            m_last_node = m_current_parent;
         }
 
         // Callback that is called when traversal begins
@@ -47,28 +51,31 @@ namespace
             {
             case pugi::node_element: {
                 auto current_depth = depth();
+                auto name = node.name();
                 if (m_last_depth < current_depth) {
-                    // child
-                    auto parent = *m_parents.rbegin();
-                    auto new_node = new XAXMLTreeItem(node.name(), parent);
-                    parent->appendChild(new_node);
-                    m_parents.push_back(new_node);
+                    // node is the first child of a parent node
+                    // m_last_node is the parent for this node
+                    m_current_parent = m_last_node;
+                    auto new_node = new XAXMLTreeItem(node.name(), m_current_parent);
+                    m_current_parent->appendChild(new_node);
+                    m_last_node = new_node;
                 }
                 else if (m_last_depth == current_depth) {
-                    // sibling
-                    auto parent = *m_parents.rbegin();
-                    auto new_node = new XAXMLTreeItem(node.name(), parent);
-                    parent->appendChild(new_node);
+                    // node is a sibling to the previous node
+                    auto new_node = new XAXMLTreeItem(node.name(), m_current_parent);
+                    m_current_parent->appendChild(new_node);
+                    m_last_node = new_node;
                 }
                 else {
-                    if (!m_parents.empty())
-                    {
-                        m_parents.pop_back();
+                    // node is child on another branch
+                    while (current_depth < m_last_depth) {
+                        m_current_parent = m_current_parent->parentItem();
+                        --m_last_depth;
                     }
-                    else
-                    {
-                        assert(false);
-                    }
+                    auto new_node = new XAXMLTreeItem(node.name(), m_current_parent);
+                    m_current_parent->appendChild(new_node);
+                    m_last_node = new_node;
+
                 }
                 m_last_depth = current_depth;
                 break;
@@ -88,8 +95,8 @@ namespace
     private:
         XAXMLTreeModel* m_model;
         XAXMLTreeItem* m_tree_root;
-        //XAXMLTreeItem* m_parent;
-        std::vector<XAXMLTreeItem*> m_parents;
+        XAXMLTreeItem* m_current_parent;
+        XAXMLTreeItem* m_last_node;
         int m_last_depth;
     };
 }
@@ -126,6 +133,7 @@ void XAData::buildTreeModelFromContent()
     {
         XmlTreeBuilder tb(m_xml_tree_model);
         doc.traverse(tb);
-        //m_xml_tree_model->dataChanged(QModelIndex(), QModelIndex());
+        
+        m_xml_tree_model->updateAll();
     }
 }

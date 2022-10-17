@@ -43,8 +43,9 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
-    
     XAXMLTreeItem* getRoot() const;
+
+    void updateAll();
 
 private:
 

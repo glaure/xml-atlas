@@ -101,7 +101,7 @@ void XAMainWindow::setupEditor()
     tv->setModel(m_app_data->getXMLTreeModel());
     tv->setHeaderHidden(true);
 
-    m_tree_dock = new XATreeDock("DuuDuu");
+    m_tree_dock = new XATreeDock("XML Tree");
     m_tree_dock->setWidget(tv);
     addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea, m_tree_dock);
 }
