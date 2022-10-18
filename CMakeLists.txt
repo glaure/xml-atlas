@@ -76,3 +76,22 @@ target_link_libraries(${APPNAME} PUBLIC
     pugixml-static
 )
 
+
+#
+# Install
+#
+
+
+#
+# Packaging
+#
+
+include(InstallRequiredSystemLibraries)
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+set(CPACK_PACKAGE_VERSION_MAJOR "1")
+set(CPACK_PACKAGE_VERSION_MINOR "0")
+set(CPACK_SOURCE_GENERATOR "TGZ")
+
+set(CPACK_WIX_UPGRADE_GUID "F93537BC-4988-4471-ACF2-E779BFD9A336")
+
+include(CPack)
