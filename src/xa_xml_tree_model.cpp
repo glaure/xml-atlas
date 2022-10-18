@@ -24,14 +24,7 @@
 XAXMLTreeModel::XAXMLTreeModel(QObject* parent)
     : QAbstractItemModel(parent)
 {
-    m_root_item = new XAXMLTreeItem{ "ROOT" };
-    
-    // Debug Tree Data:
-    //m_root_item->appendChild(new XAXMLTreeItem{ "A", m_root_item});
-    //auto n = m_root_item->appendChild(new XAXMLTreeItem{ "B", m_root_item});
-
-    //n = n->appendChild(new XAXMLTreeItem{ "C", n});
-    //n->appendChild(new XAXMLTreeItem{ "D",n});
+    m_root_item = new XAXMLTreeItem{ "ROOT", XAXMLTreeItemType::ELEMENT };   
 }
 
 XAXMLTreeModel::~XAXMLTreeModel()

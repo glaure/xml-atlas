@@ -20,12 +20,15 @@
 
 XAXMLTreeItem::XAXMLTreeItem(XAXMLTreeItem* parent_item)
     : m_parent_item(parent_item)
+    , m_value()
+    , m_item_type(XAXMLTreeItemType::ELEMENT)
 {
 }
 
-XAXMLTreeItem::XAXMLTreeItem(const std::string& value, XAXMLTreeItem* parent_item)
+XAXMLTreeItem::XAXMLTreeItem(const std::string& value, XAXMLTreeItemType item_type, XAXMLTreeItem* parent_item)
     : m_parent_item(parent_item)
     , m_value(value)
+    , m_item_type(item_type)
 {
 }
 
