@@ -30,7 +30,7 @@ include(QtSettings)
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 
 
-add_subdirectory(3rdparty/pugixml-1.12)
+add_subdirectory(3rdparty/pugixml-1.12 EXCLUDE_FROM_ALL)
 
 
 set(XA_SOURCE_FILES
@@ -80,12 +80,12 @@ target_link_libraries(${APPNAME} PUBLIC
 #
 # Install
 #
+install(TARGETS ${APPNAME} RUNTIME DESTINATION bin)
 
 
 #
 # Packaging
 #
-
 include(InstallRequiredSystemLibraries)
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR "1")
