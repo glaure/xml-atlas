@@ -181,7 +181,10 @@ endif()
 
 string(REGEX REPLACE "\\\\" "/" WINDEPLOYQT ${QT_BASE_PATH}/bin/windeployqt.exe)
 
-macro(installQtLibraries PREFIX DESTINATION)
-  install(CODE "MESSAGE(\"Install Qt Runtime ${WINDEPLOYQT}.\")")
-  install(CODE "execute_process(COMMAND ${WINDEPLOYQT} --no-quick-import --no-system-d3d-compiler ${PREFIX}/${DESTINATION})")
+macro(installQtLibraries DESTINATION)
+  # delay variable resolution to "install/cpack" step
+  install(CODE "set(DESTINATION \"${DESTINATION}\")")
+  install(CODE "set(WINDEPLOYQT \"${WINDEPLOYQT}\")")
+  install(CODE [[ MESSAGE("Install Qt Runtime to ${CMAKE_INSTALL_PREFIX}/${DESTINATION}.") ]])
+  install(CODE [[ execute_process(COMMAND ${WINDEPLOYQT} --no-quick-import --no-system-d3d-compiler ${CMAKE_INSTALL_PREFIX}/${DESTINATION}) ]] )
 endmacro()
