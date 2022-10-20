@@ -162,36 +162,6 @@ set(CMAKE_PREFIX_PATH
   ${QT_CMAKE_PATH}
 )
 
-# add a windows sdk path the cmake prefix path which was needed for some qt builds
-# does not work in all cases and seems to be no longer required for new qt releases
-#if(WIN32)
-#
-##find installed windows sdk
-#find_path(WIN_SDK_PATH lib/GlU32.Lib
-#  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]"
-#  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]"
-#  )
-#
-#if(NOT WIN_SDK_PATH)
-#  message( FATAL_ERROR "Windows SDK not found. (Required for Qt5 OpenGL support)" )
-#endif()
-#
-#message("Windows SDK: ${WIN_SDK_PATH}")
-#
-#if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-#  set(WIN_SDK_LIB_PATH "${WIN_SDK_PATH}\\lib\\x64")
-#else()
-#  set(WIN_SDK_LIB_PATH "${WIN_SDK_PATH}\\lib")
-#endif()
-#
-#set(CMAKE_PREFIX_PATH
-#  ${CMAKE_PREFIX_PATH}
-#  ${WIN_SDK_LIB_PATH}
-#)
-#
-#endif() #win32
-
-#add_definitions(-DQT_NO_KEYWORDS)
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_definitions(-DQT_NO_DEBUG )
@@ -206,3 +176,12 @@ if (NOT DEFINED QT_VERSION_MAJOR)
   set(QT_VERSION_MINOR ${CMAKE_MATCH_2})
   set(QT_VERSION_PATCH ${CMAKE_MATCH_3})
 endif()
+
+
+
+string(REGEX REPLACE "\\\\" "/" WINDEPLOYQT ${QT_BASE_PATH}/bin/windeployqt.exe)
+
+macro(installQtLibraries PREFIX DESTINATION)
+  install(CODE "MESSAGE(\"Install Qt Runtime ${WINDEPLOYQT}.\")")
+  install(CODE "execute_process(COMMAND ${WINDEPLOYQT} --no-quick-import --no-system-d3d-compiler ${PREFIX}/${DESTINATION})")
+endmacro()

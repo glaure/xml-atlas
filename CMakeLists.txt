@@ -82,6 +82,11 @@ target_link_libraries(${APPNAME} PUBLIC
 #
 install(TARGETS ${APPNAME} RUNTIME DESTINATION bin)
 
+if(WIN32)
+  installQtLibraries(${CMAKE_INSTALL_PREFIX} bin)
+endif()
+
+
 
 #
 # Packaging
@@ -93,5 +98,7 @@ set(CPACK_PACKAGE_VERSION_MINOR "0")
 set(CPACK_SOURCE_GENERATOR "TGZ")
 
 set(CPACK_WIX_UPGRADE_GUID "F93537BC-4988-4471-ACF2-E779BFD9A336")
+
+
 
 include(CPack)
