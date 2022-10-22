@@ -32,8 +32,8 @@ enum class XAXMLTreeItemType
 class XAXMLTreeItem
 {
 public:
-    explicit XAXMLTreeItem(XAXMLTreeItem* parent_item = nullptr);
-    explicit XAXMLTreeItem(const std::string& value, XAXMLTreeItemType item_type, XAXMLTreeItem* parent_item = nullptr);
+    explicit XAXMLTreeItem(const std::string& value);
+    explicit XAXMLTreeItem(const std::string& value, uint64_t offset, XAXMLTreeItemType item_type, XAXMLTreeItem* parent_item = nullptr);
     ~XAXMLTreeItem();
 
     XAXMLTreeItem* appendChild(XAXMLTreeItem* child);
@@ -48,5 +48,6 @@ private:
     QVector<XAXMLTreeItem*> m_child_items;
     XAXMLTreeItem* m_parent_item;
     std::string m_value;
+    uint64_t m_offset;
     XAXMLTreeItemType m_item_type;
 };

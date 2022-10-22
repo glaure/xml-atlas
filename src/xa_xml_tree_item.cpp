@@ -18,16 +18,18 @@
 #include "xa_xml_tree_item.h"
 
 
-XAXMLTreeItem::XAXMLTreeItem(XAXMLTreeItem* parent_item)
-    : m_parent_item(parent_item)
+XAXMLTreeItem::XAXMLTreeItem(const std::string& value)
+    : m_parent_item(nullptr)
     , m_value()
+    , m_offset(0)
     , m_item_type(XAXMLTreeItemType::ELEMENT)
 {
 }
 
-XAXMLTreeItem::XAXMLTreeItem(const std::string& value, XAXMLTreeItemType item_type, XAXMLTreeItem* parent_item)
+XAXMLTreeItem::XAXMLTreeItem(const std::string& value, uint64_t offset, XAXMLTreeItemType item_type, XAXMLTreeItem* parent_item)
     : m_parent_item(parent_item)
     , m_value(value)
+    , m_offset(offset)
     , m_item_type(item_type)
 {
 }
@@ -58,7 +60,7 @@ int XAXMLTreeItem::childCount() const
 int XAXMLTreeItem::columnCount() const
 {
     //return m_itemData.count();
-    return 1;
+    return 2;
 }
 
 QVariant XAXMLTreeItem::data(int column) const
@@ -67,6 +69,11 @@ QVariant XAXMLTreeItem::data(int column) const
         return QVariant();
     //return m_itemData.at(column);
     //return "Test";
+    switch (column) {
+    case 0:     return QString::fromStdString(m_value);
+    case 1:     return m_offset;
+    default:    return "Error: column";
+    }
     return QString::fromStdString(m_value);
 }
 
