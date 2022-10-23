@@ -89,3 +89,8 @@ XAXMLTreeItem* XAXMLTreeItem::parentItem()
 {
     return m_parent_item;
 }
+
+uint64_t XAXMLTreeItem::getOffset() const
+{
+    return m_offset;
+}

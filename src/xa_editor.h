@@ -37,6 +37,8 @@ public:
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
 
+    void markSelectedRange(uint64_t offset, std::size_t length);
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
 

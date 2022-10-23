@@ -24,6 +24,7 @@
 class XAEditor;
 class XATreeDock;
 class XAData;
+class QTreeView;
 
 
 class XAMainWindow : public QMainWindow
@@ -41,6 +42,9 @@ public slots:
 
     virtual QSize sizeHint() const;
 
+protected slots:
+    void onTreeItemClicked(const QModelIndex& index);
+
 private:
     void setupEditor();
     void setupFileMenu();
@@ -51,5 +55,5 @@ private:
     XAEditor*           m_editor;
     XAHighlighter_XML*  m_xml_highlighter;
     XATreeDock*         m_tree_dock;
-
+    QTreeView*          m_tree_view;
 };

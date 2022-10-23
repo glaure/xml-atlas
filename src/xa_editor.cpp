@@ -51,6 +51,26 @@ void XAEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
 }
 
+void XAEditor::markSelectedRange(uint64_t offset, std::size_t length)
+{
+    QList<QTextEdit::ExtraSelection> extraSelections;
+
+    if (!isReadOnly()) {
+        QTextEdit::ExtraSelection selection;
+
+        QColor lineColor = QColor(Qt::yellow).lighter(160);
+
+        selection.format.setBackground(lineColor);
+        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+        selection.cursor = textCursor();
+        selection.cursor.setPosition(offset);
+        selection.cursor.clearSelection();
+        extraSelections.append(selection);
+    }
+
+    setExtraSelections(extraSelections);
+}
+
 void XAEditor::updateLineNumberArea(const QRect &rect, int dy)
 {
     if (dy)
@@ -72,21 +92,21 @@ void XAEditor::resizeEvent(QResizeEvent *e)
 
 void XAEditor::highlightCurrentLine()
 {
-    QList<QTextEdit::ExtraSelection> extraSelections;
+    //QList<QTextEdit::ExtraSelection> extraSelections;
 
-    if (!isReadOnly()) {
-        QTextEdit::ExtraSelection selection;
+    //if (!isReadOnly()) {
+    //    QTextEdit::ExtraSelection selection;
 
-        QColor lineColor = QColor(Qt::yellow).lighter(160);
+    //    QColor lineColor = QColor(Qt::yellow).lighter(160);
 
-        selection.format.setBackground(lineColor);
-        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-        selection.cursor = textCursor();
-        selection.cursor.clearSelection();
-        extraSelections.append(selection);
-    }
+    //    selection.format.setBackground(lineColor);
+    //    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    //    selection.cursor = textCursor();
+    //    selection.cursor.clearSelection();
+    //    extraSelections.append(selection);
+    //}
 
-    setExtraSelections(extraSelections);
+    //setExtraSelections(extraSelections);
 }
 
 void XAEditor::lineNumberAreaPaintEvent(QPaintEvent *event)

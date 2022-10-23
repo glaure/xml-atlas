@@ -20,12 +20,17 @@
 #include "xa_tree_dock.h"
 #include "xa_data.h"
 #include "xa_xml_tree_model.h"
+#include "xa_xml_tree_item.h"
 #include <QtWidgets>
 
 
 XAMainWindow::XAMainWindow(XAData* app_data, QWidget *parent)
     : QMainWindow(parent)
     , m_app_data(app_data)
+    , m_editor(nullptr)
+    , m_xml_highlighter(nullptr)
+    , m_tree_dock(nullptr)
+    , m_tree_view(nullptr)
 {
     setupFileMenu();
     setupHelpMenu();
@@ -67,6 +72,10 @@ void XAMainWindow::openFile(const QString &path)
             auto content = file.readAll();
             m_app_data->setContent(content);
             m_editor->setPlainText(content);
+            m_tree_view->expandAll();
+            m_tree_view->resizeColumnToContents(0);
+            //m_tree_view->resizeColumnToContents(1);
+
         }
     }
 }
@@ -97,13 +106,14 @@ void XAMainWindow::setupEditor()
 
     m_xml_highlighter = new XAHighlighter_XML(m_editor->document());
 
-    auto tv = new QTreeView;
-    tv->setModel(m_app_data->getXMLTreeModel());
-    tv->setHeaderHidden(true);
+    m_tree_view = new QTreeView;
+    m_tree_view->setModel(m_app_data->getXMLTreeModel());
+    m_tree_view->setHeaderHidden(true);
 
+    bool ok = connect(m_tree_view, &QAbstractItemView::clicked, this, &XAMainWindow::onTreeItemClicked);
 
     m_tree_dock = new XATreeDock("XML Tree");
-    m_tree_dock->setWidget(tv);
+    m_tree_dock->setWidget(m_tree_view);
     addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea, m_tree_dock);
 }
 
@@ -163,3 +173,13 @@ void XAMainWindow::setupHelpMenu()
 }
 
 
+void XAMainWindow::onTreeItemClicked(const QModelIndex& index)
+{
+    auto item = index.internalPointer();
+    if (item)
+    {
+        auto tree_item = reinterpret_cast<XAXMLTreeItem*>(item);
+
+        m_editor->markSelectedRange(tree_item->getOffset(), 20);
+    }
+}

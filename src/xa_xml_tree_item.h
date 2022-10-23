@@ -44,6 +44,9 @@ public:
     int row() const;
     XAXMLTreeItem* parentItem();
 
+
+    uint64_t getOffset() const;
+
 private:
     QVector<XAXMLTreeItem*> m_child_items;
     XAXMLTreeItem* m_parent_item;
