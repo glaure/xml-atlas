@@ -3,7 +3,7 @@ XML viewer editor project
 
 
 [![Github All Releases](https://img.shields.io/github/downloads/glaure/xml-atlas/total)]()
-[![Build](https://github.com/glaure/xml-atlas/actions/workflows/app_xml_atlas_ubuntu_20.04.yml/badge.svg)](https://github.com/glaure/xml-atlas/actions/workflows/app_xml_atlas_ubuntu_20.04.yml)
+[![Build](https://github.com/glaure/xml-atlas/actions/workflows/app_xml_atlas_ci.yml/badge.svg)](https://github.com/glaure/xml-atlas/actions/workflows/app_xml_atlas_ci.yml)
 
 Open Source XML Editor that is heavily inspired by XML Marker (http://symbolclick.com/).
 
