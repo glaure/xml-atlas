@@ -24,10 +24,12 @@ jobs:
     name: Building XML-Atlas on Windows
     runs-on: windows-latest
     env:
-      QT_BASE_PATH: D:/a/xml-atlas/Qt
+      QT_BASE_PATH: D:/a/xml-atlas/Qt/5.15.2/msvc2019_64
     steps:
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
+        with:
+          version: '5.15.2'
       - uses: actions/checkout@v3
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
