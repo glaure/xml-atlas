@@ -1,5 +1,4 @@
-name: XML Atlas build for Ubuntu 20.04
-run-name: ${{ github.actor }} building
+name: XML Atlas CI build
 on: [push]
 
 env:
