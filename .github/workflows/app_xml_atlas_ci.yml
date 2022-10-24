@@ -1,4 +1,4 @@
-name: XML Atlas build for Ubuntu 20.04
+name: XML Atlas CI build
 run-name: ${{ github.actor }} building
 on: [push]
 
@@ -9,11 +9,6 @@ jobs:
   XML-Atlas-on-Ubuntu:
     name: Building XML-Atlas on Ubuntu 20.04
     runs-on: ubuntu-20.04
-
-    strategy:
-      matrix:
-        cc: [g++, clang++]
-
     steps:
       - name: Install Qt
         run: |-
@@ -28,10 +23,8 @@ jobs:
   XML-Atlas-on-Windows:
     name: Building XML-Atlas on Windows
     runs-on: windows-latest
-  
-  env:
-    QT_BASE_PATH: D:/a/xml-atlas/Qt
-
+    env:
+      QT_BASE_PATH: D:/a/xml-atlas/Qt
     steps:
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
