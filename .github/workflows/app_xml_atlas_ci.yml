@@ -30,6 +30,9 @@ jobs:
     XML-Atlas-on-Windows:
       name: Building XML-Atlas on Windows
       runs-on: windows-latest
+    
+    env:
+      QT_BASE_PATH: D:/a/xml-atlas/Qt
 
       steps:
         - name: Install Qt
