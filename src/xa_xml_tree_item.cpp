@@ -71,7 +71,7 @@ QVariant XAXMLTreeItem::data(int column) const
     //return "Test";
     switch (column) {
     case 0:     return QString::fromStdString(m_value);
-    case 1:     return m_offset;
+    case 1:     return static_cast<qulonglong>(m_offset);
     default:    return "Error: column";
     }
     return QString::fromStdString(m_value);
