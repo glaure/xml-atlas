@@ -53,19 +53,32 @@ void XAEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 
 void XAEditor::markSelectedRange(uint64_t offset, std::size_t length)
 {
-    QList<QTextEdit::ExtraSelection> extraSelections;
+    QList<QTextEdit::ExtraSelection> extraSelections = {};
 
     if (!isReadOnly()) {
-        QTextEdit::ExtraSelection selection;
+        QTextEdit::ExtraSelection selection = {};
 
         QColor lineColor = QColor(Qt::yellow).lighter(160);
 
         selection.format.setBackground(lineColor);
-        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+      
+#if 0
+        // highlight selection
         selection.cursor = textCursor();
-        selection.cursor.setPosition(offset);
+        selection.cursor.setPosition(offset, QTextCursor::MoveAnchor);
+        selection.cursor.setPosition(static_cast<int>(offset + length), QTextCursor::KeepAnchor);
+        selection.cursor.setCharFormat(selection.format);
         selection.cursor.clearSelection();
         extraSelections.append(selection);
+#else
+        // highlight complete line
+        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+        selection.cursor = textCursor();
+        selection.cursor.setPosition(offset, QTextCursor::MoveAnchor);
+        selection.cursor.clearSelection();
+        extraSelections.append(selection);
+#endif
+
     }
 
     setExtraSelections(extraSelections);
