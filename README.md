@@ -27,3 +27,4 @@ Release
 ```
 %PATH_TO_QT%/msvc2019_64/bin/windeployqt.exe --no-quick-import --no-system-d3d-compiler build64/Release
 ```
+
