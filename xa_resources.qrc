@@ -7,4 +7,19 @@
     <file>images/paste.png</file>
     <file>images/save.png</file>
 </qresource>
+<qresource prefix="/icons">
+    <file>images/light/new-doc.png</file>
+    <file>images/light/open-doc.png</file>
+    <file>images/light/save-doc.png</file>
+    <file>images/light/cut.png</file>
+    <file>images/light/copy.png</file>
+    <file>images/light/paste.png</file>
+    <file>images/light/undo.png</file>
+    <file>images/light/redo.png</file>
+    <file>images/light/search.png</file>
+    <file>images/light/location.png</file>
+    <file>images/light/up-arrow.png</file>
+    <file>images/light/down-arrow.png</file>
+    <file>images/light/indent.png</file>
+</qresource>
 </RCC>

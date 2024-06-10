@@ -32,6 +32,15 @@ find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 
 add_subdirectory(3rdparty/pugixml-1.12 EXCLUDE_FROM_ALL)
 
+include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+set(QT_GUI_FORM_FILES
+  qt_ui/xa_window.ui
+)
+QT5_WRAP_UI(QT_GUI_FORMS_HEADERS ${QT_GUI_FORM_FILES})
+
 
 set(XA_SOURCE_FILES
   src/xa_app.cpp
@@ -60,6 +69,7 @@ set(XA_RESOURCE_FILES
 qt5_add_resources(XA_RESOURCE ${XA_RESOURCE_FILES})
 
 add_executable(${APPNAME} WIN32
+  ${QT_GUI_FORMS_HEADERS}
   ${XA_SOURCE_FILES}
   ${XA_RESOURCE}
 )

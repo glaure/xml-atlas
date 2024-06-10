@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1024</width>
+    <height>900</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1024</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew"/>
+    <addaction name="actionNew_DTD"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_as"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="actionDelete"/>
+    <addaction name="separator"/>
+    <addaction name="actionSelect_All"/>
+    <addaction name="separator"/>
+    <addaction name="actionIndent"/>
+    <addaction name="actionFind"/>
+    <addaction name="actionReplace"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionToolbar"/>
+    <addaction name="actionStatusbar"/>
+    <addaction name="actionTable_Selection_Browser"/>
+   </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionFont"/>
+    <addaction name="actionIndent_Options"/>
+    <addaction name="actionTabs"/>
+    <addaction name="actionUnique_consolidation"/>
+    <addaction name="actionText_highlighting_options"/>
+    <addaction name="separator"/>
+    <addaction name="actionParse_this_document_as_DTD"/>
+   </widget>
+   <widget class="QMenu" name="menuNavigate">
+    <property name="title">
+     <string>Navigate</string>
+    </property>
+    <addaction name="actionLocate_in_tree"/>
+    <addaction name="actionDrill_down"/>
+    <addaction name="actionDrill_up"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout_XML_Atlas"/>
+    <addaction name="actionAbout_Qt"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuOptions"/>
+   <addaction name="menuNavigate"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNew"/>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="actionCut"/>
+   <addaction name="actionCopy"/>
+   <addaction name="actionPaste"/>
+   <addaction name="separator"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
+   <addaction name="actionFind"/>
+   <addaction name="separator"/>
+   <addaction name="actionLocate_in_tree"/>
+   <addaction name="actionDrill_up"/>
+   <addaction name="actionDrill_down"/>
+   <addaction name="actionIndent"/>
+  </widget>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/new-doc.png</normaloff>:/icons/images/light/new-doc.png</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionNew_DTD">
+   <property name="text">
+    <string>New DTD</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/open-doc.png</normaloff>:/icons/images/light/open-doc.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/save-doc.png</normaloff>:/icons/images/light/save-doc.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSave_as">
+   <property name="text">
+    <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/undo.png</normaloff>:/icons/images/light/undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/redo.png</normaloff>:/icons/images/light/redo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/cut.png</normaloff>:/icons/images/light/cut.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cut</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/copy.png</normaloff>:/icons/images/light/copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/paste.png</normaloff>:/icons/images/light/paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paste</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="text">
+    <string>Delete</string>
+   </property>
+  </action>
+  <action name="actionSelect_All">
+   <property name="text">
+    <string>Select All</string>
+   </property>
+  </action>
+  <action name="actionIndent">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/indent.png</normaloff>:/icons/images/light/indent.png</iconset>
+   </property>
+   <property name="text">
+    <string>Indent</string>
+   </property>
+  </action>
+  <action name="actionFind">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/search.png</normaloff>:/icons/images/light/search.png</iconset>
+   </property>
+   <property name="text">
+    <string>Find</string>
+   </property>
+  </action>
+  <action name="actionReplace">
+   <property name="text">
+    <string>Replace</string>
+   </property>
+  </action>
+  <action name="actionToolbar">
+   <property name="text">
+    <string>Toolbar</string>
+   </property>
+  </action>
+  <action name="actionStatusbar">
+   <property name="text">
+    <string>Status Bar</string>
+   </property>
+  </action>
+  <action name="actionTable_Selection_Browser">
+   <property name="text">
+    <string>Table Selection Browser</string>
+   </property>
+  </action>
+  <action name="actionFont">
+   <property name="text">
+    <string>Font</string>
+   </property>
+  </action>
+  <action name="actionIndent_Options">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/indent.png</normaloff>:/icons/images/light/indent.png</iconset>
+   </property>
+   <property name="text">
+    <string>Indent Options</string>
+   </property>
+  </action>
+  <action name="actionTabs">
+   <property name="text">
+    <string>Tabs</string>
+   </property>
+  </action>
+  <action name="actionUnique_consolidation">
+   <property name="text">
+    <string>Unique consolidation</string>
+   </property>
+  </action>
+  <action name="actionText_highlighting_options">
+   <property name="text">
+    <string>Text highlighting options</string>
+   </property>
+  </action>
+  <action name="actionParse_this_document_as_DTD">
+   <property name="text">
+    <string>Parse this document as DTD</string>
+   </property>
+  </action>
+  <action name="actionLocate_in_tree">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/location.png</normaloff>:/icons/images/light/location.png</iconset>
+   </property>
+   <property name="text">
+    <string>Locate in tree</string>
+   </property>
+  </action>
+  <action name="actionDrill_down">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/down-arrow.png</normaloff>:/icons/images/light/down-arrow.png</iconset>
+   </property>
+   <property name="text">
+    <string>Drill down</string>
+   </property>
+  </action>
+  <action name="actionDrill_up">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/up-arrow.png</normaloff>:/icons/images/light/up-arrow.png</iconset>
+   </property>
+   <property name="text">
+    <string>Drill up</string>
+   </property>
+  </action>
+  <action name="actionAbout_XML_Atlas">
+   <property name="text">
+    <string>&amp;About XML Atlas</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About &amp;Qt</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../xa_resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

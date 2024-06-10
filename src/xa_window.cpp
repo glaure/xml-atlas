@@ -16,6 +16,7 @@
  */
 
 #include "xa_window.h"
+#include "ui_xa_window.h"
 #include "xa_editor.h"
 #include "xa_tree_dock.h"
 #include "xa_data.h"
@@ -26,12 +27,15 @@
 
 XAMainWindow::XAMainWindow(XAData* app_data, QWidget *parent)
     : QMainWindow(parent)
+    , m_main_window(new Ui::MainWindow)
     , m_app_data(app_data)
     , m_editor(nullptr)
     , m_xml_highlighter(nullptr)
     , m_tree_dock(nullptr)
     , m_tree_view(nullptr)
 {
+    m_main_window->setupUi(this);
+
     setupFileMenu();
     setupHelpMenu();
     setupEditor();
@@ -120,6 +124,7 @@ void XAMainWindow::setupEditor()
 
 void XAMainWindow::setupFileMenu()
 {
+#if 0
     QMenu *fileMenu = new QMenu(tr("&File"), this);
     menuBar()->addMenu(fileMenu);
 
@@ -160,16 +165,18 @@ void XAMainWindow::setupFileMenu()
     //fileMenu->addAction(tr("&New"), this, &XAMainWindow::newFile, QKeySequence::New);
     //fileMenu->addAction(tr("&Open..."), this, [this]() { openFile(); },QKeySequence::Open);
     fileMenu->addAction(tr("E&xit"), qApp, &QApplication::quit, QKeySequence::Quit);
+#endif
 
+    connect(m_main_window->actionNew, &QAction::triggered, this, [this]() { newFile(); });
+    connect(m_main_window->actionOpen, &QAction::triggered, this, [this]() { openFile(); });
+    connect(m_main_window->actionSave, &QAction::triggered, this, [this]() { saveFile(); });
+    connect(m_main_window->actionExit, &QAction::triggered, qApp, &QApplication::quit);
 }
 
 void XAMainWindow::setupHelpMenu()
 {
-    QMenu *helpMenu = new QMenu(tr("&Help"), this);
-    menuBar()->addMenu(helpMenu);
-
-    helpMenu->addAction(tr("&About"), this, &XAMainWindow::about);
-    helpMenu->addAction(tr("About &Qt"), qApp, &QApplication::aboutQt);
+    connect(m_main_window->actionAbout_XML_Atlas, &QAction::triggered, this, &XAMainWindow::about);
+    connect(m_main_window->actionAbout_Qt, &QAction::triggered, qApp, &QApplication::aboutQt);
 }
 
 

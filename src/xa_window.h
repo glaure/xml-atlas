@@ -27,6 +27,12 @@ class XAData;
 class QTreeView;
 
 
+namespace Ui
+{
+    class MainWindow;
+}
+
+
 class XAMainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -51,6 +57,7 @@ private:
     void setupHelpMenu();
 
 private:
+    Ui::MainWindow*     m_main_window;
     XAData*             m_app_data;
     XAEditor*           m_editor;
     XAHighlighter_XML*  m_xml_highlighter;
