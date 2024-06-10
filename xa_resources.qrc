@@ -16,4 +16,9 @@
     <file>images/light/down-arrow.png</file>
     <file>images/light/indent.png</file>
 </qresource>
+<qresource prefix="/xml">
+    <file>images/light/element-children.png</file>
+    <file>images/light/element-empty.png</file>
+    <file>images/light/element-text.png</file>
+</qresource>
 </RCC>

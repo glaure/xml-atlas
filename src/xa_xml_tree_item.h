@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <QIcon>
 #include <QVariant>
 #include <QVector>
 
@@ -40,12 +41,17 @@ public:
     XAXMLTreeItem* child(int row);
     int childCount() const;
     int columnCount() const;
+    
     QVariant data(int column) const;
+    QIcon icon() const;
+    
     int row() const;
     XAXMLTreeItem* parentItem();
 
 
     uint64_t getOffset() const;
+
+private:
 
 private:
     QVector<XAXMLTreeItem*> m_child_items;

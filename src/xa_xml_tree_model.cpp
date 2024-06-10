@@ -37,12 +37,26 @@ QVariant XAXMLTreeModel::data(const QModelIndex& index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if (role != Qt::DisplayRole)
-        return QVariant();
+    switch (role)
+    {
+    case Qt::DisplayRole:
+    {
+        auto item = static_cast<XAXMLTreeItem*>(index.internalPointer());
+        auto data_value = item->data(index.column());
+        return data_value;
+    }
 
-    auto item = static_cast<XAXMLTreeItem*>(index.internalPointer());
-    auto data_value = item->data(index.column());
-    return data_value;
+    case Qt::DecorationRole:
+    {
+        auto item = static_cast<XAXMLTreeItem*>(index.internalPointer());
+        return item->icon();
+    }
+    
+    default:
+        break;
+    }
+
+    return QVariant();
 }
 
 Qt::ItemFlags XAXMLTreeModel::flags(const QModelIndex& index) const

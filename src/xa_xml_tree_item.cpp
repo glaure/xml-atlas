@@ -23,7 +23,7 @@ XAXMLTreeItem::XAXMLTreeItem(const std::string& value)
     , m_value()
     , m_offset(0)
     , m_item_type(XAXMLTreeItemType::ELEMENT)
-{
+{   
 }
 
 XAXMLTreeItem::XAXMLTreeItem(const std::string& value, uint64_t offset, XAXMLTreeItemType item_type, XAXMLTreeItem* parent_item)
@@ -77,6 +77,24 @@ QVariant XAXMLTreeItem::data(int column) const
     return QString::fromStdString(m_value);
 }
 
+QIcon XAXMLTreeItem::icon() const
+{
+    static QIcon ic_element_children = QIcon(":/xml/images/light/element-children.png");
+    static QIcon ic_element_empty = QIcon(":/xml/images/light/element-empty.png");
+    static QIcon ic_element_text = QIcon(":/xml/images/light/element-text.png");
+
+    if (childCount() > 1)
+    {
+        return ic_element_children;
+    }
+    else if (childCount() == 1)
+    {
+        return ic_element_text;
+    }
+
+    return ic_element_empty;
+}
+
 int XAXMLTreeItem::row() const
 {
     if (m_parent_item)
@@ -94,3 +112,7 @@ uint64_t XAXMLTreeItem::getOffset() const
 {
     return m_offset;
 }
+
+
+
+
