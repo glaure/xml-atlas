@@ -55,6 +55,9 @@ private:
     void setupEditor();
     void setupFileMenu();
     void setupHelpMenu();
+    void setupFont();
+    void setupDefaults();
+
 
 private:
     Ui::MainWindow*     m_main_window;
@@ -63,4 +66,5 @@ private:
     XAHighlighter_XML*  m_xml_highlighter;
     XATreeDock*         m_tree_dock;
     QTreeView*          m_tree_view;
+    QFont               m_font;
 };

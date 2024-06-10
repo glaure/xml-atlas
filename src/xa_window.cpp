@@ -23,6 +23,7 @@
 #include "xa_xml_tree_model.h"
 #include "xa_xml_tree_item.h"
 #include <QtWidgets>
+#include <QFontDialog>
 
 
 XAMainWindow::XAMainWindow(XAData* app_data, QWidget *parent)
@@ -38,7 +39,13 @@ XAMainWindow::XAMainWindow(XAData* app_data, QWidget *parent)
 
     setupFileMenu();
     setupHelpMenu();
+
+    // setup UI default
+    setupDefaults();
+
     setupEditor();
+
+    connect(m_main_window->actionFont, &QAction::triggered, [this]() { setupFont(); });
 
     setCentralWidget(m_editor);
     setWindowTitle(tr("XML Atlas"));
@@ -100,13 +107,8 @@ void XAMainWindow::saveFile(const QString& path)
 
 void XAMainWindow::setupEditor()
 {
-    QFont font;
-    font.setFamily("Courier");
-    font.setFixedPitch(true);
-    font.setPointSize(10);
-
     m_editor = new XAEditor;
-    m_editor->setFont(font);
+    m_editor->setFont(m_font);
 
     m_xml_highlighter = new XAHighlighter_XML(m_editor->document());
 
@@ -124,49 +126,6 @@ void XAMainWindow::setupEditor()
 
 void XAMainWindow::setupFileMenu()
 {
-#if 0
-    QMenu *fileMenu = new QMenu(tr("&File"), this);
-    menuBar()->addMenu(fileMenu);
-
-    QToolBar* fileToolBar = addToolBar(tr("File"));   
-    {
-        const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/images/new.png"));
-        QAction* newAct = new QAction(newIcon, tr("&New"), this);
-        newAct->setShortcuts(QKeySequence::New);
-        newAct->setStatusTip(tr("Create a new file"));
-        connect(newAct, &QAction::triggered, this, &XAMainWindow::newFile);
-        fileMenu->addAction(newAct);
-        fileToolBar->addAction(newAct);
-    }
-
-
-    {
-        const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open.png"));
-        QAction* openAct = new QAction(openIcon, tr("&Open..."), this);
-        openAct->setShortcuts(QKeySequence::Open);
-        openAct->setStatusTip(tr("Open an existing file"));
-        //connect(openAct, &QAction::triggered, this, &XAMainWindow::open);
-        connect(openAct, &QAction::triggered, this, [this]() { openFile(); });
-        fileMenu->addAction(openAct);
-        fileToolBar->addAction(openAct);
-    }
-
-    {
-        const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));
-        QAction* saveAct = new QAction(saveIcon, tr("&Save"), this);
-        saveAct->setShortcuts(QKeySequence::Save);
-        saveAct->setStatusTip(tr("Save the document to disk"));
-        //connect(saveAct, &QAction::triggered, this, &XAMainWindow::save);
-        connect(saveAct, &QAction::triggered, this, [this]() { saveFile(); });
-        fileMenu->addAction(saveAct);
-        fileToolBar->addAction(saveAct);
-    }
-
-    //fileMenu->addAction(tr("&New"), this, &XAMainWindow::newFile, QKeySequence::New);
-    //fileMenu->addAction(tr("&Open..."), this, [this]() { openFile(); },QKeySequence::Open);
-    fileMenu->addAction(tr("E&xit"), qApp, &QApplication::quit, QKeySequence::Quit);
-#endif
-
     connect(m_main_window->actionNew, &QAction::triggered, this, [this]() { newFile(); });
     connect(m_main_window->actionOpen, &QAction::triggered, this, [this]() { openFile(); });
     connect(m_main_window->actionSave, &QAction::triggered, this, [this]() { saveFile(); });
@@ -179,7 +138,6 @@ void XAMainWindow::setupHelpMenu()
     connect(m_main_window->actionAbout_Qt, &QAction::triggered, qApp, &QApplication::aboutQt);
 }
 
-
 void XAMainWindow::onTreeItemClicked(const QModelIndex& index)
 {
     auto item = index.internalPointer();
@@ -189,4 +147,28 @@ void XAMainWindow::onTreeItemClicked(const QModelIndex& index)
 
         m_editor->markSelectedRange(tree_item->getOffset(), 20);
     }
+}
+
+void XAMainWindow::setupFont()
+{
+    bool ok;
+    QFont font = QFontDialog::getFont(
+                    &ok, m_font, this);
+    if (ok) {
+        m_font = font;
+        m_editor->setFont(m_font);
+    } else {
+        // the user canceled the dialog; font is set to the initial
+        // value, in this case Helvetica [Cronyx], 10
+    }
+}
+
+void XAMainWindow::setupDefaults()
+{
+    QFont font;
+    font.setFamily("Monospace");
+    font.setFixedPitch(true);
+    font.setPointSize(9);
+
+    m_font = font;
 }
