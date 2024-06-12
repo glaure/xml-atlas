@@ -48,6 +48,8 @@ public slots:
 
     virtual QSize sizeHint() const;
 
+    void indentDocument();
+
 protected slots:
     void onTreeItemClicked(const QModelIndex& index);
 

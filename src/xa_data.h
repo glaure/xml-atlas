@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include "pugixml.hpp"
 #include <QObject>
 
 class XAXMLTreeModel;
@@ -36,10 +37,13 @@ public:
 
     void setContent(const QString& content);
 
+    QString indentDocument();
+
 private:
     void buildTreeModelFromContent();
 
 private:
     XAXMLTreeModel*     m_xml_tree_model;
     QString             m_content;
+    pugi::xml_document  m_doc;
 };

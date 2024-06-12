@@ -18,7 +18,8 @@
 #include "xa_data.h"
 #include "xa_xml_tree_model.h"
 #include "xa_xml_tree_item.h"
-#include "pugixml.hpp"
+
+#include <sstream>
 #include <vector>
 
 namespace
@@ -139,16 +140,22 @@ void XAData::setContent(const QString& content)
     buildTreeModelFromContent();
 }
 
+QString XAData::indentDocument()
+{
+    std::stringstream sbuff;
+    m_doc.save(sbuff);
+    return QString::fromStdString(sbuff.str());
+}
+
 void XAData::buildTreeModelFromContent()
 {
-    pugi::xml_document doc;
-    auto parse_result = doc.load_buffer(m_content.toLatin1(), m_content.size());
+    auto parse_result = m_doc.load_buffer(m_content.toLatin1(), m_content.size());
     if (parse_result.status == pugi::status_ok)
     {
         XmlTreeBuilder tb(m_xml_tree_model);
 
         m_xml_tree_model->beginFillModel();
-        doc.traverse(tb);
+        m_doc.traverse(tb);
         m_xml_tree_model->endFillModel();
         
         //m_xml_tree_model->updateAll();

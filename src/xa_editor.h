@@ -39,6 +39,8 @@ public:
 
     void markSelectedRange(uint64_t offset, std::size_t length);
 
+    //void indentDocument();
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
 

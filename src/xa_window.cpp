@@ -46,6 +46,7 @@ XAMainWindow::XAMainWindow(XAData* app_data, QWidget *parent)
     setupEditor();
 
     connect(m_main_window->actionFont, &QAction::triggered, [this]() { setupFont(); });
+    connect(m_main_window->actionIndent, &QAction::triggered, [this]() { indentDocument(); });
 
     setCentralWidget(m_editor);
     setWindowTitle(tr("XML Atlas"));
@@ -104,6 +105,16 @@ void XAMainWindow::saveFile(const QString& path)
     //        editor->setPlainText(file.readAll());
     //}
 }
+
+
+void XAMainWindow::indentDocument()
+{
+    // TODO indentation settings UI
+
+    auto content = m_app_data->indentDocument();
+    m_editor->setPlainText(content);
+}
+
 
 void XAMainWindow::setupEditor()
 {
