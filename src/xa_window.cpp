@@ -17,6 +17,7 @@
 
 #include "xa_window.h"
 #include "ui_xa_window.h"
+#include "ui_xa_indent_options.h"
 #include "xa_editor.h"
 #include "xa_tree_dock.h"
 #include "xa_data.h"
@@ -110,6 +111,10 @@ void XAMainWindow::saveFile(const QString& path)
 void XAMainWindow::indentDocument()
 {
     // TODO indentation settings UI
+    auto indent_ui = new Ui::IndentOptions();
+    auto dlg = new QDialog(this);
+    indent_ui->setupUi(dlg);
+    dlg->exec();
 
     auto content = m_app_data->indentDocument();
     m_editor->setPlainText(content);

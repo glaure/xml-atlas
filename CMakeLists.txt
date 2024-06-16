@@ -37,6 +37,8 @@ include_directories(
 )
 
 set(QT_GUI_FORM_FILES
+  qt_ui/xa_indent_options.ui
+  qt_ui/xa_tab_options.ui
   qt_ui/xa_window.ui
 )
 QT5_WRAP_UI(QT_GUI_FORMS_HEADERS ${QT_GUI_FORM_FILES})
