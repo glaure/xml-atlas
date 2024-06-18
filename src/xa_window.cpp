@@ -18,6 +18,7 @@
 #include "xa_window.h"
 #include "ui_xa_window.h"
 #include "ui_xa_indent_options.h"
+#include "ui_xa_theme_options.h"
 #include "xa_editor.h"
 #include "xa_tree_dock.h"
 #include "xa_data.h"
@@ -46,8 +47,10 @@ XAMainWindow::XAMainWindow(XAData* app_data, QWidget *parent)
 
     setupEditor();
 
+    connect(m_main_window->actionUI_Theme, &QAction::triggered, [this]() { setupTheme(); });
     connect(m_main_window->actionFont, &QAction::triggered, [this]() { setupFont(); });
-    connect(m_main_window->actionIndent, &QAction::triggered, [this]() { indentDocument(); });
+    connect(m_main_window->actionIndent, &QAction::triggered, [this]() { bool force_option = false; indentDocument(force_option); });
+    connect(m_main_window->actionIndent_Options, &QAction::triggered, [this]() { bool force_option = true;indentDocument(force_option); });
 
     setCentralWidget(m_editor);
     setWindowTitle(tr("XML Atlas"));
@@ -108,13 +111,17 @@ void XAMainWindow::saveFile(const QString& path)
 }
 
 
-void XAMainWindow::indentDocument()
+void XAMainWindow::indentDocument(bool force_option)
 {
-    // TODO indentation settings UI
-    auto indent_ui = new Ui::IndentOptions();
-    auto dlg = new QDialog(this);
-    indent_ui->setupUi(dlg);
-    dlg->exec();
+    if (force_option)
+    {
+        auto indent_ui = new Ui::IndentOptions();
+        auto dlg = new QDialog();
+        indent_ui->setupUi(dlg);
+        dlg->exec();
+
+        delete dlg;
+    }
 
     auto content = m_app_data->indentDocument();
     m_editor->setPlainText(content);
@@ -163,6 +170,17 @@ void XAMainWindow::onTreeItemClicked(const QModelIndex& index)
 
         m_editor->markSelectedRange(tree_item->getOffset(), 20);
     }
+}
+
+void XAMainWindow::setupTheme()
+{
+    auto theme_ui = new Ui::ThemeOptions;
+    auto dlg = new QDialog;
+    theme_ui->setupUi(dlg);
+    dlg->exec();
+
+
+    delete dlg;
 }
 
 void XAMainWindow::setupFont()

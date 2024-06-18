@@ -66,6 +66,7 @@
     <property name="title">
      <string>Options</string>
     </property>
+    <addaction name="actionUI_Theme"/>
     <addaction name="actionFont"/>
     <addaction name="actionIndent_Options"/>
     <addaction name="actionTabs"/>
@@ -262,6 +263,10 @@
    </property>
   </action>
   <action name="actionFont">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/font.png</normaloff>:/icons/images/light/font.png</iconset>
+   </property>
    <property name="text">
     <string>Font</string>
    </property>
@@ -330,6 +335,15 @@
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About &amp;Qt</string>
+   </property>
+  </action>
+  <action name="actionUI_Theme">
+   <property name="icon">
+    <iconset resource="../xa_resources.qrc">
+     <normaloff>:/icons/images/light/theme.png</normaloff>:/icons/images/light/theme.png</iconset>
+   </property>
+   <property name="text">
+    <string>UI Theme</string>
    </property>
   </action>
  </widget>

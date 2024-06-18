@@ -48,7 +48,7 @@ public slots:
 
     virtual QSize sizeHint() const;
 
-    void indentDocument();
+    void indentDocument(bool force_option);
 
 protected slots:
     void onTreeItemClicked(const QModelIndex& index);
@@ -57,6 +57,7 @@ private:
     void setupEditor();
     void setupFileMenu();
     void setupHelpMenu();
+    void setupTheme();
     void setupFont();
     void setupDefaults();
 
