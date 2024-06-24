@@ -82,6 +82,7 @@ void XAEditor::markSelectedRange(uint64_t offset, std::size_t length)
     }
 
     setExtraSelections(extraSelections);
+    setTextCursor(extraSelections.first().cursor);
 }
 
 void XAEditor::updateLineNumberArea(const QRect &rect, int dy)
