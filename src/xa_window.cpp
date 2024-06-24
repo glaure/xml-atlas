@@ -139,7 +139,7 @@ void XAMainWindow::setupEditor()
     m_tree_view->setModel(m_app_data->getXMLTreeModel());
     m_tree_view->setHeaderHidden(true);
 
-    bool ok = connect(m_tree_view, &QAbstractItemView::clicked, this, &XAMainWindow::onTreeItemClicked);
+    bool ok = connect(m_tree_view->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &XAMainWindow::onSelectionChanged);
 
     m_tree_dock = new XATreeDock("XML Tree", this);
     m_tree_dock->setWidget(m_tree_view);
@@ -161,7 +161,7 @@ void XAMainWindow::setupHelpMenu()
     connect(m_main_window->actionAbout_Qt, &QAction::triggered, qApp, &QApplication::aboutQt);
 }
 
-void XAMainWindow::onTreeItemClicked(const QModelIndex& index)
+void XAMainWindow::onSelectionChanged(const QModelIndex& index, const QModelIndex& previous)
 {
     auto item = index.internalPointer();
     if (item)
