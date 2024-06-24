@@ -50,13 +50,13 @@ namespace
         }
 
         // Callback that is called when traversal begins
-        virtual bool begin(pugi::xml_node& node) override
+        bool begin(pugi::xml_node& node) override
         {
             return true;
         }
 
         // Callback that is called for each node traversed
-        virtual bool for_each(pugi::xml_node& node) override
+        bool for_each(pugi::xml_node& node) override
         {
             switch (node.type())
             {
@@ -103,7 +103,7 @@ namespace
         }
 
         // Callback that is called when traversal ends
-        virtual bool end(pugi::xml_node& node) override
+        bool end(pugi::xml_node& node) override
         {
             return true;
         }
@@ -119,12 +119,11 @@ namespace
 
 XAData::XAData()
 {
-    m_xml_tree_model = new XAXMLTreeModel;
+    m_xml_tree_model = new XAXMLTreeModel(this);
 }
 
 XAData::~XAData()
 {
-    delete m_xml_tree_model;
 }
 
 
