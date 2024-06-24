@@ -122,6 +122,7 @@ if(NOT EXISTS ${QT_BASE_PATH})
           OR ${LSB_RELEASE_CODENAME} STREQUAL "focal"
           OR ${LSB_RELEASE_CODENAME} STREQUAL "impish"
           OR ${LSB_RELEASE_CODENAME} STREQUAL "jammy"
+          OR ${LSB_RELEASE_CODENAME} STREQUAL "noble"
           ))
       set(QT_SYSTEM_PATH "/usr/lib/*/cmake")
       message("Selecting Qt system libraries.")
