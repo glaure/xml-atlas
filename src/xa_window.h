@@ -51,7 +51,7 @@ public slots:
     void indentDocument(bool force_option);
 
 protected slots:
-    void onTreeItemClicked(const QModelIndex& index);
+    void onSelectionChanged(const QModelIndex& index, const QModelIndex& previous);
 
 private:
     void setupEditor();
