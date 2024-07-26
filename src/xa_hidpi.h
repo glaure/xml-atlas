@@ -15,17 +15,32 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QApplication>
-#include "xa_app.h"
-#include "xa_hidpi.h"
+#pragma once
 
+#include <QObject>
 
-int main(int argc, char* argv[])
+/**
+ * Utilities to handle HighDPI displays
+ */
+class HighDPIUtil : public QObject
 {
-    HighDPIUtil::applyHighDpiAppSettings();
+    Q_OBJECT
+public:
+    HighDPIUtil();
+    ~HighDPIUtil();
 
-    XAApp app(argc, argv);
+    static void applyHighDpiAppSettings();
 
-    if (!app.init()) return -1;
-    return app.run();
-}
+    /**
+     * Refresh HighDPI Settings
+     */
+    void update();
+
+    void fixAppFont();
+
+    qreal screenScaleFactor() const;
+    qreal fontScaleFactor() const;
+private:
+    qreal m_screen_scale_factor;
+    qreal m_pixel_ratio;
+};

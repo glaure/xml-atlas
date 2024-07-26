@@ -19,6 +19,7 @@
 #include "xa_data.h"
 #include "xa_editor.h"
 #include "xa_window.h"
+#include "xa_hidpi.h"
 
 #include "QFile"
 #include <QFileInfo>
@@ -28,7 +29,8 @@ XAApp::XAApp(int& argc, char** argv)
     , m_app(argc, argv)
     , m_app_data(nullptr)
 {
-
+    HighDPIUtil hidpi;
+    hidpi.fixAppFont();
 }
 
 XAApp::~XAApp()
