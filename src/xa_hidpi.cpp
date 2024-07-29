@@ -18,7 +18,7 @@
 #include "xa_hidpi.h"
 #include <QApplication>
 #include <QDesktopWidget>
-
+#include <QtGlobal>
 
 HighDPIUtil::HighDPIUtil()
     : m_screen_scale_factor(1.0)
@@ -35,7 +35,9 @@ HighDPIUtil::~HighDPIUtil()
 void HighDPIUtil::applyHighDpiAppSettings()
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#if QT_VERSION >= 0x051400
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+#endif
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 }
 
