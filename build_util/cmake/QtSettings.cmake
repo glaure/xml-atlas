@@ -32,38 +32,35 @@ endif()
 
 
 if(NOT QT_VERSION)
-  
-  # set default (last lts)
-  set(QT_VERSION "5.15.2")
 
   if (WIN32)
-    if (MSVC_VERSION EQUAL 1800)
-      set(QT_CANDIDATES "5.9.2;5.6.0")
-    else()
-      set(QT_CANDIDATES "5.15.4;5.15.3;5.15.2;5.14.0;5.12.6;5.12.5")
-    endif()
 
+    set(QT_CANDIDATES "6.7.2;5.15.11;5.15.4;5.15.3;5.15.2;5.14.0;5.12.6;5.12.5")
+    
+    # look in workspace first
     foreach(_qt ${QT_CANDIDATES})
       message(STATUS "Looking for ${SW_APP_ROOT}/3rdparty/qt/${_qt}_${QT_BUILD_SYSTEM}${QT_BUILD_BITS}")
       if (EXISTS "${SW_APP_ROOT}/3rdparty/qt/${_qt}_${QT_BUILD_SYSTEM}${QT_BUILD_BITS}")
         set(QT_VERSION ${_qt})
         break()
       endif()
-    endforeach()   
+    endforeach()
+
+    # look in C:\Qt next
+    if (NOT QT_VERSION)
+      foreach(_qt ${QT_CANDIDATES})
+        message(STATUS "Looking for C:/Qt/${_qt}")
+        if (EXISTS "C:/Qt/${_qt}/msvc2019_64")
+          set(QT_VERSION ${_qt})
+          break()
+        endif()
+      endforeach()
+    endif()
     message("Qt version detected (${QT_VERSION})")
   endif()
 endif()
 
 
-if(QT_VERSION VERSION_LESS 5.9.0)
-  if(QT_SPECIAL_VERSION)
-    set(QT_BUILD_SUFFIX "_${QT_SPECIAL_VERSION}")
-  else()
-    set(QT_BUILD_SUFFIX "")
-  endif()
-else()
-  set(QT_BUILD_SUFFIX "")
-endif()
 
 
 set(QT_BUILD "${QT_BUILD_SYSTEM}${QT_BUILD_BITS}${QT_BUILD_SUFFIX}")
@@ -100,39 +97,39 @@ message("=====================================================================")
 #
 # Can Qt System lib used? (Fallback)
 #
-if(NOT EXISTS ${QT_BASE_PATH})
-  find_program(LSB_RELEASE_COMMAND lsb_release)
-  if(LSB_RELEASE_COMMAND)
-    execute_process(COMMAND ${LSB_RELEASE_COMMAND} -s -i
-      OUTPUT_VARIABLE TMP_LSB_RELEASE_ID
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(TOLOWER ${TMP_LSB_RELEASE_ID} LSB_RELEASE_ID)
-    execute_process(COMMAND ${LSB_RELEASE_COMMAND} -s -c
-      OUTPUT_VARIABLE TMP_LSB_RELEASE_CODENAME
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(TOLOWER ${TMP_LSB_RELEASE_CODENAME} LSB_RELEASE_CODENAME)
+# if(NOT EXISTS ${QT_BASE_PATH})
+#   find_program(LSB_RELEASE_COMMAND lsb_release)
+#   if(LSB_RELEASE_COMMAND)
+#     execute_process(COMMAND ${LSB_RELEASE_COMMAND} -s -i
+#       OUTPUT_VARIABLE TMP_LSB_RELEASE_ID
+#       OUTPUT_STRIP_TRAILING_WHITESPACE)
+#     string(TOLOWER ${TMP_LSB_RELEASE_ID} LSB_RELEASE_ID)
+#     execute_process(COMMAND ${LSB_RELEASE_COMMAND} -s -c
+#       OUTPUT_VARIABLE TMP_LSB_RELEASE_CODENAME
+#       OUTPUT_STRIP_TRAILING_WHITESPACE)
+#     string(TOLOWER ${TMP_LSB_RELEASE_CODENAME} LSB_RELEASE_CODENAME)
 
-    if (NOT QT_SYSTEM_PATH AND ${LSB_RELEASE_ID} STREQUAL "ubuntu" AND
-        (${LSB_RELEASE_CODENAME} STREQUAL "vivid"
-          OR ${LSB_RELEASE_CODENAME} STREQUAL "wily"
-          OR ${LSB_RELEASE_CODENAME} STREQUAL "xenial"
-          OR ${LSB_RELEASE_CODENAME} STREQUAL "zesty"
-          OR ${LSB_RELEASE_CODENAME} STREQUAL "bionic"
-          OR ${LSB_RELEASE_CODENAME} STREQUAL "eoan"
-          OR ${LSB_RELEASE_CODENAME} STREQUAL "focal"
-          OR ${LSB_RELEASE_CODENAME} STREQUAL "impish"
-          OR ${LSB_RELEASE_CODENAME} STREQUAL "jammy"
-          OR ${LSB_RELEASE_CODENAME} STREQUAL "noble"
-          ))
-      set(QT_SYSTEM_PATH "/usr/lib/*/cmake")
-      message("Selecting Qt system libraries.")
-    endif()
-    if (NOT QT_SYSTEM_PATH AND ${LSB_RELEASE_ID} STREQUAL "debian")
-      set(QT_SYSTEM_PATH "/usr/lib/*/cmake")
-      message("Selecting Qt system libraries.")
-    endif()
-  endif(LSB_RELEASE_COMMAND)
-endif()
+#     if (NOT QT_SYSTEM_PATH AND ${LSB_RELEASE_ID} STREQUAL "ubuntu" AND
+#         (${LSB_RELEASE_CODENAME} STREQUAL "vivid"
+#           OR ${LSB_RELEASE_CODENAME} STREQUAL "wily"
+#           OR ${LSB_RELEASE_CODENAME} STREQUAL "xenial"
+#           OR ${LSB_RELEASE_CODENAME} STREQUAL "zesty"
+#           OR ${LSB_RELEASE_CODENAME} STREQUAL "bionic"
+#           OR ${LSB_RELEASE_CODENAME} STREQUAL "eoan"
+#           OR ${LSB_RELEASE_CODENAME} STREQUAL "focal"
+#           OR ${LSB_RELEASE_CODENAME} STREQUAL "impish"
+#           OR ${LSB_RELEASE_CODENAME} STREQUAL "jammy"
+#           OR ${LSB_RELEASE_CODENAME} STREQUAL "noble"
+#           ))
+#       set(QT_SYSTEM_PATH "/usr/lib/*/cmake")
+#       message("Selecting Qt system libraries.")
+#     endif()
+#     if (NOT QT_SYSTEM_PATH AND ${LSB_RELEASE_ID} STREQUAL "debian")
+#       set(QT_SYSTEM_PATH "/usr/lib/*/cmake")
+#       message("Selecting Qt system libraries.")
+#     endif()
+#   endif(LSB_RELEASE_COMMAND)
+# endif()
 
 # Guess where to look for installed Qt5 libraries:
 # Debian/Ubuntu use something like that /opt/lib/x86_64-linux-gnu/cmake
@@ -141,18 +138,18 @@ endif()
 # Look for the Qt library files
 # 1. opt/qt (or 3rdparty/qt)
 # 2. /opt/lib (on Linux)
-find_path(QT_CMAKE_PATH Qt5/Qt5Config.cmake
-  ${QT_BASE_PATH}/lib/cmake
-  /opt/lib/*/cmake
-  /opt/lib64/cmake
-  /opt/lib/cmake
-  /usr/lib64/cmake
-  ${QT_SYSTEM_PATH}
-  )
+# find_path(QT_CMAKE_PATH Qt5/Qt5Config.cmake
+#   ${QT_BASE_PATH}/lib/cmake
+#   /opt/lib/*/cmake
+#   /opt/lib64/cmake
+#   /opt/lib/cmake
+#   /usr/lib64/cmake
+#   ${QT_SYSTEM_PATH}
+#   )
 
-if(NOT QT_CMAKE_PATH)
-  message( FATAL_ERROR "Qt5 CMake support files not found." )
-endif()
+# if(NOT QT_CMAKE_PATH)
+#   message( FATAL_ERROR "Qt5 CMake support files not found." )
+# endif()
 
 if (CMAKE_SCRIPT_DEBUG)
   message("Qt5 cmake path: ${QT_CMAKE_PATH}")

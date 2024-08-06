@@ -17,7 +17,8 @@
 
 #include "xa_hidpi.h"
 #include <QApplication>
-#include <QDesktopWidget>
+//#include <QDesktopWidget>
+#include <QFont>
 #include <QtGlobal>
 
 HighDPIUtil::HighDPIUtil()
@@ -53,14 +54,14 @@ qreal HighDPIUtil::fontScaleFactor() const
 
 void HighDPIUtil::update()
 {
-    auto desktop = qApp->desktop();
-    auto dpi_x = desktop->logicalDpiX();
-    auto dpi_y = desktop->logicalDpiY();
+    // auto desktop = qApp->desktop();
+    // auto dpi_x = desktop->logicalDpiX();
+    // auto dpi_y = desktop->logicalDpiY();
 
-    auto phy_dpi_x = desktop->physicalDpiX();
+    // auto phy_dpi_x = desktop->physicalDpiX();
 
-    m_pixel_ratio = desktop->devicePixelRatioF();
-    m_screen_scale_factor = dpi_x / 96.0;  // 96 == default dpi
+    // m_pixel_ratio = desktop->devicePixelRatioF();
+    // m_screen_scale_factor = dpi_x / 96.0;  // 96 == default dpi
 }
 
 void HighDPIUtil::fixAppFont()

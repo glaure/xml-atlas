@@ -1,7 +1,7 @@
 #
 # XML Atlas CMake Project
 #
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.16)
 
 #
 # C++17 or better
@@ -21,14 +21,25 @@ set(CMAKE_MODULE_PATH
   ${APP_ROOT}/build_util/cmake
 )
 
+# QT6
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 # Whether to handle rcc automatically for Qt targets.
 set(CMAKE_AUTORCC ON)
 
-include(QtSettings)
-find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
+#list(APPEND CMAKE_PREFIX_PATH "C:/Qt/6.7.2/msvc2019_64")
 
+include(QtSettings)
+
+find_package(Qt5 COMPONENTS Core Gui Widgets QUIET)
+if (NOT ${Qt5_FOUND})
+  message(STATUS "No Qt5 found")
+endif()
+
+find_package(Qt6 COMPONENTS Core Gui Widgets QUIET)
+if (NOT ${Qt6_FOUND})
+  message(STATUS "No Qt6 found")
+endif()
 
 add_subdirectory(3rdparty/pugixml-1.12 EXCLUDE_FROM_ALL)
 
@@ -36,14 +47,20 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+
+
 set(QT_GUI_FORM_FILES
   qt_ui/xa_indent_options.ui
   qt_ui/xa_tab_options.ui
   qt_ui/xa_theme_options.ui
   qt_ui/xa_window.ui
 )
-QT5_WRAP_UI(QT_GUI_FORMS_HEADERS ${QT_GUI_FORM_FILES})
-
+if (${Qt6_FOUND})
+ QT6_WRAP_UI(QT_GUI_FORMS_HEADERS ${QT_GUI_FORM_FILES})
+endif()
+if (${Qt5_FOUND})
+ QT5_WRAP_UI(QT_GUI_FORMS_HEADERS ${QT_GUI_FORM_FILES})
+endif()
 
 set(XA_SOURCE_FILES
   src/xa_app.cpp
@@ -71,7 +88,12 @@ set(XA_RESOURCE_FILES
   xa_resources.qrc
 )
 
-qt5_add_resources(XA_RESOURCE ${XA_RESOURCE_FILES})
+if (${Qt6_FOUND})
+  qt6_add_resources(XA_RESOURCE ${XA_RESOURCE_FILES})
+endif()
+if (${Qt5_FOUND})
+  qt5_add_resources(XA_RESOURCE ${XA_RESOURCE_FILES})
+endif()
 
 add_executable(${APPNAME} WIN32
   ${QT_GUI_FORMS_HEADERS}
@@ -84,13 +106,23 @@ set_target_properties(${APPNAME} PROPERTIES
     MACOSX_BUNDLE TRUE
 )
 
-target_link_libraries(${APPNAME} PUBLIC
+if (${Qt6_FOUND})
+  target_link_libraries(${APPNAME} PUBLIC
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets)
+endif()
+
+if (${Qt5_FOUND})
+  target_link_libraries(${APPNAME} PUBLIC
     Qt5::Core
     Qt5::Gui
-    Qt5::Widgets
+    Qt5::Widgets)
+endif()
+
+target_link_libraries(${APPNAME} PUBLIC
     pugixml-static
 )
-
 
 #
 # Install
@@ -98,7 +130,7 @@ target_link_libraries(${APPNAME} PUBLIC
 install(TARGETS ${APPNAME} RUNTIME DESTINATION bin)
 
 if(WIN32)
-  installQtLibraries(bin)
+  #installQtLibraries(bin)
 endif()
 
 
