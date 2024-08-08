@@ -35,15 +35,10 @@ if (NOT ${Qt6_FOUND})
 endif()
 
 if (NOT ${Qt6_FOUND})
-  find_package(Qt5 COMPONENTS Core Gui Widgets QUIET)
+  find_package(Qt5 COMPONENTS Core Gui Widgets)
   if (NOT ${Qt5_FOUND})
     message(STATUS "No Qt5 found")
   endif()
-endif()
-
-find_package(Qt6 COMPONENTS Core Gui Widgets QUIET)
-if (NOT ${Qt6_FOUND})
-  message(STATUS "No Qt6 found")
 endif()
 
 add_subdirectory(3rdparty/pugixml-1.12 EXCLUDE_FROM_ALL)
