@@ -47,6 +47,7 @@ if(NOT QT_VERSION AND NOT QT_BASE_PATH)
 
     # QT_ROOT_DIR set? (github)
     set(QT_ROOT_DIR "$ENV{QT_ROOT_DIR}")
+    cmake_path(CONVERT ${QT_ROOT_DIR} TO_CMAKE_PATH_LIST QT_ROOT_DIR)
     message(STATUS "QT_ROOT_DIR = ${QT_ROOT_DIR}")
     if (NOT ${QT_ROOT_DIR} STREQUAL "")
       GetQtVersionFromString(${QT_ROOT_DIR} QT_VERSION)
