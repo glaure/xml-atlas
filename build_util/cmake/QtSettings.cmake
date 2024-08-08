@@ -31,26 +31,27 @@ else()
 endif()
 
 macro(GetQtVersionFromString SOME_PATH QT_VERSION)
-  string(REGEX MATCH ".*([0-9]+)\\.([0-9]+)\\.([0-9]+).*" MY_PROGRAM_VERSION_MATCH ${QT_BASE_PATH})
+  string(REGEX MATCH ".*([0-9]+)\\.([0-9]+)\\.([0-9]+).*" MY_PROGRAM_VERSION_MATCH ${SOME_PATH})
   set(QT_VERSION_MAJOR ${CMAKE_MATCH_1})
   set(QT_VERSION_MINOR ${CMAKE_MATCH_2})
   set(QT_VERSION_PATCH ${CMAKE_MATCH_3})
-  if (MY_PROGRAM_VERSION_MATCH)
-    set(QT_VERSION "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
-  endif()
+  set(QT_VERSION "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
 endmacro()
 
 
-# Otherwise discover a Qt installation
+# Discover a Qt installation
 if(NOT QT_VERSION AND NOT QT_BASE_PATH)
   if (WIN32)
 
     set(QT_CANDIDATES "6.7.2;5.15.11;5.15.4;5.15.3;5.15.2;5.14.0;5.12.6;5.12.5")
 
     # QT_ROOT_DIR set? (github)
-    if ($ENV{QT_ROOT_DIR})
-      GetQtVersionFromString($ENV{QT_ROOT_DIR} QT_VERSION)
-      if (NOT EXISTS "$ENV{QT_ROOT_DIR}")
+    set(QT_ROOT_DIR "$ENV{QT_ROOT_DIR}")
+    message(STATUS "QT_ROOT_DIR = ${QT_ROOT_DIR}")
+    if (NOT ${QT_ROOT_DIR} STREQUAL "")
+      GetQtVersionFromString(${QT_ROOT_DIR} QT_VERSION)
+      message(STATUS "GetQtVersionFromString ${QT_VERSION}")
+      if (NOT EXISTS "${QT_ROOT_DIR}")
         set(QT_VERSION "")
       endif()
     endif()
