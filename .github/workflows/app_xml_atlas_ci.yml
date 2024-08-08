@@ -20,16 +20,33 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --target all --parallel
 
 
-  XML-Atlas-on-Windows:
-    name: Building XML-Atlas on Windows
+  XML-Atlas-qt5-on-Windows:
+    name: Building XML-Atlas-Qt5 on Windows
     runs-on: windows-latest
     env:
       QT_BASE_PATH: D:/a/xml-atlas/Qt/5.15.2/msvc2019_64
     steps:
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: '5.15.2'
+      - uses: actions/checkout@v4
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --parallel
+
+
+  XML-Atlas-qt6-on-Windows:
+    name: Building XML-Atlas-Qt6 on Windows
+    runs-on: windows-latest
+    env:
+      QT_BASE_PATH: D:/a/xml-atlas/Qt/6.7.2/msvc2019_64
+    steps:
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.2'
       - uses: actions/checkout@v3
       - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}

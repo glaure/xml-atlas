@@ -31,12 +31,28 @@ else()
 endif()
 
 
-if(NOT QT_VERSION)
 
+# Check if QT_BASE_PATH is set
+if (QT_BASE_PATH)
+  string(REGEX MATCH ".*([0-9]+)\\.([0-9]+)\\.([0-9]+).*" MY_PROGRAM_VERSION_MATCH ${QT_BASE_PATH})
+  set(QT_VERSION_MAJOR ${CMAKE_MATCH_1})
+  set(QT_VERSION_MINOR ${CMAKE_MATCH_2})
+  set(QT_VERSION_PATCH ${CMAKE_MATCH_3})
+
+  if (MY_PROGRAM_VERSION_MATCH)
+    set(QT_VERSION "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
+    message("Qt version from QT_BASE_PATH: (${QT_VERSION})")
+    list(APPEND CMAKE_PREFIX_PATH "${QT_BASE_PATH}")
+  endif()
+endif()
+
+
+# Otherwise discover a Qt installation
+if(NOT QT_VERSION AND NOT QT_BASE_PATH)
   if (WIN32)
 
     set(QT_CANDIDATES "6.7.2;5.15.11;5.15.4;5.15.3;5.15.2;5.14.0;5.12.6;5.12.5")
-    
+
     # look in workspace first
     foreach(_qt ${QT_CANDIDATES})
       message(STATUS "Looking for ${SW_APP_ROOT}/3rdparty/qt/${_qt}_${QT_BUILD_SYSTEM}${QT_BUILD_BITS}")
@@ -52,6 +68,7 @@ if(NOT QT_VERSION)
         message(STATUS "Looking for C:/Qt/${_qt}")
         if (EXISTS "C:/Qt/${_qt}/msvc2019_64")
           set(QT_VERSION ${_qt})
+          list(APPEND CMAKE_PREFIX_PATH "C:/Qt/${_qt}/msvc2019_64")
           break()
         endif()
       endforeach()
@@ -61,35 +78,16 @@ if(NOT QT_VERSION)
 endif()
 
 
-
-
 set(QT_BUILD "${QT_BUILD_SYSTEM}${QT_BUILD_BITS}${QT_BUILD_SUFFIX}")
 
 
 
-message("=Qt==================================================================")
-if(NOT QT_BASE_PATH)
-  foreach(_QT_PATH
-      $ENV{QT_BASE_PATH}
-      C:/Qt/${QT_VERSION}/msvc2019_64
-      )
-                
-    message("Qt Discovery: Testing ${_QT_PATH}")
-    if(EXISTS ${_QT_PATH})
-      set(QT_BASE_PATH ${_QT_PATH})
-      get_filename_component(QT_INSTALL_PATH ${QT_BASE_PATH} DIRECTORY)
-      break()
-    endif()
-  endforeach()
-endif()
-
-
-message("QT_VERSION=${QT_VERSION} (requested)")
+message("QT_VERSION=${QT_VERSION}")
 if(EXISTS ${QT_BASE_PATH})
   message("QT_BASE_PATH=${QT_BASE_PATH}")
 else()
-  unset(QT_BASE_PATH)
-  message("No Qt found in opt or 3rdparty")
+  # unset(QT_BASE_PATH)
+  # message("No Qt found in opt or 3rdparty")
 endif()
 message("=====================================================================")
 

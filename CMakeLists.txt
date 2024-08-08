@@ -27,13 +27,18 @@ set(CMAKE_AUTOMOC ON)
 # Whether to handle rcc automatically for Qt targets.
 set(CMAKE_AUTORCC ON)
 
-#list(APPEND CMAKE_PREFIX_PATH "C:/Qt/6.7.2/msvc2019_64")
-
 include(QtSettings)
 
-find_package(Qt5 COMPONENTS Core Gui Widgets QUIET)
-if (NOT ${Qt5_FOUND})
-  message(STATUS "No Qt5 found")
+find_package(Qt6 COMPONENTS Core Gui Widgets QUIET)
+if (NOT ${Qt6_FOUND})
+  message(STATUS "No Qt6 found")
+endif()
+
+if (NOT ${Qt6_FOUND})
+  find_package(Qt5 COMPONENTS Core Gui Widgets QUIET)
+  if (NOT ${Qt5_FOUND})
+    message(STATUS "No Qt5 found")
+  endif()
 endif()
 
 find_package(Qt6 COMPONENTS Core Gui Widgets QUIET)
