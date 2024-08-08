@@ -53,7 +53,6 @@ include_directories(
 )
 
 
-
 set(QT_GUI_FORM_FILES
   qt_ui/xa_indent_options.ui
   qt_ui/xa_tab_options.ui

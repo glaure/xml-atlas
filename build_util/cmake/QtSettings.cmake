@@ -30,21 +30,15 @@ else()
   set(QT_BUILD_SYSTEM "unknown")
 endif()
 
-
-
-# Check if QT_BASE_PATH is set
-if (QT_BASE_PATH)
+macro(GetQtVersionFromString SOME_PATH QT_VERSION)
   string(REGEX MATCH ".*([0-9]+)\\.([0-9]+)\\.([0-9]+).*" MY_PROGRAM_VERSION_MATCH ${QT_BASE_PATH})
   set(QT_VERSION_MAJOR ${CMAKE_MATCH_1})
   set(QT_VERSION_MINOR ${CMAKE_MATCH_2})
   set(QT_VERSION_PATCH ${CMAKE_MATCH_3})
-
   if (MY_PROGRAM_VERSION_MATCH)
     set(QT_VERSION "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
-    message(STATUS "Qt version from QT_BASE_PATH: (${QT_VERSION})")
-    list(APPEND CMAKE_PREFIX_PATH "${QT_BASE_PATH}")
   endif()
-endif()
+endmacro()
 
 
 # Otherwise discover a Qt installation
@@ -53,17 +47,27 @@ if(NOT QT_VERSION AND NOT QT_BASE_PATH)
 
     set(QT_CANDIDATES "6.7.2;5.15.11;5.15.4;5.15.3;5.15.2;5.14.0;5.12.6;5.12.5")
 
-    # look in workspace first
-    foreach(_qt ${QT_CANDIDATES})
-      message(STATUS "Looking for ${SW_APP_ROOT}/3rdparty/qt/${_qt}_${QT_BUILD_SYSTEM}${QT_BUILD_BITS}")
-      if (EXISTS "${SW_APP_ROOT}/3rdparty/qt/${_qt}_${QT_BUILD_SYSTEM}${QT_BUILD_BITS}")
-        set(QT_VERSION ${_qt})
-        break()
+    # QT_ROOT_DIR set? (github)
+    if ($ENV{QT_ROOT_DIR})
+      GetQtVersionFromString($ENV{QT_ROOT_DIR} QT_VERSION)
+      if (NOT EXISTS "$ENV{QT_ROOT_DIR}")
+        set(QT_VERSION "")
       endif()
-    endforeach()
+    endif()
+    
+    # look in workspace
+    if (NOT QT_VERSION)
+      foreach(_qt ${QT_CANDIDATES})
+        message(STATUS "Looking for ${SW_APP_ROOT}/3rdparty/qt/${_qt}_${QT_BUILD_SYSTEM}${QT_BUILD_BITS}")
+        if (EXISTS "${SW_APP_ROOT}/3rdparty/qt/${_qt}_${QT_BUILD_SYSTEM}${QT_BUILD_BITS}")
+          set(QT_VERSION ${_qt})
+          break()
+        endif()
+      endforeach()
+    endif()
 
-    # look in default install dirs C:\Qt next
-    set(QT_PREFIX_DIR "C:/Qt;${PROJECT_SOURCE_DIR}/Qt;$ENV{QT_ROOT_DIR}")
+    # look in default install dirs C:\Qt next or WORKSPACE\Qt
+    set(QT_PREFIX_DIR "C:/Qt;${PROJECT_SOURCE_DIR}/Qt")
     if (NOT QT_VERSION)
       set(qt_found FALSE)
       foreach(_qt_prefix ${QT_PREFIX_DIR})
