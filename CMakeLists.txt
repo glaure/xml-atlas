@@ -29,7 +29,7 @@ set(CMAKE_AUTORCC ON)
 
 include(QtSettings)
 
-find_package(Qt6 COMPONENTS Core Gui Widgets QUIET)
+find_package(Qt6 COMPONENTS Core Gui Widgets)
 if (NOT ${Qt6_FOUND})
   message(STATUS "No Qt6 found")
 endif()
