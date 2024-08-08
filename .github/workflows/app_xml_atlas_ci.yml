@@ -23,8 +23,6 @@ jobs:
   XML-Atlas-qt5-on-Windows:
     name: Building XML-Atlas-Qt5 on Windows
     runs-on: windows-latest
-    env:
-      QT_BASE_PATH: D:/a/xml-atlas/Qt/5.15.2/msvc2019_64
     steps:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
@@ -40,8 +38,6 @@ jobs:
   XML-Atlas-qt6-on-Windows:
     name: Building XML-Atlas-Qt6 on Windows
     runs-on: windows-latest
-    env:
-      QT_BASE_PATH: D:/a/xml-atlas/Qt/6.7.2/msvc2019_64
     steps:
       - name: Install Qt
         uses: jurplel/install-qt-action@v4

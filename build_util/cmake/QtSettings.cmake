@@ -41,7 +41,7 @@ if (QT_BASE_PATH)
 
   if (MY_PROGRAM_VERSION_MATCH)
     set(QT_VERSION "${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
-    message("Qt version from QT_BASE_PATH: (${QT_VERSION})")
+    message(STATUS "Qt version from QT_BASE_PATH: (${QT_VERSION})")
     list(APPEND CMAKE_PREFIX_PATH "${QT_BASE_PATH}")
   endif()
 endif()
@@ -62,18 +62,26 @@ if(NOT QT_VERSION AND NOT QT_BASE_PATH)
       endif()
     endforeach()
 
-    # look in C:\Qt next
+    # look in default install dirs C:\Qt next
+    set(QT_PREFIX_DIR "C:/Qt;${PROJECT_SOURCE_DIR}/Qt")
     if (NOT QT_VERSION)
-      foreach(_qt ${QT_CANDIDATES})
-        message(STATUS "Looking for C:/Qt/${_qt}")
-        if (EXISTS "C:/Qt/${_qt}/msvc2019_64")
-          set(QT_VERSION ${_qt})
-          list(APPEND CMAKE_PREFIX_PATH "C:/Qt/${_qt}/msvc2019_64")
+      set(qt_found FALSE)
+      foreach(_qt_prefix ${QT_PREFIX_DIR})
+        foreach(_qt ${QT_CANDIDATES})
+          message(STATUS "Looking for ${_qt_prefix}/${_qt}")
+          if (EXISTS "${_qt_prefix}/${_qt}/msvc2019_64")
+            set(QT_VERSION ${_qt})
+            list(APPEND CMAKE_PREFIX_PATH "${_qt_prefix}/${_qt}/msvc2019_64")
+            set(qt_found TRUE)
+            break()
+          endif()
+        endforeach()
+        if (qt_found)
           break()
         endif()
       endforeach()
     endif()
-    message("Qt version detected (${QT_VERSION})")
+    message(STATUS "Qt version detected (${QT_VERSION})")
   endif()
 endif()
 
@@ -82,14 +90,14 @@ set(QT_BUILD "${QT_BUILD_SYSTEM}${QT_BUILD_BITS}${QT_BUILD_SUFFIX}")
 
 
 
-message("QT_VERSION=${QT_VERSION}")
+message(STATUS "QT_VERSION=${QT_VERSION}")
 if(EXISTS ${QT_BASE_PATH})
-  message("QT_BASE_PATH=${QT_BASE_PATH}")
+  message(STATUS "QT_BASE_PATH=${QT_BASE_PATH}")
 else()
   # unset(QT_BASE_PATH)
   # message("No Qt found in opt or 3rdparty")
 endif()
-message("=====================================================================")
+message(STATUS "=====================================================================")
 
 
 #
@@ -150,7 +158,7 @@ message("=====================================================================")
 # endif()
 
 if (CMAKE_SCRIPT_DEBUG)
-  message("Qt5 cmake path: ${QT_CMAKE_PATH}")
+  message(STATUS "Qt5 cmake path: ${QT_CMAKE_PATH}")
 endif()
 
 set(CMAKE_PREFIX_PATH

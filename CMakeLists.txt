@@ -27,8 +27,6 @@ set(CMAKE_AUTOMOC ON)
 # Whether to handle rcc automatically for Qt targets.
 set(CMAKE_AUTORCC ON)
 
-message(STATUS "QT_ROOT_DIR = ${QT_ROOT_DIR}")
-
 include(QtSettings)
 
 find_package(Qt6 COMPONENTS Core Gui Widgets QUIET)
