@@ -63,7 +63,7 @@ if(NOT QT_VERSION AND NOT QT_BASE_PATH)
     endforeach()
 
     # look in default install dirs C:\Qt next
-    set(QT_PREFIX_DIR "C:/Qt;${PROJECT_SOURCE_DIR}/Qt")
+    set(QT_PREFIX_DIR "C:/Qt;${PROJECT_SOURCE_DIR}/Qt;$ENV{QT_ROOT_DIR}")
     if (NOT QT_VERSION)
       set(qt_found FALSE)
       foreach(_qt_prefix ${QT_PREFIX_DIR})
