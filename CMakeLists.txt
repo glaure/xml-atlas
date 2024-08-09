@@ -10,7 +10,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(APPNAME XMLAtlas)
 project(${APPNAME})
 
-
 #
 # define SW_APP_ROOT == Projects root directory
 get_filename_component(APP_ROOT . ABSOLUTE)
@@ -29,7 +28,7 @@ set(CMAKE_AUTORCC ON)
 
 include(QtSettings)
 
-find_package(Qt6 COMPONENTS Core Gui Widgets)
+find_package(Qt6 COMPONENTS Core Gui Widgets QUIET)
 if (NOT ${Qt6_FOUND})
   message(STATUS "No Qt6 found")
 endif()
@@ -46,7 +45,6 @@ add_subdirectory(3rdparty/pugixml-1.12 EXCLUDE_FROM_ALL)
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
 )
-
 
 set(QT_GUI_FORM_FILES
   qt_ui/xa_indent_options.ui
