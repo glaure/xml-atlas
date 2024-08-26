@@ -15,6 +15,7 @@
             <StarHubSlot>2</StarHubSlot>
             <SystemInfo></SystemInfo>
         </KEY>
+<!--
         <KEY EncName = "FFFFFFF0">
             <Name>Standard-Enclosure</Name>
             <SubVersion>0</SubVersion>
@@ -23,6 +24,7 @@
             <StarHubSlot>2</StarHubSlot>
             <SystemInfo></SystemInfo>
         </KEY>
+-->
         <KEY EncName = "01FFFFF0" Visible = "false">
             <Name>DEWE2-Unknown</Name>
             <SubVersion>0</SubVersion>

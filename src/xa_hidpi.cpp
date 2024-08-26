@@ -36,7 +36,7 @@ HighDPIUtil::~HighDPIUtil()
 void HighDPIUtil::applyHighDpiAppSettings()
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#if QT_VERSION >= 0x051400
+#if QT_VERSION >= 0x050F00
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);

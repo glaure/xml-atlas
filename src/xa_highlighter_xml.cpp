@@ -146,24 +146,49 @@ void XAHighlighter_XML::init()
 {
     HighlightingRule rule;
 
+    updateFormatMap();
 
-    {   //<?xml version="1.0" encoding="UTF-8"?>
-        QTextCharFormat prolog_fmt;
-        prolog_fmt.setFontWeight(QFont::Bold);
-        prolog_fmt.setForeground(Qt::red);
-        rule.pattern = QRegularExpression(QStringLiteral("<?xml.*>"));
-        rule.format = prolog_fmt;
-        m_highlighting_rules.append(rule);
-    }
     {   
         //<ABC></ABC>
         //<ABC/>
-        QTextCharFormat elem_fmt;
-        elem_fmt.setFontWeight(QFont::Bold);
-        elem_fmt.setForeground(Qt::darkBlue);
         rule.pattern = QRegularExpression(QStringLiteral("<[/]?[\\s]*([^\\n][^>]*)(?=[\\s/>])"));
-        rule.format = elem_fmt;
-        //m_highlighting_rules.append(rule);
+        rule.format = m_format_map.at(static_cast<int>(XMLSE::XML_ELEM));
+        m_highlighting_rules.append(rule);
+    }
+    {   
+        rule.pattern = QRegularExpression(QStringLiteral("\\w+\\s*(?=\\=)\\s*"));
+        rule.format = m_format_map.at(static_cast<int>(XMLSE::XML_ATTR));
+        m_highlighting_rules.append(rule);
+    }
+    {   //<?xml version="1.0" encoding="UTF-8"?>
+        rule.pattern = QRegularExpression(QStringLiteral("<\\?xml.*>"));
+        rule.format = m_format_map.at(static_cast<int>(XMLSE::XML_PROLOG));
+        m_highlighting_rules.append(rule);
     }
 
+}
+
+
+void XAHighlighter_XML::updateFormatMap()
+{
+    {
+        QTextCharFormat fmt;
+        fmt.setFontWeight(QFont::Bold);
+        fmt.setForeground(Qt::red);
+        m_format_map[static_cast<int>(XMLSE::XML_PROLOG)] = fmt;
+    }
+
+    {
+        QTextCharFormat fmt;
+        fmt.setFontWeight(QFont::Bold);
+        fmt.setForeground(Qt::darkBlue);
+        m_format_map[static_cast<int>(XMLSE::XML_ELEM)] = fmt;
+    }
+
+    {
+        QTextCharFormat fmt;
+        fmt.setFontWeight(QFont::Bold);
+        fmt.setForeground(Qt::red);
+        m_format_map[static_cast<int>(XMLSE::XML_ATTR)] = fmt;
+    }
 }

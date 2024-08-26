@@ -17,14 +17,21 @@
 
 #pragma once
 
-
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
 #include <QRegularExpression>
-
+#include <map>
 
 class QTextDocument;
 class QTextEdit;
+
+
+enum class XMLSE
+{
+    XML_PROLOG,
+    XML_ELEM,
+    XML_ATTR,
+};
 
 
 class XAHighlighter_XML : public QSyntaxHighlighter
@@ -46,8 +53,11 @@ private:
     // void setRegexes();
     // void setFormats();
     void init();
+    void updateFormatMap();
 
 private:
+    std::map<int, QTextCharFormat>  m_format_map;
+
     struct HighlightingRule
     {
         QRegularExpression pattern;
