@@ -43,19 +43,27 @@ private:
     void highlightByRegex(const QTextCharFormat& format,
         const QRegularExpression& regex, const QString& text);
 
-    void setRegexes();
-    void setFormats();
+    // void setRegexes();
+    // void setFormats();
+    void init();
 
 private:
-    QTextCharFormat     m_xmlKeywordFormat;
-    QTextCharFormat     m_xmlElementFormat;
-    QTextCharFormat     m_xmlAttributeFormat;
-    QTextCharFormat     m_xmlValueFormat;
-    QTextCharFormat     m_xmlCommentFormat;
+    struct HighlightingRule
+    {
+        QRegularExpression pattern;
+        QTextCharFormat format;
+    };
+    QList<HighlightingRule> m_highlighting_rules;
 
-    QList<QRegularExpression>      m_xmlKeywordRegexes;
-    QRegularExpression             m_xmlElementRegex;
-    QRegularExpression             m_xmlAttributeRegex;
-    QRegularExpression             m_xmlValueRegex;
-    QRegularExpression             m_xmlCommentRegex;
+    // QTextCharFormat     m_xmlKeywordFormat;
+    // QTextCharFormat     m_xmlElementFormat;
+    // QTextCharFormat     m_xmlAttributeFormat;
+    // QTextCharFormat     m_xmlValueFormat;
+    // QTextCharFormat     m_xmlCommentFormat;
+
+    // QList<QRegularExpression>      m_xmlKeywordRegexes;
+    // QRegularExpression             m_xmlElementRegex;
+    // QRegularExpression             m_xmlAttributeRegex;
+    // QRegularExpression             m_xmlValueRegex;
+    // QRegularExpression             m_xmlCommentRegex;
 };
