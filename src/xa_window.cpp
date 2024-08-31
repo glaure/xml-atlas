@@ -54,6 +54,8 @@ XAMainWindow::XAMainWindow(XAData* app_data, QWidget *parent)
 
     setCentralWidget(m_editor);
     setWindowTitle(tr("XML Atlas"));
+    QIcon icon(":/icons/images/xmlatlas.ico");
+    setWindowIcon(icon);
 }
 
 
