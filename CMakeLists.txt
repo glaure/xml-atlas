@@ -81,6 +81,10 @@ set(XA_SOURCE_FILES
   src/xml_atlas.cpp
 )
 
+set(XA_WIN_RESOURCES
+  images/resources.rc
+)
+
 set(XA_RESOURCE_FILES
   xa_resources.qrc
 )
@@ -96,6 +100,7 @@ add_executable(${APPNAME} WIN32
   ${QT_GUI_FORMS_HEADERS}
   ${XA_SOURCE_FILES}
   ${XA_RESOURCE}
+  ${XA_WIN_RESOURCES}
 )
 
 set_target_properties(${APPNAME} PROPERTIES
