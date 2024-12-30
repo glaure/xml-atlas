@@ -12,19 +12,19 @@ Open Source XML Editor that is heavily inspired by XML Marker (http://symbolclic
 # Qt
 
 Please install a valid Qt version.
-The current reference version is Qt 5.15.2
+The current reference version is Qt 6.8.1
 
 ## Windows deployment
 
 Debug:
 
 ```
-%PATH_TO_QT%/msvc2019_64/bin/windeployqt.exe --no-quick-import --no-system-d3d-compiler build64/Debug/
+%PATH_TO_QT%/msvc2022_64/bin/windeployqt.exe --no-quick-import --no-system-d3d-compiler build/Debug/
 ```
 
 Release
 
 ```
-%PATH_TO_QT%/msvc2019_64/bin/windeployqt.exe --no-quick-import --no-system-d3d-compiler build64/Release
+%PATH_TO_QT%/msvc2022_64/bin/windeployqt.exe --no-quick-import --no-system-d3d-compiler build/Release
 ```
 

@@ -127,9 +127,30 @@ target_link_libraries(${APPNAME} PUBLIC
 install(TARGETS ${APPNAME} RUNTIME DESTINATION bin)
 
 if(WIN32)
-  #installQtLibraries(bin)
+  # Use windeployqt to deploy Qt libraries
+  if(${Qt6_FOUND})
+    add_custom_command(TARGET ${APPNAME} POST_BUILD
+      COMMAND ${Qt6_DIR}/../../../bin/windeployqt.exe --dir ${CMAKE_BINARY_DIR}/$<CONFIG> $<TARGET_FILE:${APPNAME}>
+      COMMENT "Running windeployqt for Qt6 to ${CMAKE_BINARY_DIR}/$<CONFIG>"
+    )
+  endif()
+  if(${Qt5_FOUND})
+    add_custom_command(TARGET ${APPNAME} POST_BUILD
+      COMMAND ${Qt5_DIR}/../../../bin/windeployqt.exe --dir ${CMAKE_BINARY_DIR}/$<CONFIG> $<TARGET_FILE:${APPNAME}>
+      COMMENT "Running windeployqt for Qt5 ${CMAKE_BINARY_DIR}/$<CONFIG>"
+    )
+  endif()
 endif()
 
+# Install Qt libraries to the installation directory
+if(WIN32)
+  if(${Qt6_FOUND})
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/ DESTINATION bin)
+  endif()
+  if(${Qt5_FOUND})
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/ DESTINATION bin)
+  endif()
+endif()
 
 #
 # Packaging
@@ -138,9 +159,21 @@ include(InstallRequiredSystemLibraries)
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR "1")
 set(CPACK_PACKAGE_VERSION_MINOR "0")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
 set(CPACK_SOURCE_GENERATOR "TGZ")
 
+set(CPACK_GENERATOR WIX)
 set(CPACK_WIX_UPGRADE_GUID "F93537BC-4988-4471-ACF2-E779BFD9A336")
+set(CPACK_WIX_PRODUCT_ICON "${CMAKE_SOURCE_DIR}/images/xmlatlas.ico")
+set(CPACK_WIX_LICENSE_RTF "${CMAKE_SOURCE_DIR}/LICENSE.rtf")
+set(CPACK_WIX_UI_BANNER "${CMAKE_SOURCE_DIR}/images/banner.bmp")
+set(CPACK_WIX_UI_DIALOG "${CMAKE_SOURCE_DIR}/images/dialog.bmp")
 
+#set(CPACK_WIX_UI_REF "WixUI_Advanced")
+set(CPACK_WIX_UI_REF "WixUI_Minimal")
+#set(CPACK_WIX_UI_REF "WixUI_FeatureTree")
+
+# Start menu shortcut
+set(CPACK_PACKAGE_EXECUTABLES "XMLAtlas" "XMLAtlas")
 
 include(CPack)
