@@ -181,4 +181,20 @@ set(CPACK_WIX_UI_REF "WixUI_Minimal")
 # Start menu shortcut
 set(CPACK_PACKAGE_EXECUTABLES "XMLAtlas" "XMLAtlas")
 
+# Flatpak settings
+set(CPACK_FLATPAK_APPID "com.example.XMLAtlas")
+set(CPACK_FLATPAK_RUNTIME "org.freedesktop.Platform")
+set(CPACK_FLATPAK_RUNTIME_VERSION "21.08")
+set(CPACK_FLATPAK_SDK "org.freedesktop.Sdk")
+set(CPACK_FLATPAK_REPO_URL "https://example.com/repo")
+set(CPACK_FLATPAK_REPO_NAME "example-repo")
+set(CPACK_FLATPAK_BRANCH "stable")
+
+# Debian package settings
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Your Name <your-email@example.com>")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libqt5gui5, libqt5widgets5")
+set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
+set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+set(CPACK_DEBIAN_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
+
 include(CPack)
