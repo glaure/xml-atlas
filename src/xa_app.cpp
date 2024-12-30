@@ -21,8 +21,11 @@
 #include "xa_window.h"
 #include "xa_hidpi.h"
 
-#include "QFile"
+#include <QFile>
 #include <QFileInfo>
+#include <QGuiApplication>
+#include <QPalette>
+#include <QStyleHints>
 
 XAApp::XAApp(int& argc, char** argv)
     : QObject(nullptr)
@@ -31,6 +34,16 @@ XAApp::XAApp(int& argc, char** argv)
 {
     HighDPIUtil hidpi;
     hidpi.fixAppFont();
+
+    //selectColorTheme("dark");
+    //selectColorTheme("light");
+    if (isDarkMode())
+    {
+        selectColorTheme("dark");
+    }
+    else {
+        selectColorTheme("light");
+    }
 }
 
 XAApp::~XAApp()
@@ -53,6 +66,43 @@ bool XAApp::initGui()
 {
     m_window->show();
     return true;
+}
+
+bool XAApp::isDarkMode() const
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    const auto scheme = QGuiApplication::styleHints()->colorScheme();
+    return scheme == Qt::ColorScheme::Dark;
+#else
+    const QPalette defaultPalette;
+    const auto text = defaultPalette.color(QPalette::WindowText);
+    return text.lightness() > window.lightness();
+#endif // QT_VERSION
+}
+
+void XAApp::selectColorTheme(const QString& color_theme)
+{
+    QGuiApplication::styleHints()->setColorScheme(Qt::ColorScheme::Light);
+
+    //auto app = qobject_cast<QApplication*>(QApplication::instance());
+    //if (app)
+    //{
+    //    //auto old_theme = m_color_theme.toStdString();
+    //    auto new_theme = color_theme.toStdString();
+
+    //    QFile file(QString(":/%1.qss").arg(color_theme));
+    //    //QFile file(":/dark.qss");
+    //    //QFile file(":/light.qss");
+    //    file.open(QFile::ReadOnly | QFile::Text);
+    //    if (file.isOpen()) {
+    //        QTextStream stream(&file);
+    //        app->setStyleSheet(stream.readAll());
+    //    }
+    //    else {
+    //        app->setStyleSheet({});
+    //    }
+    //    //m_color_theme = color_theme;
+    //}
 }
 
 int XAApp::run()

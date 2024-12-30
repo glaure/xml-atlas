@@ -45,7 +45,9 @@ public:
 
 
 private:
-
+    
+    bool isDarkMode() const;
+    void selectColorTheme(const QString& color_theme);
 
 private:
     QApplication      m_app;
