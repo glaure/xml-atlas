@@ -206,6 +206,32 @@ void XAMainWindow::setupTheme()
     auto theme_ui = new Ui::ThemeOptions;
     auto dlg = new QDialog;
     theme_ui->setupUi(dlg);
+
+    auto theme = m_app->getTheme();
+
+    if (theme->getColorTheme() == "dark")
+    {
+        theme_ui->m_style->setCurrentIndex(1);
+    }
+    else
+    {
+        theme_ui->m_style->setCurrentIndex(0);
+    }
+
+    connect(theme_ui->m_style, QOverload<int>::of(&QComboBox::currentIndexChanged), [theme, this](int index) {
+        if (index == 0)
+        {
+            theme->selectColorTheme("light");
+        }
+        else
+        {
+            theme->selectColorTheme("dark");
+        }
+
+        this->onThemeChange();
+
+        });
+
     dlg->exec();
 
 

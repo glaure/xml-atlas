@@ -26,8 +26,10 @@ public:
     XATheme();
     ~XATheme();
 
-    bool isDarkMode() const;
+    bool isSystemDarkMode() const;
     void selectColorTheme(const QString& color_theme);
+
+    QString getColorTheme() const;
 
     QIcon getIcon(QString icon_name) const;
 private:

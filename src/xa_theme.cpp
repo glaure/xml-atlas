@@ -92,7 +92,7 @@ XATheme::~XATheme()
 {
 }
 
-bool XATheme::isDarkMode() const
+bool XATheme::isSystemDarkMode() const
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     const auto scheme = QGuiApplication::styleHints()->colorScheme();
@@ -119,6 +119,11 @@ void XATheme::selectColorTheme(const QString& color_theme)
     auto app = qobject_cast<QApplication*>(QApplication::instance());
     app->setPalette(qt_fusionPalette_legacy(m_color_theme == "dark"));
 #endif // QT_VERSION
+}
+
+QString XATheme::getColorTheme() const
+{
+    return m_color_theme;
 }
 
 QIcon XATheme::getIcon(QString icon_name) const

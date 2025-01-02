@@ -35,11 +35,12 @@ XAApp::XAApp(int& argc, char** argv)
     HighDPIUtil hidpi;
     hidpi.fixAppFont();
 
-    if (m_theme->isDarkMode())
+    if (m_theme->isSystemDarkMode())
     {
         m_theme->selectColorTheme("dark");
     }
-    else {
+    else 
+    {
         m_theme->selectColorTheme("light");
     }
 }
