@@ -20,7 +20,7 @@
 #include "xa_highlighter_xml.h"
 #include <QMainWindow>
 
-
+class XAApp;
 class XAEditor;
 class XATreeDock;
 class XAData;
@@ -38,7 +38,7 @@ class XAMainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    XAMainWindow(XAData* app_data, QWidget *parent = nullptr);
+    XAMainWindow(XAApp* app, XAData* app_data, QWidget *parent = nullptr);
 
 public slots:
     void about();
@@ -52,6 +52,7 @@ public slots:
 
 protected slots:
     void onSelectionChanged(const QModelIndex& index, const QModelIndex& previous);
+    void onThemeChange();
 
 private:
     void setupEditor();
@@ -64,6 +65,7 @@ private:
 
 private:
     Ui::MainWindow*     m_main_window;
+    XAApp*              m_app;
     XAData*             m_app_data;
     XAEditor*           m_editor;
     XAHighlighter_XML*  m_xml_highlighter;

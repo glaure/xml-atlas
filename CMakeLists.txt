@@ -70,6 +70,8 @@ set(XA_SOURCE_FILES
   src/xa_hidpi.h
   src/xa_highlighter_xml.cpp
   src/xa_highlighter_xml.h
+  src/xa_theme.cpp
+  src/xa_theme.h
   src/xa_window.cpp
   src/xa_window.h
   src/xa_tree_dock.cpp

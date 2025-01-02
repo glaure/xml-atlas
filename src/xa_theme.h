@@ -17,43 +17,19 @@
 
 #pragma once
 
-#include <QApplication>
-#include <QObject>
+#include <QString>
+#include <QIcon>
 
-class XAData;
-class XAEditor;
-class XAMainWindow;
-class XATheme;
-
-/**
- * Initializes the application and manages the GUI
- */
-class XAApp : public QObject
+class XATheme
 {
-    Q_OBJECT;
-
 public:
-    XAApp(int& argc, char** argv);
-    ~XAApp();
+    XATheme();
+    ~XATheme();
 
-    bool init();
-    bool initGui();
+    bool isDarkMode() const;
+    void selectColorTheme(const QString& color_theme);
 
-    /**
-     * Starts the GUI application and only returns (with an exit code) when the application should terminate
-     */
-    int run();
-
-    /**
-     * Returns the theme manager
-     */
-    XATheme* getTheme();
-
+    QIcon getIcon(QString icon_name) const;
 private:
-
-private:
-    QApplication      m_app;
-    XAData*           m_app_data;
-    XAMainWindow*     m_window;
-    std::unique_ptr<XATheme> m_theme;
+    QString m_color_theme;
 };

@@ -19,18 +19,21 @@
 #include "ui_xa_window.h"
 #include "ui_xa_indent_options.h"
 #include "ui_xa_theme_options.h"
+#include "xa_app.h"
 #include "xa_editor.h"
 #include "xa_tree_dock.h"
 #include "xa_data.h"
+#include "xa_theme.h"
 #include "xa_xml_tree_model.h"
 #include "xa_xml_tree_item.h"
 #include <QtWidgets>
 #include <QFontDialog>
 
 
-XAMainWindow::XAMainWindow(XAData* app_data, QWidget *parent)
+XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget *parent)
     : QMainWindow(parent)
     , m_main_window(new Ui::MainWindow)
+    , m_app(app)
     , m_app_data(app_data)
     , m_editor(nullptr)
     , m_xml_highlighter(nullptr)
@@ -56,6 +59,8 @@ XAMainWindow::XAMainWindow(XAData* app_data, QWidget *parent)
     setWindowTitle(tr("XML Atlas"));
     QIcon icon(":/icons/images/xmlatlas.ico");
     setWindowIcon(icon);
+
+    onThemeChange();
 }
 
 
@@ -172,6 +177,28 @@ void XAMainWindow::onSelectionChanged(const QModelIndex& index, const QModelInde
 
         m_editor->markSelectedRange(tree_item->getOffset(), 20);
     }
+}
+
+void XAMainWindow::onThemeChange()
+{
+    auto theme = m_app->getTheme();
+
+    m_main_window->actionNew->setIcon(theme->getIcon("new-doc.png"));
+    m_main_window->actionOpen->setIcon(theme->getIcon("open-doc.png"));
+    m_main_window->actionSave->setIcon(theme->getIcon("save-doc.png"));
+
+    m_main_window->actionCut->setIcon(theme->getIcon("cut.png"));
+    m_main_window->actionCopy->setIcon(theme->getIcon("copy.png"));
+    m_main_window->actionPaste->setIcon(theme->getIcon("paste.png"));
+    m_main_window->actionUndo->setIcon(theme->getIcon("undo.png"));
+    m_main_window->actionRedo->setIcon(theme->getIcon("redo.png"));
+
+    m_main_window->actionIndent->setIcon(theme->getIcon("indent.png"));
+    m_main_window->actionFind->setIcon(theme->getIcon("search.png"));
+    m_main_window->actionLocate_in_tree->setIcon(theme->getIcon("location.png"));
+
+    m_main_window->actionDrill_down->setIcon(theme->getIcon("down-arrow.png"));
+    m_main_window->actionDrill_up->setIcon(theme->getIcon("up-arrow.png"));
 }
 
 void XAMainWindow::setupTheme()
