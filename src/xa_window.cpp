@@ -118,23 +118,6 @@ void XAMainWindow::saveFile(const QString& path)
 }
 
 
-void XAMainWindow::indentDocument(bool force_option)
-{
-    if (force_option)
-    {
-        auto indent_ui = new Ui::IndentOptions();
-        auto dlg = new QDialog();
-        indent_ui->setupUi(dlg);
-        dlg->exec();
-
-        delete dlg;
-    }
-
-    auto content = m_app_data->indentDocument();
-    m_editor->setPlainText(content);
-}
-
-
 void XAMainWindow::setupEditor()
 {
     m_editor = new XAEditor;
@@ -242,15 +225,33 @@ void XAMainWindow::setupFont()
 {
     bool ok;
     QFont font = QFontDialog::getFont(
-                    &ok, m_font, this);
+        &ok, m_font, this);
     if (ok) {
         m_font = font;
         m_editor->setFont(m_font);
-    } else {
+    }
+    else {
         // the user canceled the dialog; font is set to the initial
         // value, in this case Helvetica [Cronyx], 10
     }
 }
+
+void XAMainWindow::indentDocument(bool force_option)
+{
+    if (force_option)
+    {
+        auto indent_ui = new Ui::IndentOptions();
+        auto dlg = new QDialog();
+        indent_ui->setupUi(dlg);
+        dlg->exec();
+
+        delete dlg;
+    }
+
+    auto content = m_app_data->indentDocument();
+    m_editor->setPlainText(content);
+}
+
 
 void XAMainWindow::setupDefaults()
 {
