@@ -17,33 +17,22 @@
 
 #pragma once
 
-#include "pugixml.hpp"
-#include <QObject>
+#include <pugixml.hpp>
+#include <sstream>
 
-class XAXMLTreeModel;
-
- /**
-  * Application main model
-  */
-class XAData : public QObject
+class XAXMLWriter
 {
-    Q_OBJECT
-
 public:
-    XAData();
-    ~XAData();
+    XAXMLWriter();
 
-    XAXMLTreeModel* getXMLTreeModel() const;
+    void setIndentation(int indent_size);
+    void setAttributesPerLine(int max_attr_per_line);
+    void setUseSpaces(bool use_spaces);
 
-    void setContent(const QString& content);
-
-    QString indentDocument(int indent_size, int max_attr_per_line, bool use_spaces);
-
-private:
-    void buildTreeModelFromContent();
+    bool write(const pugi::xml_document& doc, std::stringstream& buff);
 
 private:
-    XAXMLTreeModel*     m_xml_tree_model;
-    QString             m_content;
-    pugi::xml_document  m_doc;
+    int m_indent_size;
+    int m_max_attr_per_line;
+    bool m_use_spaces;
 };

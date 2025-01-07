@@ -242,6 +242,10 @@ void XAMainWindow::setupFont()
 
 void XAMainWindow::indentDocument(bool force_option)
 {
+    int indent_size = 4;
+    int max_attr_per_line = 6;
+    bool use_spaces = true;
+
     if (force_option)
     {
         auto indent_ui = new Ui::IndentOptions();
@@ -252,9 +256,9 @@ void XAMainWindow::indentDocument(bool force_option)
         delete dlg;
     }
 
-    auto content = m_app_data->indentDocument();
+    auto content = m_app_data->indentDocument(indent_size, max_attr_per_line, use_spaces);
     m_editor->setPlainText(content);
-}
+ }
 
 
 void XAMainWindow::setupDefaults()

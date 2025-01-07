@@ -115,6 +115,9 @@ void XAHighlighter_XML::updateFormatMap()
         {
             // XML = character: lightgrey 0xcccccc
         }
+        {
+            // Comment color: 0x6a9955
+        }
     }
     else
     {

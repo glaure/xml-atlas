@@ -80,6 +80,8 @@ set(XA_SOURCE_FILES
   src/xa_xml_tree_item.h
   src/xa_xml_tree_model.cpp
   src/xa_xml_tree_model.h
+  src/xa_xml_writer.cpp
+  src/xa_xml_writer.h
   src/xml_atlas.cpp
 )
 

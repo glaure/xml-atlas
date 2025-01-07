@@ -18,7 +18,7 @@
 #include "xa_data.h"
 #include "xa_xml_tree_model.h"
 #include "xa_xml_tree_item.h"
-
+#include "xa_xml_writer.h"
 #include <sstream>
 #include <vector>
 
@@ -139,10 +139,17 @@ void XAData::setContent(const QString& content)
     buildTreeModelFromContent();
 }
 
-QString XAData::indentDocument()
+QString XAData::indentDocument(int indent_size, int max_attr_per_line, bool use_spaces)
 {
     std::stringstream sbuff;
-    m_doc.save(sbuff);
+
+    XAXMLWriter xw;
+    xw.setIndentation(indent_size);
+    xw.setAttributesPerLine(max_attr_per_line);
+    xw.setUseSpaces(use_spaces);
+
+    xw.write(m_doc, sbuff);
+
     return QString::fromStdString(sbuff.str());
 }
 
