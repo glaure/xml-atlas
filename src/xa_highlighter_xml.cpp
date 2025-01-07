@@ -16,57 +16,19 @@
  */
 
 #include "xa_highlighter_xml.h"
+#include "xa_app.h"
+#include "xa_theme.h"
 
 
-XAHighlighter_XML::XAHighlighter_XML(QObject* parent) :
-    QSyntaxHighlighter(parent)
+XAHighlighter_XML::XAHighlighter_XML(XAApp* app, QTextDocument* parent)
+    : QSyntaxHighlighter(parent)
+    , m_app(app)
 {
-    // setRegexes();
-    // setFormats();
     init();
 }
-
-XAHighlighter_XML::XAHighlighter_XML(QTextDocument* parent) :
-    QSyntaxHighlighter(parent)
-{
-    // setRegexes();
-    // setFormats();
-    init();
-}
-
-//XAHighlighter_XML::XAHighlighter_XML(QTextEdit* parent) :
-//    QSyntaxHighlighter(parent)
-//{
-//    setRegexes();
-//    setFormats();
-//}
 
 void XAHighlighter_XML::highlightBlock(const QString& text)
 {
-    // Special treatment for xml element regex as we use captured text to emulate lookbehind
-    // int xmlElementIndex = m_xmlElementRegex.indexIn(text);
-    // while (xmlElementIndex >= 0)
-    // {
-    //     int matchedPos = m_xmlElementRegex.pos(1);
-    //     int matchedLength = m_xmlElementRegex.cap(1).length();
-    //     setFormat(matchedPos, matchedLength, m_xmlElementFormat);
-
-    //     xmlElementIndex = m_xmlElementRegex.indexIn(text, matchedPos + matchedLength);
-    // }
-
-    // // Highlight xml keywords *after* xml elements to fix any occasional / captured into the enclosing element
-    // typedef QList<QRegExp>::const_iterator Iter;
-    // Iter xmlKeywordRegexesEnd = m_xmlKeywordRegexes.end();
-    // for (Iter it = m_xmlKeywordRegexes.begin(); it != xmlKeywordRegexesEnd; ++it) {
-    //     const QRegExp& regex = *it;
-    //     highlightByRegex(m_xmlKeywordFormat, regex, text);
-    // }
-
-    // highlightByRegex(m_xmlAttributeFormat, m_xmlAttributeRegex, text);
-    // highlightByRegex(m_xmlCommentFormat, m_xmlCommentRegex, text);
-    // highlightByRegex(m_xmlValueFormat, m_xmlValueRegex, text);
-
-
     for (const HighlightingRule &rule : std::as_const(m_highlighting_rules)) {
         QRegularExpressionMatchIterator matchIterator = rule.pattern.globalMatch(text);
         while (matchIterator.hasNext()) {
@@ -77,69 +39,13 @@ void XAHighlighter_XML::highlightBlock(const QString& text)
 
     setCurrentBlockState(0);
 
-    // int startIndex = 0;
-    // if (previousBlockState() != 1)
-    //     startIndex = text.indexOf(commentStartExpression);
-
-
-    // while (startIndex >= 0) {
-    //     QRegularExpressionMatch match = commentEndExpression.match(text, startIndex);
-    //     int endIndex = match.capturedStart();
-    //     int commentLength = 0;
-    //     if (endIndex == -1) {
-    //         setCurrentBlockState(1);
-    //         commentLength = text.length() - startIndex;
-    //     } else {
-    //         commentLength = endIndex - startIndex
-    //                         + match.capturedLength();
-    //     }
-    //     setFormat(startIndex, commentLength, multiLineCommentFormat);
-    //     startIndex = text.indexOf(commentStartExpression, startIndex + commentLength);
-    // }
 }
 
-void XAHighlighter_XML::highlightByRegex(const QTextCharFormat& format,
-    const QRegularExpression& regex, const QString& text)
+void XAHighlighter_XML::onThemeChange()
 {
-    // int index = regex.indexIn(text);
-
-    // while (index >= 0)
-    // {
-    //     int matchedLength = regex.matchedLength();
-    //     setFormat(index, matchedLength, format);
-
-    //     index = regex.indexIn(text, index + matchedLength);
-    // }
+    init();
+    rehighlight();
 }
-
-// void XAHighlighter_XML::setRegexes()
-// {
-//     m_xmlElementRegex.setPattern("<[?\\s]*[/]?[\\s]*([^\\n][^>]*)(?=[\\s/>])");
-//     m_xmlAttributeRegex.setPattern("\\w+\\s*(?=\\=)\\s*");
-//     m_xmlValueRegex.setPattern("\"[^\\n\"]+\"(?=[?\\s/>])");
-//     m_xmlCommentRegex.setPattern("<!--[^\\n]*-->");
-
-//     // m_xmlKeywordRegexes = QList<QRegExp>() << QRegExp("<\\?") << QRegExp("/>")
-//     //     << QRegExp(">") << QRegExp("<") << QRegExp("</")
-//     //     << QRegExp("\\?>");
-// }
-
-// void XAHighlighter_XML::setFormats()
-// {
-//     m_xmlKeywordFormat.setForeground(Qt::blue);
-//     m_xmlKeywordFormat.setFontWeight(QFont::Bold);
-
-//     m_xmlElementFormat.setForeground(Qt::darkBlue);
-//     m_xmlElementFormat.setFontWeight(QFont::Bold);
-
-//     m_xmlAttributeFormat.setForeground(Qt::darkGreen);
-//     m_xmlAttributeFormat.setFontWeight(QFont::Bold);
-//     m_xmlAttributeFormat.setFontItalic(true);
-
-//     m_xmlValueFormat.setForeground(Qt::darkRed);
-
-//     m_xmlCommentFormat.setForeground(Qt::gray);
-// }
 
 
 void XAHighlighter_XML::init()
@@ -147,6 +53,8 @@ void XAHighlighter_XML::init()
     HighlightingRule rule;
 
     updateFormatMap();
+
+    m_highlighting_rules.clear();
 
     {   
         //<ABC></ABC>
@@ -171,24 +79,64 @@ void XAHighlighter_XML::init()
 
 void XAHighlighter_XML::updateFormatMap()
 {
-    {
-        QTextCharFormat fmt;
-        fmt.setFontWeight(QFont::Bold);
-        fmt.setForeground(Qt::red);
-        m_format_map[static_cast<int>(XMLSE::XML_PROLOG)] = fmt;
-    }
+    auto theme = m_app->getTheme();
 
+    if (theme->getColorTheme() == "dark")
     {
-        QTextCharFormat fmt;
-        fmt.setFontWeight(QFont::Bold);
-        fmt.setForeground(Qt::darkBlue);
-        m_format_map[static_cast<int>(XMLSE::XML_ELEM)] = fmt;
-    }
+        {
+            QTextCharFormat fmt;
+            fmt.setFontWeight(QFont::Bold);
+            fmt.setForeground(QBrush(0x569cd6));    // lightblue
+            m_format_map[static_cast<int>(XMLSE::XML_PROLOG)] = fmt;
+        }
 
+        {
+            QTextCharFormat fmt;
+            fmt.setFontWeight(QFont::Bold);
+            fmt.setForeground(QBrush(0x569cd6));    // lightblue
+            m_format_map[static_cast<int>(XMLSE::XML_ELEM)] = fmt;
+        }
+
+        {
+            QTextCharFormat fmt;
+            fmt.setFontWeight(QFont::Bold);
+            fmt.setForeground(QBrush(0x9cdcfe));    // lightlightblue
+            m_format_map[static_cast<int>(XMLSE::XML_ATTR)] = fmt;
+        }
+
+        {
+            // Attribute value: orange/red 0xce9178
+        }
+
+        {
+            // XML </> characters: grey 0x808080
+        }
+
+        {
+            // XML = character: lightgrey 0xcccccc
+        }
+    }
+    else
     {
-        QTextCharFormat fmt;
-        fmt.setFontWeight(QFont::Bold);
-        fmt.setForeground(Qt::red);
-        m_format_map[static_cast<int>(XMLSE::XML_ATTR)] = fmt;
+        {
+            QTextCharFormat fmt;
+            fmt.setFontWeight(QFont::Bold);
+            fmt.setForeground(Qt::red);
+            m_format_map[static_cast<int>(XMLSE::XML_PROLOG)] = fmt;
+        }
+
+        {
+            QTextCharFormat fmt;
+            fmt.setFontWeight(QFont::Bold);
+            fmt.setForeground(Qt::darkBlue);
+            m_format_map[static_cast<int>(XMLSE::XML_ELEM)] = fmt;
+        }
+
+        {
+            QTextCharFormat fmt;
+            fmt.setFontWeight(QFont::Bold);
+            fmt.setForeground(Qt::red);
+            m_format_map[static_cast<int>(XMLSE::XML_ATTR)] = fmt;
+        }
     }
 }

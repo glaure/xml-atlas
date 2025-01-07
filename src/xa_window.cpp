@@ -123,7 +123,7 @@ void XAMainWindow::setupEditor()
     m_editor = new XAEditor;
     m_editor->setFont(m_font);
 
-    m_xml_highlighter = new XAHighlighter_XML(m_editor->document());
+    m_xml_highlighter = new XAHighlighter_XML(m_app, m_editor->document());
 
     m_tree_view = new QTreeView(this);
     m_tree_view->setModel(m_app_data->getXMLTreeModel());
@@ -182,6 +182,7 @@ void XAMainWindow::onThemeChange()
 
     m_main_window->actionDrill_down->setIcon(theme->getIcon("down-arrow.png"));
     m_main_window->actionDrill_up->setIcon(theme->getIcon("up-arrow.png"));
+
 }
 
 void XAMainWindow::setupTheme()
@@ -212,7 +213,10 @@ void XAMainWindow::setupTheme()
         }
 
         this->onThemeChange();
-
+        if (m_xml_highlighter)
+        {
+            m_xml_highlighter->onThemeChange();
+        }
         });
 
     dlg->exec();
