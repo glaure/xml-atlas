@@ -18,13 +18,16 @@
 
 #include "xa_xml_tree_model.h"
 #include "xa_xml_tree_item.h"
+#include "xa_theme.h"
+
+#include <QIcon>
 
 
-
-XAXMLTreeModel::XAXMLTreeModel(QObject* parent)
+XAXMLTreeModel::XAXMLTreeModel(XATheme* theme, QObject* parent)
     : QAbstractItemModel(parent)
+    , m_theme(theme)
 {
-    m_root_item = new XAXMLTreeItem{ "ROOT"};   
+    m_root_item = new XAXMLTreeItem{ "ROOT"};
 }
 
 XAXMLTreeModel::~XAXMLTreeModel()
@@ -49,7 +52,31 @@ QVariant XAXMLTreeModel::data(const QModelIndex& index, int role) const
     case Qt::DecorationRole:
     {
         auto item = static_cast<XAXMLTreeItem*>(index.internalPointer());
-        return item->icon();
+        static QIcon ic_light_element_children = QIcon(":/xml/images/light/element-children.png");
+        static QIcon ic_light_element_empty = QIcon(":/xml/images/light/element-empty.png");
+        static QIcon ic_light_element_text = QIcon(":/xml/images/light/element-text.png");
+        static QIcon ic_dark_element_children = QIcon(":/xml/images/dark/element-children.png");
+        static QIcon ic_dark_element_empty = QIcon(":/xml/images/dark/element-empty.png");
+        static QIcon ic_dark_element_text = QIcon(":/xml/images/dark/element-text.png");
+        
+        if (m_theme->getColorTheme() == "dark")
+        {
+            switch (item->childCount())
+            {
+            case 0:  return ic_dark_element_empty;
+            case 1:  return ic_dark_element_text;
+            default: return ic_dark_element_children;
+            }
+        }
+        else
+        {
+            switch (item->childCount())
+            {
+            case 0:  return ic_light_element_empty;
+            case 1:  return ic_light_element_text;
+            default: return ic_light_element_children;
+            }
+        }
     }
     
     default:
@@ -151,3 +178,10 @@ void XAXMLTreeModel::endFillModel()
     endResetModel();
 }
 
+void XAXMLTreeModel::clear()
+{
+    beginResetModel();
+    delete m_root_item;
+    m_root_item = new XAXMLTreeItem{ "ROOT" };
+    endResetModel();
+}

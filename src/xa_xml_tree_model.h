@@ -21,6 +21,7 @@
 
 
 class XAXMLTreeItem;
+class XATheme;
 
 
 class XAXMLTreeModel : public QAbstractItemModel
@@ -28,7 +29,7 @@ class XAXMLTreeModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    XAXMLTreeModel(QObject* parent = nullptr);
+    XAXMLTreeModel(XATheme* theme, QObject* parent = nullptr);
     ~XAXMLTreeModel();
 
     QVariant data(const QModelIndex& index, int role) const override;
@@ -49,7 +50,8 @@ public:
     void beginFillModel();
     void endFillModel();
 
+    void clear();
 private:
-
+    XATheme* m_theme;
     XAXMLTreeItem* m_root_item;
 };

@@ -53,7 +53,7 @@ XAApp::~XAApp()
 
 bool XAApp::init()
 {
-    m_app_data = new XAData;
+    m_app_data = new XAData(getTheme());
     m_window = new XAMainWindow(this, m_app_data);
 
     if (!initGui()) return false;

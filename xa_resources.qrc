@@ -38,5 +38,8 @@
     <file>images/light/element-children.png</file>
     <file>images/light/element-empty.png</file>
     <file>images/light/element-text.png</file>
+	<file>images/dark/element-children.png</file>
+	<file>images/dark/element-empty.png</file>
+	<file>images/dark/element-text.png</file>
 </qresource>
 </RCC>

@@ -43,14 +43,11 @@ public:
     int columnCount() const;
     
     QVariant data(int column) const;
-    QIcon icon() const;
     
     int row() const;
     XAXMLTreeItem* parentItem();
 
-
     uint64_t getOffset() const;
-
 private:
 
 private:

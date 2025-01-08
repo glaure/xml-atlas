@@ -80,6 +80,8 @@ void XAMainWindow::about()
 void XAMainWindow::newFile()
 {
     m_editor->clear();
+    m_app_data->getXMLTreeModel()->clear();
+    m_tree_view->reset();
 }
 
 void XAMainWindow::openFile(const QString &path)
@@ -95,7 +97,8 @@ void XAMainWindow::openFile(const QString &path)
             auto content = file.readAll();
             m_app_data->setContent(content);
             m_editor->setPlainText(content);
-            m_tree_view->expandAll();
+            //m_tree_view->expandAll();
+            m_tree_view->expand(m_app_data->getXMLTreeModel()->index(0, 0));
             m_tree_view->resizeColumnToContents(0);
             //m_tree_view->resizeColumnToContents(1);
 

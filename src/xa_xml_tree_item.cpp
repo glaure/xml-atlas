@@ -77,19 +77,6 @@ QVariant XAXMLTreeItem::data(int column) const
     return QString::fromStdString(m_value);
 }
 
-QIcon XAXMLTreeItem::icon() const
-{
-    static QIcon ic_element_children = QIcon(":/xml/images/light/element-children.png");
-    static QIcon ic_element_empty = QIcon(":/xml/images/light/element-empty.png");
-    static QIcon ic_element_text = QIcon(":/xml/images/light/element-text.png");
-
-    switch (childCount())
-    {
-    case 0:  return ic_element_empty;
-    case 1:  return ic_element_text;
-    default: return ic_element_children;
-    }
-}
 
 int XAXMLTreeItem::row() const
 {

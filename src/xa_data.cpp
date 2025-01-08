@@ -117,9 +117,9 @@ namespace
 }
 
 
-XAData::XAData()
+XAData::XAData(XATheme* theme)
 {
-    m_xml_tree_model = new XAXMLTreeModel(this);
+    m_xml_tree_model = new XAXMLTreeModel(theme, this);
 }
 
 XAData::~XAData()
@@ -135,7 +135,7 @@ XAXMLTreeModel* XAData::getXMLTreeModel() const
 void XAData::setContent(const QString& content)
 {
     m_content = content;
-
+    m_xml_tree_model->clear();
     buildTreeModelFromContent();
 }
 

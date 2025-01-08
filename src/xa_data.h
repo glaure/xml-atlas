@@ -20,7 +20,9 @@
 #include "pugixml.hpp"
 #include <QObject>
 
+
 class XAXMLTreeModel;
+class XATheme;
 
  /**
   * Application main model
@@ -30,7 +32,7 @@ class XAData : public QObject
     Q_OBJECT
 
 public:
-    XAData();
+    XAData(XATheme* theme);
     ~XAData();
 
     XAXMLTreeModel* getXMLTreeModel() const;
