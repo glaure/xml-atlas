@@ -25,14 +25,15 @@ class QSize;
 class QWidget;
 
 class LineNumberArea;
-
+class XAApp;
+class XATheme;
 
 class XAEditor : public QPlainTextEdit
 {
     Q_OBJECT
 
 public:
-    XAEditor(QWidget *parent = nullptr);
+    XAEditor(XAApp* app, QWidget *parent = nullptr);
 
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
@@ -49,6 +50,7 @@ private slots:
 
 private:
     QWidget *lineNumberArea;
+    XATheme* m_theme;
 };
 
 

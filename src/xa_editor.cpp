@@ -18,9 +18,13 @@
 #include "xa_editor.h"
 #include <QPainter>
 #include <QTextBlock>
+#include "xa_app.h"
+#include "xa_theme.h"
 
 
-XAEditor::XAEditor(QWidget *parent) : QPlainTextEdit(parent)
+XAEditor::XAEditor(XAApp* app, QWidget *parent) 
+    : QPlainTextEdit(parent)
+    , m_theme(app->getTheme())
 {
     lineNumberArea = new LineNumberArea(this);
 
@@ -58,7 +62,10 @@ void XAEditor::markSelectedRange(uint64_t offset, std::size_t length)
     if (!isReadOnly()) {
         QTextEdit::ExtraSelection selection = {};
 
-        QColor lineColor = QColor(Qt::yellow).lighter(160);
+        //QColor lineColor = QColor(0x264f78);  // dark
+        //QColor lineColor = QColor(0xbbd5fd);    // light
+        QColor lineColor = m_theme->getColorTheme() == "dark" ? QColor(0x264f78) : QColor(0xbbd5fd);
+
 
         selection.format.setBackground(lineColor);
       

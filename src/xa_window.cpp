@@ -134,7 +134,7 @@ void XAMainWindow::saveFile(const QString& path)
 
 void XAMainWindow::setupEditor()
 {
-    m_editor = new XAEditor;
+    m_editor = new XAEditor(m_app, this);
     m_editor->setFont(m_font);
 
     m_xml_highlighter = new XAHighlighter_XML(m_app, m_editor->document());
