@@ -97,11 +97,22 @@ void XAMainWindow::openFile(const QString &path)
             auto content = file.readAll();
             m_app_data->setContent(content);
             m_editor->setPlainText(content);
-            //m_tree_view->expandAll();
-            m_tree_view->expand(m_app_data->getXMLTreeModel()->index(0, 0));
+            m_tree_view->expandAll();
+            
             m_tree_view->resizeColumnToContents(0);
-            //m_tree_view->resizeColumnToContents(1);
 
+            //{
+            //    auto cw = m_tree_view->columnWidth(0);
+            //    m_tree_view->setColumnWidth(0, cw + 50);
+            //}
+
+            //{
+            //    auto cw = m_tree_view->columnWidth(1);
+            //    m_tree_view->setColumnWidth(1, 20);
+            //}
+
+            m_tree_view->collapseAll();
+            m_tree_view->expand(m_app_data->getXMLTreeModel()->index(0, 0));
         }
     }
 }
