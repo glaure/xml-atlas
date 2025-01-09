@@ -119,16 +119,22 @@ void XAMainWindow::openFile(const QString &path)
 
 void XAMainWindow::saveFile(const QString& path)
 {
-    //QString fileName = path;
+    QString fileName = path;
 
-    //if (fileName.isNull())
-    //    fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", "C++ Files (*.xml *.XML)");
+    if (fileName.isNull())
+        fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "", "XML Files (*.xml *.XML)");
 
-    //if (!fileName.isEmpty()) {
-    //    QFile file(fileName);
-    //    if (file.open(QFile::ReadOnly | QFile::Text))
-    //        editor->setPlainText(file.readAll());
-    //}
+    if (!fileName.isEmpty()) {
+        QFile file(fileName);
+        if (file.open(QFile::WriteOnly | QFile::Text)) {
+            QTextStream out(&file);
+            out << m_editor->toPlainText();
+            file.close();
+        }
+        else {
+            QMessageBox::warning(this, tr("Error"), tr("Cannot save file %1:\n%2.").arg(fileName, file.errorString()));
+        }
+    }
 }
 
 
@@ -156,6 +162,7 @@ void XAMainWindow::setupFileMenu()
     connect(m_main_window->actionNew, &QAction::triggered, this, [this]() { newFile(); });
     connect(m_main_window->actionOpen, &QAction::triggered, this, [this]() { openFile(); });
     connect(m_main_window->actionSave, &QAction::triggered, this, [this]() { saveFile(); });
+    connect(m_main_window->actionSave_as, &QAction::triggered, this, [this]() { saveFile(); });
     connect(m_main_window->actionExit, &QAction::triggered, qApp, &QApplication::quit);
 }
 
