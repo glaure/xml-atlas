@@ -31,6 +31,11 @@ enum class XMLSE
     XML_PROLOG,
     XML_ELEM,
     XML_ATTR,
+    XML_ATTR_VALUE,
+    XML_COMMENT,
+    XML_MULTILINE_COMMENT,
+    XML_CDATA,
+    XML_PI,
 };
 
 
