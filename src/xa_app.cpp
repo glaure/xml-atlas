@@ -30,19 +30,15 @@ XAApp::XAApp(int& argc, char** argv)
     : QObject(nullptr)
     , m_app(argc, argv)
     , m_app_data(nullptr)
+    , m_window(nullptr)
     , m_theme(std::make_unique<XATheme>())
+    , m_settings("XMLAtlas", "XMLAtlas")
 {
     HighDPIUtil hidpi;
     hidpi.fixAppFont();
 
-    if (m_theme->isSystemDarkMode())
-    {
-        m_theme->selectColorTheme("dark");
-    }
-    else 
-    {
-        m_theme->selectColorTheme("light");
-    }
+    auto theme = retrieveColorTheme();
+    m_theme->selectColorTheme(theme);
 }
 
 XAApp::~XAApp()
@@ -79,4 +75,15 @@ int XAApp::run()
 XATheme* XAApp::getTheme() 
 { 
     return m_theme.get(); 
+}
+
+void XAApp::storeColorTheme(const QString& color_theme)
+{
+    m_settings.setValue("color_theme", color_theme);
+}
+
+QString XAApp::retrieveColorTheme() const
+{
+    auto sys_theme = m_theme->isSystemDarkMode() ? "dark" : "light";
+    return m_settings.value("color_theme", sys_theme).toString();
 }

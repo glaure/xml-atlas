@@ -206,8 +206,9 @@ void XAMainWindow::setupTheme()
     theme_ui->setupUi(dlg);
 
     auto theme = m_app->getTheme();
+    QString current_theme = m_app->retrieveColorTheme();
 
-    if (theme->getColorTheme() == "dark")
+    if (current_theme == "dark")
     {
         theme_ui->m_style->setCurrentIndex(1);
     }
@@ -216,25 +217,17 @@ void XAMainWindow::setupTheme()
         theme_ui->m_style->setCurrentIndex(0);
     }
 
+
     connect(theme_ui->m_style, QOverload<int>::of(&QComboBox::currentIndexChanged), [theme, this](int index) {
-        if (index == 0)
-        {
-            theme->selectColorTheme("light");
-        }
-        else
-        {
-            theme->selectColorTheme("dark");
-        }
+        QString selected_theme = (index == 0) ? "light" : "dark";
+        changeTheme(selected_theme);
+    });
 
-        this->onThemeChange();
-        if (m_xml_highlighter)
-        {
-            m_xml_highlighter->onThemeChange();
-        }
-        });
-
-    dlg->exec();
-
+    auto ret = dlg->exec();
+    if (ret != QDialog::Accepted)
+    {
+        changeTheme(current_theme);
+    }
 
     delete dlg;
 }
@@ -283,4 +276,17 @@ void XAMainWindow::setupDefaults()
     font.setPointSize(9);
 
     m_font = font;
+}
+
+void XAMainWindow::changeTheme(const QString& selected_theme)
+{
+    auto theme = m_app->getTheme();
+    theme->selectColorTheme(selected_theme);
+    m_app->storeColorTheme(selected_theme);
+
+    this->onThemeChange();
+    if (m_xml_highlighter)
+    {
+        m_xml_highlighter->onThemeChange();
+    }
 }

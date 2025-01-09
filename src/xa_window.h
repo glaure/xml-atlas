@@ -62,6 +62,7 @@ private:
     void setupFont();
     void setupDefaults();
 
+    void changeTheme(const QString& selected_theme);
 
 private:
     Ui::MainWindow*     m_main_window;

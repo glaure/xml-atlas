@@ -19,6 +19,7 @@
 
 #include <QApplication>
 #include <QObject>
+#include <QSettings>
 
 class XAData;
 class XAEditor;
@@ -49,11 +50,20 @@ public:
      */
     XATheme* getTheme();
 
-private:
+    /**
+     * Stores the current color theme
+     */
+    void storeColorTheme(const QString& color_theme);
+
+    /**
+     * Retrieves the stored color theme
+     */
+    QString retrieveColorTheme() const;
 
 private:
     QApplication      m_app;
     XAData*           m_app_data;
     XAMainWindow*     m_window;
     std::unique_ptr<XATheme> m_theme;
+    QSettings         m_settings;
 };
