@@ -155,7 +155,7 @@ QString XAData::indentDocument(int indent_size, int max_attr_per_line, bool use_
 
 void XAData::buildTreeModelFromContent()
 {
-    auto parse_result = m_doc.load_buffer(m_content.toLatin1(), m_content.size());
+    auto parse_result = m_doc.load_buffer(m_content.toLatin1(), m_content.size(), pugi::parse_full);
     if (parse_result.status == pugi::status_ok)
     {
         XmlTreeBuilder tb(m_xml_tree_model);

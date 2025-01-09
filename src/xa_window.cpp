@@ -269,7 +269,7 @@ void XAMainWindow::indentDocument(bool force_option)
 
         delete dlg;
     }
-
+    //m_app_data->setContent(m_editor->toPlainText());
     auto content = m_app_data->indentDocument(indent_size, max_attr_per_line, use_spaces);
     m_editor->setPlainText(content);
  }

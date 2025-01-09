@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="style.xsl"?>
+<!--This is a comment -->
+<root>
+    <!--Another comment -->
+    <element1 attr1 = "value1" attr2 = "value2">
+        <![CDATA[
+        This is a CDATA section.
+        It can contain special characters like <, >, and & without being escaped.
+        ]]>
+        <child1 attr1 = "value1" attr2 = "value2"/>
+<?processing-instruction This is a processing instruction ?>
+    </element1>
+    <element2 attr1 = "value1" attr2 = "value2">
+        <child2 attr1 = "value1" attr2 = "value2"/>
+        <![CDATA[
+        Another CDATA section.
+        ]]>
+    </element2>
+</root>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+    <!ELEMENT root (element1, element2)>
+    <!ELEMENT element1 (child1)>
+    <!ELEMENT element2 (child2)>
+    <!ELEMENT child1 (#PCDATA)>
+    <!ELEMENT child2 (#PCDATA)>
+    <!ATTLIST element1 attr1 CDATA #REQUIRED attr2 CDATA #IMPLIED>
+    <!ATTLIST element2 attr1 CDATA #REQUIRED attr2 CDATA #IMPLIED>
+    <!ATTLIST child1 attr1 CDATA #REQUIRED attr2 CDATA #IMPLIED>
+    <!ATTLIST child2 attr1 CDATA #REQUIRED attr2 CDATA #IMPLIED>
+]>
+<root>
+    <element1 attr1="value1" attr2="value2">
+        <child1 attr1="value1" attr2="value2">This is child1 text.</child1>
+    </element1>
+    <element2 attr1="value1" attr2="value2">
+        <child2 attr1="value1" attr2="value2">This is child2 text.</child2>
+    </element2>
+</root>
