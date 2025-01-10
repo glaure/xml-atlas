@@ -61,6 +61,10 @@ public:
      */
     QString retrieveColorTheme() const;
 
+    /**
+     * Returns the settings object
+     */
+    QSettings& getSettings();
 private:
     QApplication      m_app;
     XAData*           m_app_data;

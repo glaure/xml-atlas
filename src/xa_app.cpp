@@ -87,3 +87,8 @@ QString XAApp::retrieveColorTheme() const
     auto sys_theme = m_theme->isSystemDarkMode() ? "dark" : "light";
     return m_settings.value("color_theme", sys_theme).toString();
 }
+
+QSettings& XAApp::getSettings()
+{
+    return m_settings;
+}

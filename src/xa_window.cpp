@@ -39,6 +39,10 @@ XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget *parent)
     , m_xml_highlighter(nullptr)
     , m_tree_dock(nullptr)
     , m_tree_view(nullptr)
+    , m_font()
+    , m_recent_file_acts()
+    , m_recent_file_separator(nullptr)
+    , m_recent_file_submenuact(nullptr)
 {
     m_main_window->setupUi(this);
 
@@ -61,6 +65,7 @@ XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget *parent)
     setWindowIcon(icon);
 
     onThemeChange();
+    updateRecentFileActions();
 }
 
 
@@ -113,6 +118,8 @@ void XAMainWindow::openFile(const QString &path)
 
             m_tree_view->collapseAll();
             m_tree_view->expand(m_app_data->getXMLTreeModel()->index(0, 0));
+
+            addRecentFile(fileName);
         }
     }
 }
@@ -130,6 +137,7 @@ void XAMainWindow::saveFile(const QString& path)
             QTextStream out(&file);
             out << m_editor->toPlainText();
             file.close();
+            addRecentFile(fileName);
         }
         else {
             QMessageBox::warning(this, tr("Error"), tr("Cannot save file %1:\n%2.").arg(fileName, file.errorString()));
@@ -164,6 +172,14 @@ void XAMainWindow::setupFileMenu()
     connect(m_main_window->actionSave, &QAction::triggered, this, [this]() { saveFile(); });
     connect(m_main_window->actionSave_as, &QAction::triggered, this, [this]() { saveFile(); });
     connect(m_main_window->actionExit, &QAction::triggered, qApp, &QApplication::quit);
+
+    m_recent_file_separator = m_main_window->menuFile->addSeparator();
+    for (int i = 0; i < MaxRecentFiles; ++i) {
+        m_recent_file_acts[i] = new QAction(this);
+        m_recent_file_acts[i]->setVisible(false);
+        connect(m_recent_file_acts[i], &QAction::triggered, this, &XAMainWindow::openRecentFile);
+        m_main_window->menuFile->addAction(m_recent_file_acts[i]);
+    }
 }
 
 void XAMainWindow::setupHelpMenu()
@@ -296,4 +312,44 @@ void XAMainWindow::changeTheme(const QString& selected_theme)
     {
         m_xml_highlighter->onThemeChange();
     }
+}
+
+void XAMainWindow::updateRecentFileActions()
+{
+    auto& settings = m_app->getSettings();
+    QStringList files = settings.value("recentFileList").toStringList();
+
+    int numRecentFiles = qMin(files.size(), (int)MaxRecentFiles);
+
+    for (int i = 0; i < numRecentFiles; ++i) {
+        QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName());
+        m_recent_file_acts[i]->setText(text);
+        m_recent_file_acts[i]->setData(files[i]);
+        m_recent_file_acts[i]->setVisible(true);
+    }
+    for (int j = numRecentFiles; j < MaxRecentFiles; ++j)
+        m_recent_file_acts[j]->setVisible(false);
+
+    m_recent_file_separator->setVisible(numRecentFiles > 0);
+}
+
+void XAMainWindow::openRecentFile()
+{
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action)
+        openFile(action->data().toString());
+}
+
+void XAMainWindow::addRecentFile(const QString& filePath)
+{
+    auto& settings = m_app->getSettings();
+    QStringList files = settings.value("recentFileList").toStringList();
+    files.removeAll(filePath);
+    files.prepend(filePath);
+    while (files.size() > MaxRecentFiles)
+        files.removeLast();
+
+    settings.setValue("recentFileList", files);
+
+    updateRecentFileActions();
 }

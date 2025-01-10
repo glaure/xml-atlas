@@ -61,8 +61,10 @@ private:
     void setupTheme();
     void setupFont();
     void setupDefaults();
-
     void changeTheme(const QString& selected_theme);
+    void updateRecentFileActions();
+    void openRecentFile();
+    void addRecentFile(const QString& file_path);
 
 private:
     Ui::MainWindow*     m_main_window;
@@ -73,4 +75,9 @@ private:
     XATreeDock*         m_tree_dock;
     QTreeView*          m_tree_view;
     QFont               m_font;
+
+    enum { MaxRecentFiles = 10 };
+    QAction* m_recent_file_acts[MaxRecentFiles];
+    QAction* m_recent_file_separator;
+    QAction* m_recent_file_submenuact;
 };
