@@ -193,6 +193,55 @@ void XAHighlighter_XML::highlightBlock(const QString& text)
         }
     }
 
+    // Processing instruction
+    {
+        auto proc_instr = m_processing_instruction.match(text);
+        if (proc_instr.hasMatch())
+        {
+            {
+                int piStart = proc_instr.capturedStart();
+                int piEnd = proc_instr.capturedEnd();
+                setFormat(piStart, piEnd - piStart, m_format_map.at(static_cast<int>(XMLSE::XML_ELEM)));
+            }
+
+            int piNameStart = proc_instr.capturedStart(1);
+            int piNameEnd = proc_instr.capturedEnd(1);
+            auto debug = text.mid(piNameStart, piNameEnd - piNameStart).toStdString();
+            setFormat(piNameStart, piNameEnd - piNameStart, m_format_map.at(static_cast<int>(XMLSE::XML_PI)));
+
+            // attributes or other
+            {
+                auto attr_name = m_attribute_name.match(text, piNameEnd);
+                if (attr_name.hasMatch())
+                {
+                    while (attr_name.hasMatch())
+                    {
+                        int attrStart = attr_name.capturedStart();
+                        int attrEnd = attr_name.capturedEnd();
+                        setFormat(attrStart, attrEnd - attrStart, m_format_map.at(static_cast<int>(XMLSE::XML_ATTR)));
+                        attr_name = m_attribute_name.match(text, attrEnd);
+                        // attribute value
+                        auto attr_value = m_attribute_value.match(text, attrEnd);
+                        if (attr_value.hasMatch())
+                        {
+                            int attrValueStart = attr_value.capturedStart();
+                            int attrValueEnd = attr_value.capturedEnd();
+                            setFormat(attrValueStart, attrValueEnd - attrValueStart, m_format_map.at(static_cast<int>(XMLSE::XML_ATTR_VALUE)));
+                        }
+                    }
+                }
+                else
+                {
+                    int piContentStart = proc_instr.capturedStart(2);
+                    int piContentEnd = proc_instr.capturedEnd(2);
+                    auto debug = text.mid(piContentStart, piContentEnd - piContentStart).toStdString();
+                    setFormat(piContentStart, piContentEnd - piContentStart, m_format_map.at(static_cast<int>(XMLSE::XML_PI_VALUE)));
+                }
+            }
+
+        }
+    }
+
 }
 
 void XAHighlighter_XML::onThemeChange()
@@ -212,9 +261,9 @@ void XAHighlighter_XML::init()
 
     // line rules
     {   // Processing instruction
-        rule.pattern = QRegularExpression(QStringLiteral("<\\?.*\\?>"));
-        rule.format = m_format_map.at(static_cast<int>(XMLSE::XML_PI));
-        m_line_rules.append(rule);
+        //rule.pattern = QRegularExpression(QStringLiteral("<\\?.*\\?>"));
+        //rule.format = m_format_map.at(static_cast<int>(XMLSE::XML_PI));
+        //m_line_rules.append(rule);
 
         //<?xml version="1.0" encoding="UTF-8"?>
         rule.pattern = QRegularExpression(QStringLiteral("<\\?xml.*>"));
@@ -226,11 +275,6 @@ void XAHighlighter_XML::init()
         rule.format = m_format_map.at(static_cast<int>(XMLSE::XML_COMMENT));
         m_line_rules.append(rule);
 
-        //</ABC>
-        //<ABC/>
-        //rule.pattern = QRegularExpression(QStringLiteral("<[/]?[\\s]*([a-zA-Z_][\\w\\-\\.]*)[\\s/>]"));
-        //rule.format = m_format_map.at(static_cast<int>(XMLSE::XML_ELEM));
-        //m_line_rules.append(rule);
     }
 
     // (potential) multi-line rules
@@ -242,25 +286,19 @@ void XAHighlighter_XML::init()
         rule.pattern = QRegularExpression(QStringLiteral("<!\\[CDATA\\[.*\\]\\]>"));
         rule.format = m_format_map.at(static_cast<int>(XMLSE::XML_CDATA));
 
-        //<ABC></ABC>
-        //<ABC/>
-        //rule.pattern = QRegularExpression(QStringLiteral("<[/]?[\\s]*([a-zA-Z_][\\w\\-\\.]*)[\\s/>]"));
-        //rule.format = m_format_map.at(static_cast<int>(XMLSE::XML_ELEM));
-
         //<ABC
         m_element_start_pattern = QRegularExpression(QStringLiteral("<([a-zA-Z_][\\w\\-\\.]*)"));
         m_element_closing_pattern = QRegularExpression(QStringLiteral(">(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"));
         m_element_end_pattern = QRegularExpression(QStringLiteral("</([a-zA-Z_][\\w\\-\\.]*)>")); 
 
         // XML attribute name
-        //rule.pattern = QRegularExpression(QStringLiteral("\\b[a-zA-Z_][\\w\\-\\.]*\\b(?=\\s*=)"));
-        //rule.format = m_format_map.at(static_cast<int>(XMLSE::XML_ATTR));
         m_attribute_name = QRegularExpression(QStringLiteral("\\b[a-zA-Z_][\\w\\-\\.]*\\b(?=\\s*=)"));
 
         // XML Attribute value
         m_attribute_value = QRegularExpression(QStringLiteral("\"[^\"]*\""));
-        //rule.pattern = QRegularExpression(QStringLiteral("\"[^\"]*\""));
-        //rule.format = m_format_map.at(static_cast<int>(XMLSE::XML_ATTR_VALUE));
+
+        // Processing instruction
+        m_processing_instruction = QRegularExpression(QStringLiteral("<\\?([a-zA-Z_][\\w\\-\\.]*)(.*)\\?>"));
     }
 }
 
@@ -324,6 +362,12 @@ void XAHighlighter_XML::updateFormatMap()
             m_format_map[static_cast<int>(XMLSE::XML_PI)] = fmt;
         }
 
+        {
+            QTextCharFormat fmt;
+            fmt.setForeground(QColor(Qt::gray).darker(100));
+            m_format_map[static_cast<int>(XMLSE::XML_PI_VALUE)] = fmt;
+        }
+
     }
     else
     {
@@ -376,8 +420,14 @@ void XAHighlighter_XML::updateFormatMap()
 
         {
             QTextCharFormat fmt;
-            fmt.setForeground(QColor(0xffa500).darker(100));
+            fmt.setForeground(QColor(0xffa500).darker(150));
             m_format_map[static_cast<int>(XMLSE::XML_PI)] = fmt;
+        }
+
+        {
+            QTextCharFormat fmt;
+            fmt.setForeground(QColor(Qt::gray).darker(200));
+            m_format_map[static_cast<int>(XMLSE::XML_PI_VALUE)] = fmt;
         }
     }
 }

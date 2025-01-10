@@ -36,6 +36,7 @@ enum class XMLSE
     XML_MULTILINE_COMMENT,
     XML_CDATA,
     XML_PI,
+    XML_PI_VALUE,
 };
 
 
@@ -73,4 +74,6 @@ private:
 
     QRegularExpression m_attribute_name;
     QRegularExpression m_attribute_value;
+
+    QRegularExpression m_processing_instruction;
 };
