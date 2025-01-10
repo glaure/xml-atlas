@@ -116,8 +116,7 @@ void XATheme::selectColorTheme(const QString& color_theme)
     else
         QGuiApplication::styleHints()->setColorScheme(Qt::ColorScheme::Light);
 #else
-    auto app = qobject_cast<QApplication*>(QApplication::instance());
-    app->setPalette(qt_fusionPalette_legacy(m_color_theme == "dark"));
+     qApp->setPalette(qt_fusionPalette_legacy(m_color_theme == "dark"));
 #endif // QT_VERSION
 }
 

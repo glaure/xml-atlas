@@ -20,6 +20,7 @@
 #include <QApplication>
 #include <QObject>
 #include <QSettings>
+#include <memory>
 
 class XAData;
 class XAEditor;
