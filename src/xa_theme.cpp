@@ -110,7 +110,7 @@ void XATheme::selectColorTheme(const QString& color_theme)
 {
     m_color_theme = color_theme;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
     if (m_color_theme == "dark")
         QGuiApplication::styleHints()->setColorScheme(Qt::ColorScheme::Dark);
     else
