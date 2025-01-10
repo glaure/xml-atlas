@@ -8,6 +8,22 @@ XML viewer editor project
 Open Source XML Editor that is heavily inspired by XML Marker (http://symbolclick.com/).
 
 
+# Features
+
+* XML tree view
+* Syntax highlighting
+* Dark and light theme
+
+
+# Screenshots
+
+## XML Atlas light theme
+
+![Application screenshot light theme](images/screenshot_light.png)
+
+## XML Atlas dark theme
+
+![Application screenshot dark theme](images/screenshot_dark.png)
 
 # Qt
 
