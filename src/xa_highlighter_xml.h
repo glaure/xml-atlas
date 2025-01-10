@@ -51,10 +51,7 @@ public:
 protected:
     virtual void highlightBlock(const QString& text);
 
-
 private:
-    void highlightByRegex(const QTextCharFormat& format,
-        const QRegularExpression& regex, const QString& text);
 
     void init();
     void updateFormatMap();
@@ -68,6 +65,12 @@ private:
         QRegularExpression pattern;
         QTextCharFormat format;
     };
-    QList<HighlightingRule> m_highlighting_rules;
+    QList<HighlightingRule> m_line_rules;
 
+    QRegularExpression m_element_start_pattern;
+    QRegularExpression m_element_closing_pattern;
+    QRegularExpression m_element_end_pattern;
+
+    QRegularExpression m_attribute_name;
+    QRegularExpression m_attribute_value;
 };
