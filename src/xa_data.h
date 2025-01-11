@@ -41,6 +41,7 @@ public:
 
     QString indentDocument(int indent_size, int max_attr_per_line, bool use_spaces);
 
+    pugi::xml_document& getDocument();
 private:
     void buildTreeModelFromContent();
 

@@ -22,6 +22,7 @@
 
 class XAApp;
 class XAEditor;
+class XATableView;
 class XATreeDock;
 class XAData;
 class QTreeView;
@@ -56,6 +57,7 @@ protected slots:
 
 private:
     void setupEditor();
+    void setupTableView();
     void setupFileMenu();
     void setupHelpMenu();
     void setupTheme();
@@ -65,12 +67,14 @@ private:
     void updateRecentFileActions();
     void openRecentFile();
     void addRecentFile(const QString& file_path);
+    void onEditorTextChanged();
 
 private:
     Ui::MainWindow*     m_main_window;
     XAApp*              m_app;
     XAData*             m_app_data;
     XAEditor*           m_editor;
+    XATableView*        m_tableView;
     XAHighlighter_XML*  m_xml_highlighter;
     XATreeDock*         m_tree_dock;
     QTreeView*          m_tree_view;

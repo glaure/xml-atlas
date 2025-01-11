@@ -1,17 +1,17 @@
-/* 
+/*
  * This file is part of XMLAtlas (https://github.com/glaure/xml-atlas)
  * Copyright (c) 2022 Gunther Laure <gunther.laure@gmail.com>.
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 3.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
+ * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -21,6 +21,7 @@
 #include "ui_xa_theme_options.h"
 #include "xa_app.h"
 #include "xa_editor.h"
+#include "xa_tableview.h"
 #include "xa_tree_dock.h"
 #include "xa_data.h"
 #include "xa_theme.h"
@@ -30,7 +31,7 @@
 #include <QFontDialog>
 
 
-XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget *parent)
+XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget* parent)
     : QMainWindow(parent)
     , m_main_window(new Ui::MainWindow)
     , m_app(app)
@@ -53,11 +54,12 @@ XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget *parent)
     setupDefaults();
 
     setupEditor();
+    setupTableView();
 
     connect(m_main_window->actionUI_Theme, &QAction::triggered, [this]() { setupTheme(); });
     connect(m_main_window->actionFont, &QAction::triggered, [this]() { setupFont(); });
     connect(m_main_window->actionIndent, &QAction::triggered, [this]() { bool force_option = false; indentDocument(force_option); });
-    connect(m_main_window->actionIndent_Options, &QAction::triggered, [this]() { bool force_option = true;indentDocument(force_option); });
+    connect(m_main_window->actionIndent_Options, &QAction::triggered, [this]() { bool force_option = true; indentDocument(force_option); });
 
     setCentralWidget(m_editor);
     setWindowTitle(tr("XML Atlas"));
@@ -71,15 +73,15 @@ XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget *parent)
 
 QSize XAMainWindow::sizeHint() const
 {
-    return QSize{1024, 800};
+    return QSize{ 1024, 800 };
 }
 
 void XAMainWindow::about()
 {
     QMessageBox::about(this, tr("About XML Atlas"),
-                tr("<p>The <b>XML Atlas</b> is an XML editor with " \
-                   "tree navigation support. " \
-                   "</p>"));
+        tr("<p>The <b>XML Atlas</b> is an XML editor with " \
+            "tree navigation support. " \
+            "</p>"));
 }
 
 void XAMainWindow::newFile()
@@ -89,7 +91,7 @@ void XAMainWindow::newFile()
     m_tree_view->reset();
 }
 
-void XAMainWindow::openFile(const QString &path)
+void XAMainWindow::openFile(const QString& path)
 {
     QString fileName = path;
 
@@ -103,7 +105,7 @@ void XAMainWindow::openFile(const QString &path)
             m_app_data->setContent(content);
             m_editor->setPlainText(content);
             m_tree_view->expandAll();
-            
+
             m_tree_view->resizeColumnToContents(0);
 
             //{
@@ -162,8 +164,24 @@ void XAMainWindow::setupEditor()
     m_tree_dock = new XATreeDock("XML Tree", this);
     m_tree_dock->setWidget(m_tree_view);
     addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea, m_tree_dock);
+    
+    //connect(m_editor, &XAEditor::textChanged, this, &XAMainWindow::onEditorTextChanged);
 }
 
+void XAMainWindow::setupTableView()
+{
+    m_tableView = new XATableView(this);
+    QDockWidget* tableDockWidget = new QDockWidget(tr("Table View"), this);
+    tableDockWidget->setWidget(m_tableView);
+    addDockWidget(Qt::BottomDockWidgetArea, tableDockWidget);
+}
+
+void XAMainWindow::onEditorTextChanged()
+{
+    //QString xmlContent = m_editor->toPlainText();
+    //m_tableView->setXmlContent(xmlContent);
+    //auto& doc = m_app_data->getDocument();
+}
 
 void XAMainWindow::setupFileMenu()
 {
@@ -195,7 +213,12 @@ void XAMainWindow::onSelectionChanged(const QModelIndex& index, const QModelInde
     {
         auto tree_item = reinterpret_cast<XAXMLTreeItem*>(item);
 
+        // mark
         m_editor->markSelectedRange(tree_item->getOffset(), 20);
+
+        // update table view
+        //auto& doc = m_app_data->getDocument();
+        m_tableView->setTableRootNode(tree_item->getNode());
     }
 }
 
@@ -244,7 +267,7 @@ void XAMainWindow::setupTheme()
     connect(theme_ui->m_style, QOverload<int>::of(&QComboBox::currentIndexChanged), [theme, this](int index) {
         QString selected_theme = (index == 0) ? "light" : "dark";
         changeTheme(selected_theme);
-    });
+        });
 
     auto ret = dlg->exec();
     if (ret != QDialog::Accepted)
@@ -288,7 +311,7 @@ void XAMainWindow::indentDocument(bool force_option)
     //m_app_data->setContent(m_editor->toPlainText());
     auto content = m_app_data->indentDocument(indent_size, max_attr_per_line, use_spaces);
     m_editor->setPlainText(content);
- }
+}
 
 
 void XAMainWindow::setupDefaults()

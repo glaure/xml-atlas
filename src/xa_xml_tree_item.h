@@ -20,7 +20,7 @@
 #include <QIcon>
 #include <QVariant>
 #include <QVector>
-
+#include <pugixml.hpp>
 
 enum class XAXMLTreeItemType
 {
@@ -34,7 +34,10 @@ class XAXMLTreeItem
 {
 public:
     explicit XAXMLTreeItem(const std::string& value);
-    explicit XAXMLTreeItem(const std::string& value, uint64_t offset, XAXMLTreeItemType item_type, XAXMLTreeItem* parent_item = nullptr);
+    explicit XAXMLTreeItem(const std::string& value,
+        const pugi::xml_node& node,
+        XAXMLTreeItemType item_type,
+        XAXMLTreeItem* parent_item = nullptr);
     ~XAXMLTreeItem();
 
     XAXMLTreeItem* appendChild(XAXMLTreeItem* child);
@@ -48,12 +51,14 @@ public:
     XAXMLTreeItem* parentItem();
 
     uint64_t getOffset() const;
+
+    pugi::xml_node getNode();
 private:
 
 private:
     QVector<XAXMLTreeItem*> m_child_items;
     XAXMLTreeItem* m_parent_item;
     std::string m_value;
-    uint64_t m_offset;
+    pugi::xml_node m_node;
     XAXMLTreeItemType m_item_type;
 };

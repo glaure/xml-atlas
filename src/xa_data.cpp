@@ -30,7 +30,10 @@ namespace
         const auto& attributes = node.attributes();
         for (const auto& attr : attributes)
         {
-            item->appendChild(new XAXMLTreeItem{ attr.name(), static_cast<uint64_t>(node.offset_debug()), XAXMLTreeItemType::ATTRIBUTE, item});
+            item->appendChild(new XAXMLTreeItem{ attr.name(), 
+                node, 
+                XAXMLTreeItemType::ATTRIBUTE, 
+                item});
         }
     }
 
@@ -67,14 +70,20 @@ namespace
                     // node is the first child of a parent node
                     // m_last_node is the parent for this node
                     m_current_parent = m_last_node;
-                    auto new_node = new XAXMLTreeItem(node.name(), node.offset_debug(), XAXMLTreeItemType::ELEMENT, m_current_parent);
+                    auto new_node = new XAXMLTreeItem(node.name(), 
+                        node, 
+                        XAXMLTreeItemType::ELEMENT, 
+                        m_current_parent);
                     appendAttributes(new_node, node);
                     m_current_parent->appendChild(new_node);
                     m_last_node = new_node;
                 }
                 else if (m_last_depth == current_depth) {
                     // node is a sibling to the previous node
-                    auto new_node = new XAXMLTreeItem(node.name(), node.offset_debug(), XAXMLTreeItemType::ELEMENT, m_current_parent);
+                    auto new_node = new XAXMLTreeItem(node.name(), 
+                        node, 
+                        XAXMLTreeItemType::ELEMENT, 
+                        m_current_parent);
                     appendAttributes(new_node, node);
                     m_current_parent->appendChild(new_node);
                     m_last_node = new_node;
@@ -86,7 +95,10 @@ namespace
                         m_current_parent = m_current_parent->parentItem();
                         --last_depth;
                     }
-                    auto new_node = new XAXMLTreeItem(node.name(), node.offset_debug(), XAXMLTreeItemType::ELEMENT, m_current_parent);
+                    auto new_node = new XAXMLTreeItem(node.name(), 
+                        node, 
+                        XAXMLTreeItemType::ELEMENT, 
+                        m_current_parent);
                     appendAttributes(new_node, node);
                     m_current_parent->appendChild(new_node);
                     m_last_node = new_node;
@@ -151,6 +163,11 @@ QString XAData::indentDocument(int indent_size, int max_attr_per_line, bool use_
     xw.write(m_doc, sbuff);
 
     return QString::fromStdString(sbuff.str());
+}
+
+pugi::xml_document& XAData::getDocument()
+{
+    return m_doc;
 }
 
 void XAData::buildTreeModelFromContent()

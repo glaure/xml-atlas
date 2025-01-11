@@ -21,15 +21,18 @@
 XAXMLTreeItem::XAXMLTreeItem(const std::string& value)
     : m_parent_item(nullptr)
     , m_value()
-    , m_offset(0)
+    , m_node()
     , m_item_type(XAXMLTreeItemType::ELEMENT)
 {
 }
 
-XAXMLTreeItem::XAXMLTreeItem(const std::string& value, uint64_t offset, XAXMLTreeItemType item_type, XAXMLTreeItem* parent_item)
+XAXMLTreeItem::XAXMLTreeItem(const std::string& value
+    , const pugi::xml_node& node
+    , XAXMLTreeItemType item_type
+    , XAXMLTreeItem* parent_item)
     : m_parent_item(parent_item)
     , m_value(value)
-    , m_offset(offset)
+    , m_node(node)
     , m_item_type(item_type)
 {
 }
@@ -71,7 +74,7 @@ QVariant XAXMLTreeItem::data(int column) const
     //return "Test";
     switch (column) {
     case 0:     return QString::fromStdString(m_value);
-    case 1:     return static_cast<qulonglong>(m_offset);
+    case 1:     return static_cast<qulonglong>(m_node.offset_debug());
     default:    return "Error: column";
     }
     return QString::fromStdString(m_value);
@@ -95,5 +98,10 @@ XAXMLTreeItem* XAXMLTreeItem::parentItem()
 
 uint64_t XAXMLTreeItem::getOffset() const
 {
-    return m_offset;
+    return m_node.offset_debug();
+}
+
+pugi::xml_node XAXMLTreeItem::getNode()
+{
+    return m_node;
 }

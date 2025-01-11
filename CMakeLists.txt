@@ -74,6 +74,8 @@ set(XA_SOURCE_FILES
   src/xa_theme.h
   src/xa_window.cpp
   src/xa_window.h
+  src/xa_tableview.cpp
+  src/xa_tableview.h
   src/xa_tree_dock.cpp
   src/xa_tree_dock.h
   src/xa_xml_tree_item.cpp
