@@ -33,8 +33,10 @@ public:
     void setTableRootNode(pugi::xml_node node);
 
 private:
+    void populateAttributeTable(pugi::xml_node node);
     void populateTable(pugi::xml_node node);
 
-
-    QTableWidget* m_tableWidget;
+    QVBoxLayout*  m_layout;
+    QTableWidget* m_tableattributes;
+    QTableWidget* m_tablechildren;
 };
