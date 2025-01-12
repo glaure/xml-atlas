@@ -21,6 +21,9 @@
 #include <QVBoxLayout>
 #include <pugixml.hpp>
 
+class QVBoxLayout;
+class QLabel;
+class QTableWidget;
 
 
 class XATableView : public QWidget
@@ -33,10 +36,13 @@ public:
     void setTableRootNode(pugi::xml_node node);
 
 private:
+    void setupLayout();
     void populateAttributeTable(pugi::xml_node node);
     void populateTable(pugi::xml_node node);
 
     QVBoxLayout*  m_layout;
+    QLabel*       m_tableattribute_title;
     QTableWidget* m_tableattributes;
+    QLabel*       m_tablechildren_title;
     QTableWidget* m_tablechildren;
 };
