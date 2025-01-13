@@ -89,6 +89,8 @@ void XAMainWindow::newFile()
     m_editor->clear();
     m_app_data->getXMLTreeModel()->clear();
     m_tree_view->reset();
+
+    setWindowTitle(tr("XML Atlas"));
 }
 
 void XAMainWindow::openFile(const QString& path)
@@ -108,20 +110,16 @@ void XAMainWindow::openFile(const QString& path)
 
             m_tree_view->resizeColumnToContents(0);
 
-            //{
-            //    auto cw = m_tree_view->columnWidth(0);
-            //    m_tree_view->setColumnWidth(0, cw + 50);
-            //}
-
-            //{
-            //    auto cw = m_tree_view->columnWidth(1);
-            //    m_tree_view->setColumnWidth(1, 20);
-            //}
-
             m_tree_view->collapseAll();
             m_tree_view->expand(m_app_data->getXMLTreeModel()->index(0, 0));
 
             addRecentFile(fileName);
+
+            {
+                QFileInfo info(fileName);
+                setWindowTitle(QString("%1 - %2").arg(windowTitle()).arg(info.fileName()));
+            }
+
         }
     }
 }
