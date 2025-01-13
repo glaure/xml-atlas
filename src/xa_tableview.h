@@ -38,6 +38,7 @@ private:
     void populateAttributeTable(pugi::xml_node node);
     void populateTable(pugi::xml_node node);
     void adjustHeight(QTableWidget* table);
+    void adjustWidth();
 
     QVBoxLayout*  m_layout;
     QLabel*       m_tableattribute_title;

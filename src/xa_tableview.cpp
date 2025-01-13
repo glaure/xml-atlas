@@ -19,6 +19,7 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QTableWidget>
 #include <QVBoxLayout>
 
@@ -62,6 +63,8 @@ void XATableView::setupLayout()
     container->setLayout(containerLayout);
     m_scrollArea->setWidget(container);
     m_scrollArea->setWidgetResizable(true);
+    //m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     m_layout->addWidget(m_scrollArea);
     setLayout(m_layout);
@@ -276,6 +279,9 @@ void XATableView::populateTable(pugi::xml_node node)
 
     // Adjust the height of the table to fit the content
     adjustHeight(m_tablechildren);
+
+    // Adjust the width of the container to fit the content
+    adjustWidth();
 }
 
 void XATableView::adjustHeight(QTableWidget* table)
@@ -287,4 +293,13 @@ void XATableView::adjustHeight(QTableWidget* table)
         totalHeight += table->rowHeight(i);
     }
     table->setFixedHeight(totalHeight);
+}
+
+void XATableView::adjustWidth()
+{
+    // Adjust the width of the container to fit the content
+    int maxWidth = std::max(m_tableattributes->horizontalHeader()->length(),
+        m_tablechildren->horizontalHeader()->length());
+    
+    m_tablechildren->setFixedWidth(maxWidth + m_scrollArea->verticalScrollBar()->width() + 20);
 }
