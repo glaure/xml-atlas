@@ -16,42 +16,57 @@
  */
 
 #include "xa_tableview.h"
+#include <QHeaderView>
 #include <QLabel>
+#include <QScrollArea>
+#include <QTableWidget>
+#include <QVBoxLayout>
 
 
 XATableView::XATableView(QWidget* parent)
     : QWidget(parent)
-    , m_layout(nullptr)
+    , m_layout(new QVBoxLayout(this))
+    , m_tableattribute_title(new QLabel("Attributes:", this))
+    , m_tableattributes(new QTableWidget(this))
+    , m_tablechildren_title(new QLabel("Subtags:", this))
+    , m_tablechildren(new QTableWidget(this))
+    , m_scrollArea(new QScrollArea(this))
 {
-    m_layout = new QVBoxLayout(this);
-    m_layout->setSizeConstraint(QLayout::SetMinimumSize);
-    setLayout(m_layout);
-
-    m_tableattributes = new QTableWidget(this);
-    m_tablechildren = new QTableWidget(this);
-    m_tableattribute_title = new QLabel(QString("Attributes:"), this);
-    m_tablechildren_title = new QLabel(QString("Subtags:"), this);
-
     setupLayout();
 }
 
 void XATableView::setupLayout()
 {
-    // 1
-    m_tableattribute_title->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    m_layout->addWidget(m_tableattribute_title);
+    // Disable scrollbars for the tables
+    m_tableattributes->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_tableattributes->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_tablechildren->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_tablechildren->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    // 2
-    m_tableattributes->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    m_layout->addWidget(m_tableattributes);
+    // Set size policies to adjust size to content
+    m_tableattributes->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    m_tablechildren->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-    // 3
-    m_tablechildren_title->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    m_layout->addWidget(m_tablechildren_title);
+    QWidget* container = new QWidget(this);
+    QVBoxLayout* containerLayout = new QVBoxLayout(container);
 
-    // 4
-    m_tablechildren->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_layout->addWidget(m_tablechildren);
+    containerLayout->addWidget(m_tableattribute_title);
+    containerLayout->addWidget(m_tableattributes);
+    containerLayout->addWidget(m_tablechildren_title);
+    containerLayout->addWidget(m_tablechildren);
+
+    container->setLayout(containerLayout);
+    m_scrollArea->setWidget(container);
+    m_scrollArea->setWidgetResizable(true);
+
+    m_layout->addWidget(m_scrollArea);
+    setLayout(m_layout);
+
+
+    m_tableattribute_title->hide();
+    m_tablechildren_title->hide();
+    adjustHeight(m_tableattributes);
+    //adjustHeight(m_tablechildren);
 }
 
 void XATableView::setTableRootNode(pugi::xml_node node)
@@ -95,7 +110,9 @@ void XATableView::populateAttributeTable(pugi::xml_node node)
         m_tableattributes->resizeRowsToContents();
         m_tableattributes->resizeColumnsToContents();
         m_tableattributes->adjustSize();
-        m_tableattributes->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+        // Adjust the height of the table to fit the content
+        adjustHeight(m_tableattributes);
 
         m_tableattribute_title->show();
         m_tableattributes->show();
@@ -121,71 +138,54 @@ void XATableView::populateTable(pugi::xml_node node)
     auto children = node.children();
     auto num_children = std::distance(children.begin(), children.end());
 
-
-    // Traverse the XML nodes to extract tag names, attributes, and child elements
-    int row = 0;
-    for (pugi::xml_node child : node.children())
+    if (num_children > 0)
     {
-        int col = 0;
-        m_tablechildren->insertRow(row);
-        std::string name = child.name();
+        m_tablechildren_title->show();
+        m_tablechildren->show();
 
-        if (!name.empty())
+        // Traverse the XML nodes to extract tag names, attributes, and child elements
+        int row = 0;
+        for (pugi::xml_node child : node.children())
         {
-            // Add tag name
-            QTableWidgetItem* tagItem = new QTableWidgetItem(name.c_str());
-            m_tablechildren->setItem(row, col, tagItem);
-            col++;
-        }
+            int col = 0;
+            m_tablechildren->insertRow(row);
+            std::string name = child.name();
 
-        // Add attributes
-        for (pugi::xml_attribute attr : child.attributes())
-        {
-            QString attrName = attr.name();
-            QString attrValue = attr.value();
-
-            if (!headers.contains(attrName))
+            if (!name.empty())
             {
-                headers << attrName;
-                m_tablechildren->setColumnCount(headers.size());
+                // Add tag name
+                QTableWidgetItem* tagItem = new QTableWidgetItem(name.c_str());
+                m_tablechildren->setItem(row, col, tagItem);
+                col++;
             }
 
-            int attrCol = headers.indexOf(attrName);
-            QTableWidgetItem* attrItem = new QTableWidgetItem(attrValue);
-            m_tablechildren->setItem(row, attrCol, attrItem);
-        }
-
-        // Text
-        switch (child.type())
-        {
-        case pugi::node_pcdata:
-        {
-            QString grandChildName = "Text";
-            QString grandChildValue = child.text().as_string();
-            if (row == 0)
+            // Add attributes
+            for (pugi::xml_attribute attr : child.attributes())
             {
-                headers.clear();
-                headers << grandChildName;
-                m_tablechildren->setColumnCount(headers.size());
-            }
-            int grandChildCol = headers.indexOf(grandChildName);
-            QTableWidgetItem* grandChildItem = new QTableWidgetItem(grandChildValue);
-            m_tablechildren->setItem(row, grandChildCol, grandChildItem);
-        } break;
-        default: break;
-        }
+                QString attrName = attr.name();
+                QString attrValue = attr.value();
 
-        // Add child elements
-        for (pugi::xml_node grandChild : child.children())
-        {
-            switch (grandChild.type())
+                if (!headers.contains(attrName))
+                {
+                    headers << attrName;
+                    m_tablechildren->setColumnCount(headers.size());
+                }
+
+                int attrCol = headers.indexOf(attrName);
+                QTableWidgetItem* attrItem = new QTableWidgetItem(attrValue);
+                m_tablechildren->setItem(row, attrCol, attrItem);
+            }
+
+            // Text
+            switch (child.type())
             {
             case pugi::node_pcdata:
             {
                 QString grandChildName = "Text";
-                QString grandChildValue = grandChild.text().as_string();
+                QString grandChildValue = child.text().as_string();
                 if (row == 0)
                 {
+                    headers.clear();
                     headers << grandChildName;
                     m_tablechildren->setColumnCount(headers.size());
                 }
@@ -193,31 +193,75 @@ void XATableView::populateTable(pugi::xml_node node)
                 QTableWidgetItem* grandChildItem = new QTableWidgetItem(grandChildValue);
                 m_tablechildren->setItem(row, grandChildCol, grandChildItem);
             } break;
-            
-            case pugi::node_element:
-            {
-                QString grandChildName = grandChild.name();
-                QString grandChildValue = grandChild.child_value();
-
-                if (!headers.contains(grandChildName))
-                {
-                    headers << grandChildName;
-                    m_tablechildren->setColumnCount(headers.size());
-                }
-
-                int grandChildCol = headers.indexOf(grandChildName);
-                QTableWidgetItem* grandChildItem = new QTableWidgetItem(grandChildValue);
-                m_tablechildren->setItem(row, grandChildCol, grandChildItem);
-            } break;
-
-            default:
-                break;
+            default: break;
             }
 
-        }
+            // Add child elements
+            for (pugi::xml_node grandChild : child.children())
+            {
+                switch (grandChild.type())
+                {
+                case pugi::node_pcdata:
+                {
+                    QString grandChildName = "Text";
+                    QString grandChildValue = grandChild.text().as_string();
+                    if (row == 0)
+                    {
+                        headers << grandChildName;
+                        m_tablechildren->setColumnCount(headers.size());
+                    }
+                    int grandChildCol = headers.indexOf(grandChildName);
+                    QTableWidgetItem* grandChildItem = new QTableWidgetItem(grandChildValue);
+                    m_tablechildren->setItem(row, grandChildCol, grandChildItem);
+                } break;
 
-        row++;
+                case pugi::node_element:
+                {
+                    QString grandChildName = grandChild.name();
+                    QString grandChildValue = grandChild.child_value();
+
+                    if (!headers.contains(grandChildName))
+                    {
+                        headers << grandChildName;
+                        m_tablechildren->setColumnCount(headers.size());
+                    }
+
+                    int grandChildCol = headers.indexOf(grandChildName);
+                    QTableWidgetItem* grandChildItem = new QTableWidgetItem(grandChildValue);
+                    m_tablechildren->setItem(row, grandChildCol, grandChildItem);
+                } break;
+
+                default:
+                    break;
+                }
+
+            }
+
+            row++;
+        }
+    }
+    else
+    {
+        m_tablechildren_title->hide();
+        m_tablechildren->hide();
     }
 
     m_tablechildren->setHorizontalHeaderLabels(headers);
+    m_tablechildren->resizeRowsToContents();
+    m_tablechildren->resizeColumnsToContents();
+    m_tablechildren->adjustSize();
+
+    // Adjust the height of the table to fit the content
+    adjustHeight(m_tablechildren);
+}
+
+void XATableView::adjustHeight(QTableWidget* table)
+{
+    // Adjust the height of the table to fit the content
+    int totalHeight = table->horizontalHeader()->height();
+    for (int i = 0; i < table->rowCount(); ++i)
+    {
+        totalHeight += table->rowHeight(i);
+    }
+    table->setFixedHeight(totalHeight);
 }

@@ -17,14 +17,12 @@
 
 #pragma once
 #include <QWidget>
-#include <QTableWidget>
-#include <QVBoxLayout>
 #include <pugixml.hpp>
 
 class QVBoxLayout;
 class QLabel;
 class QTableWidget;
-
+class QScrollArea;
 
 class XATableView : public QWidget
 {
@@ -39,10 +37,12 @@ private:
     void setupLayout();
     void populateAttributeTable(pugi::xml_node node);
     void populateTable(pugi::xml_node node);
+    void adjustHeight(QTableWidget* table);
 
     QVBoxLayout*  m_layout;
     QLabel*       m_tableattribute_title;
     QTableWidget* m_tableattributes;
     QLabel*       m_tablechildren_title;
     QTableWidget* m_tablechildren;
+    QScrollArea*  m_scrollArea;
 };
