@@ -8,8 +8,8 @@ endif(my_module_QtSettings_included)
 set(my_module_QtSettings_included true)
 
 
-if (NOT SW_APP_ROOT)
-  get_filename_component(SW_APP_ROOT ../.. ABSOLUTE)
+if (NOT WORKSPACE_ROOT)
+  get_filename_component(WORKSPACE_ROOT ../.. ABSOLUTE)
 endif()
 
 
@@ -59,43 +59,46 @@ if(NOT QT_VERSION AND NOT QT_BASE_PATH)
       endif()
     endif()
     
-    # look in workspace
+    # look for Qt custom build
     if (NOT QT_VERSION)
       foreach(_qt ${QT_CANDIDATES})
-        message(STATUS "Looking for ${SW_APP_ROOT}/3rdparty/qt/${_qt}_${QT_BUILD_SYSTEM}${QT_BUILD_BITS}")
-        if (EXISTS "${SW_APP_ROOT}/3rdparty/qt/${_qt}_${QT_BUILD_SYSTEM}${QT_BUILD_BITS}")
+        set(_qt_search_path "${QT_CUSTOM_PATH}/${_qt}_${QT_BUILD_SYSTEM}${QT_BUILD_BITS}")
+        message(STATUS "Looking for ${_qt_search_path}")
+        if (EXISTS "${_qt_search_path}")
           set(QT_VERSION ${_qt})
+          cmake_path(ABSOLUTE_PATH _qt_search_path NORMALIZE)
+          list(APPEND CMAKE_PREFIX_PATH "${_qt_search_path}")
           break()
         endif()
       endforeach()
     endif()
 
-# look in default install dirs C:\Qt next or WORKSPACE\Qt
-set(QT_PREFIX_DIR "C:/Qt;${PROJECT_SOURCE_DIR}/Qt")
-if (NOT QT_VERSION)
-  set(qt_found FALSE)
-  foreach(_qt_prefix ${QT_PREFIX_DIR})
-    foreach(_qt ${QT_CANDIDATES})
-      message(STATUS "Looking for ${_qt_prefix}/${_qt}")
-      # Check for Visual Studio 2019 and 2022 libraries
-      foreach(_vs_version ${VS_VERSIONS})
-        if (EXISTS "${_qt_prefix}/${_qt}/${_vs_version}")
-          set(QT_VERSION ${_qt})
-          list(APPEND CMAKE_PREFIX_PATH "${_qt_prefix}/${_qt}/${_vs_version}")
-          set(qt_found TRUE)
+    # look in default install dirs C:\Qt next or WORKSPACE\Qt
+    set(QT_PREFIX_DIR "C:/Qt;${PROJECT_SOURCE_DIR}/Qt")
+    if (NOT QT_VERSION)
+      set(qt_found FALSE)
+      foreach(_qt_prefix ${QT_PREFIX_DIR})
+        foreach(_qt ${QT_CANDIDATES})
+          message(STATUS "Looking for ${_qt_prefix}/${_qt}")
+          # Check for Visual Studio 2019 and 2022 libraries
+          foreach(_vs_version ${VS_VERSIONS})
+            if (EXISTS "${_qt_prefix}/${_qt}/${_vs_version}")
+              set(QT_VERSION ${_qt})
+              list(APPEND CMAKE_PREFIX_PATH "${_qt_prefix}/${_qt}/${_vs_version}")
+              set(qt_found TRUE)
+              break()
+            endif()
+          endforeach()
+          if (qt_found)
+            break()
+          endif()
+        endforeach()
+        if (qt_found)
           break()
         endif()
       endforeach()
-      if (qt_found)
-        break()
-      endif()
-    endforeach()
-    if (qt_found)
-      break()
     endif()
-  endforeach()
-endif()
-message(STATUS "Qt version detected (${QT_VERSION})")
+    message(STATUS "Qt version detected (${QT_VERSION})")
   endif()
 endif()
 
@@ -114,62 +117,6 @@ endif()
 message(STATUS "=====================================================================")
 
 
-#
-# Can Qt System lib used? (Fallback)
-#
-# if(NOT EXISTS ${QT_BASE_PATH})
-#   find_program(LSB_RELEASE_COMMAND lsb_release)
-#   if(LSB_RELEASE_COMMAND)
-#     execute_process(COMMAND ${LSB_RELEASE_COMMAND} -s -i
-#       OUTPUT_VARIABLE TMP_LSB_RELEASE_ID
-#       OUTPUT_STRIP_TRAILING_WHITESPACE)
-#     string(TOLOWER ${TMP_LSB_RELEASE_ID} LSB_RELEASE_ID)
-#     execute_process(COMMAND ${LSB_RELEASE_COMMAND} -s -c
-#       OUTPUT_VARIABLE TMP_LSB_RELEASE_CODENAME
-#       OUTPUT_STRIP_TRAILING_WHITESPACE)
-#     string(TOLOWER ${TMP_LSB_RELEASE_CODENAME} LSB_RELEASE_CODENAME)
-
-#     if (NOT QT_SYSTEM_PATH AND ${LSB_RELEASE_ID} STREQUAL "ubuntu" AND
-#         (${LSB_RELEASE_CODENAME} STREQUAL "vivid"
-#           OR ${LSB_RELEASE_CODENAME} STREQUAL "wily"
-#           OR ${LSB_RELEASE_CODENAME} STREQUAL "xenial"
-#           OR ${LSB_RELEASE_CODENAME} STREQUAL "zesty"
-#           OR ${LSB_RELEASE_CODENAME} STREQUAL "bionic"
-#           OR ${LSB_RELEASE_CODENAME} STREQUAL "eoan"
-#           OR ${LSB_RELEASE_CODENAME} STREQUAL "focal"
-#           OR ${LSB_RELEASE_CODENAME} STREQUAL "impish"
-#           OR ${LSB_RELEASE_CODENAME} STREQUAL "jammy"
-#           OR ${LSB_RELEASE_CODENAME} STREQUAL "noble"
-#           ))
-#       set(QT_SYSTEM_PATH "/usr/lib/*/cmake")
-#       message("Selecting Qt system libraries.")
-#     endif()
-#     if (NOT QT_SYSTEM_PATH AND ${LSB_RELEASE_ID} STREQUAL "debian")
-#       set(QT_SYSTEM_PATH "/usr/lib/*/cmake")
-#       message("Selecting Qt system libraries.")
-#     endif()
-#   endif(LSB_RELEASE_COMMAND)
-# endif()
-
-# Guess where to look for installed Qt5 libraries:
-# Debian/Ubuntu use something like that /opt/lib/x86_64-linux-gnu/cmake
-# RHEL/CentOS use something loke that /opt/lib64/cmake
-
-# Look for the Qt library files
-# 1. opt/qt (or 3rdparty/qt)
-# 2. /opt/lib (on Linux)
-# find_path(QT_CMAKE_PATH Qt5/Qt5Config.cmake
-#   ${QT_BASE_PATH}/lib/cmake
-#   /opt/lib/*/cmake
-#   /opt/lib64/cmake
-#   /opt/lib/cmake
-#   /usr/lib64/cmake
-#   ${QT_SYSTEM_PATH}
-#   )
-
-# if(NOT QT_CMAKE_PATH)
-#   message( FATAL_ERROR "Qt5 CMake support files not found." )
-# endif()
 
 if (CMAKE_SCRIPT_DEBUG)
   message(STATUS "Qt5 cmake path: ${QT_CMAKE_PATH}")
@@ -187,13 +134,6 @@ else()
   add_definitions(-DQT_QML_DEBUG)
 endif()
 
-
-# if (NOT DEFINED QT_VERSION_MAJOR)
-#   string(REGEX MATCH "^([0-9]+)\\.([0-9]+)\\.([0-9]+)" MY_PROGRAM_VERSION_MATCH ${QT_VERSION})
-#   set(QT_VERSION_MAJOR ${CMAKE_MATCH_1})
-#   set(QT_VERSION_MINOR ${CMAKE_MATCH_2})
-#   set(QT_VERSION_PATCH ${CMAKE_MATCH_3})
-# endif()
 
 
 
