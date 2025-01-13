@@ -46,6 +46,7 @@ void XATableView::setupLayout()
     // Set size policies to adjust size to content
     m_tableattributes->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     m_tablechildren->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    m_tablechildren_title->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
 
     QWidget* container = new QWidget(this);
     QVBoxLayout* containerLayout = new QVBoxLayout(container);
@@ -54,6 +55,9 @@ void XATableView::setupLayout()
     containerLayout->addWidget(m_tableattributes);
     containerLayout->addWidget(m_tablechildren_title);
     containerLayout->addWidget(m_tablechildren);
+    containerLayout->setAlignment(Qt::AlignTop);
+    containerLayout->setSizeConstraint(QLayout::SetMinimumSize);
+    m_layout->setSizeConstraint(QLayout::SetMinimumSize);
 
     container->setLayout(containerLayout);
     m_scrollArea->setWidget(container);
@@ -62,11 +66,9 @@ void XATableView::setupLayout()
     m_layout->addWidget(m_scrollArea);
     setLayout(m_layout);
 
-
     m_tableattribute_title->hide();
     m_tablechildren_title->hide();
     adjustHeight(m_tableattributes);
-    //adjustHeight(m_tablechildren);
 }
 
 void XATableView::setTableRootNode(pugi::xml_node node)
@@ -90,18 +92,25 @@ void XATableView::populateAttributeTable(pugi::xml_node node)
         headers << "Name";
         headers << "Value";
 
+        m_tableattribute_title->setText(QString("%1 Attributes:").arg(num_attr));
         m_tableattributes->setRowCount(num_attr);
         m_tableattributes->setColumnCount(2);
+
+        QFontMetrics metrics(m_tableattributes->font());
 
         for (pugi::xml_attribute attr : attributes)
         {
             QString attrName = attr.name();
             QString attrValue = attr.value();
 
-            QTableWidgetItem* attrNameItem = new QTableWidgetItem(attrName);
+            // Shorten the text if it is too long to fit
+            QString elidedAttrName = metrics.elidedText(attrName, Qt::ElideRight, m_tableattributes->columnWidth(0));
+            QString elidedAttrValue = metrics.elidedText(attrValue, Qt::ElideRight, m_tableattributes->columnWidth(1));
+
+            QTableWidgetItem* attrNameItem = new QTableWidgetItem(elidedAttrName);
             m_tableattributes->setItem(row, 0, attrNameItem);
 
-            QTableWidgetItem* attrItem = new QTableWidgetItem(attrValue);
+            QTableWidgetItem* attrItem = new QTableWidgetItem(elidedAttrValue);
             m_tableattributes->setItem(row, 1, attrItem);
             row++;
         }
@@ -122,7 +131,6 @@ void XATableView::populateAttributeTable(pugi::xml_node node)
         m_tableattribute_title->hide();
         m_tableattributes->hide();
     }
-
 }
 
 void XATableView::populateTable(pugi::xml_node node)
@@ -140,8 +148,11 @@ void XATableView::populateTable(pugi::xml_node node)
 
     if (num_children > 0)
     {
+        m_tablechildren_title->setText(QString("%1 Subtags:").arg(num_children));
         m_tablechildren_title->show();
         m_tablechildren->show();
+
+        QFontMetrics metrics(m_tablechildren->font());
 
         // Traverse the XML nodes to extract tag names, attributes, and child elements
         int row = 0;
@@ -154,7 +165,8 @@ void XATableView::populateTable(pugi::xml_node node)
             if (!name.empty())
             {
                 // Add tag name
-                QTableWidgetItem* tagItem = new QTableWidgetItem(name.c_str());
+                QString tagName = QString::fromStdString(name);
+                QTableWidgetItem* tagItem = new QTableWidgetItem(tagName);
                 m_tablechildren->setItem(row, col, tagItem);
                 col++;
             }
@@ -172,6 +184,7 @@ void XATableView::populateTable(pugi::xml_node node)
                 }
 
                 int attrCol = headers.indexOf(attrName);
+
                 QTableWidgetItem* attrItem = new QTableWidgetItem(attrValue);
                 m_tablechildren->setItem(row, attrCol, attrItem);
             }
@@ -183,6 +196,8 @@ void XATableView::populateTable(pugi::xml_node node)
             {
                 QString grandChildName = "Text";
                 QString grandChildValue = child.text().as_string();
+                grandChildValue.remove('\n');
+                grandChildValue.remove('\r');
                 if (row == 0)
                 {
                     headers.clear();
@@ -190,7 +205,9 @@ void XATableView::populateTable(pugi::xml_node node)
                     m_tablechildren->setColumnCount(headers.size());
                 }
                 int grandChildCol = headers.indexOf(grandChildName);
-                QTableWidgetItem* grandChildItem = new QTableWidgetItem(grandChildValue);
+                auto col_size = 2 * m_tablechildren->columnWidth(grandChildCol);
+                QString elidedGrandChildValue = metrics.elidedText(grandChildValue, Qt::ElideRight, col_size);
+                QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedGrandChildValue);
                 m_tablechildren->setItem(row, grandChildCol, grandChildItem);
             } break;
             default: break;
@@ -205,13 +222,17 @@ void XATableView::populateTable(pugi::xml_node node)
                 {
                     QString grandChildName = "Text";
                     QString grandChildValue = grandChild.text().as_string();
+                    grandChildValue.remove('\n');
+                    grandChildValue.remove('\r');
                     if (row == 0)
                     {
                         headers << grandChildName;
                         m_tablechildren->setColumnCount(headers.size());
                     }
                     int grandChildCol = headers.indexOf(grandChildName);
-                    QTableWidgetItem* grandChildItem = new QTableWidgetItem(grandChildValue);
+                    auto col_size = 2 * m_tablechildren->columnWidth(grandChildCol);
+                    QString elidedGrandChildValue = metrics.elidedText(grandChildValue, Qt::ElideRight, col_size);
+                    QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedGrandChildValue);
                     m_tablechildren->setItem(row, grandChildCol, grandChildItem);
                 } break;
 
@@ -219,7 +240,8 @@ void XATableView::populateTable(pugi::xml_node node)
                 {
                     QString grandChildName = grandChild.name();
                     QString grandChildValue = grandChild.child_value();
-
+                    grandChildValue.remove('\n');
+                    grandChildValue.remove('\r');
                     if (!headers.contains(grandChildName))
                     {
                         headers << grandChildName;
@@ -227,14 +249,15 @@ void XATableView::populateTable(pugi::xml_node node)
                     }
 
                     int grandChildCol = headers.indexOf(grandChildName);
-                    QTableWidgetItem* grandChildItem = new QTableWidgetItem(grandChildValue);
+                    auto col_size = 2 * m_tablechildren->columnWidth(grandChildCol);
+                    QString elidedGrandChildValue = metrics.elidedText(grandChildValue, Qt::ElideRight, col_size);
+                    QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedGrandChildValue);
                     m_tablechildren->setItem(row, grandChildCol, grandChildItem);
                 } break;
 
                 default:
                     break;
                 }
-
             }
 
             row++;
