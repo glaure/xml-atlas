@@ -66,6 +66,8 @@ set(XA_SOURCE_FILES
   src/xa_data.h
   src/xa_editor.cpp
   src/xa_editor.h
+  src/xa_find_dialog.cpp
+  src/xa_find_dialog.h
   src/xa_hidpi.cpp
   src/xa_hidpi.h
   src/xa_highlighter_xml.cpp

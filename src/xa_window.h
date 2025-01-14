@@ -54,9 +54,12 @@ public slots:
 protected slots:
     void onSelectionChanged(const QModelIndex& index, const QModelIndex& previous);
     void onThemeChange();
+    void onFind();
+    void onFindNext();
 
 private:
     void setupEditor();
+    void setupShortCuts();
     void setupTableView();
     void setupFileMenu();
     void setupHelpMenu();
@@ -68,12 +71,14 @@ private:
     void openRecentFile();
     void addRecentFile(const QString& file_path);
     void onEditorTextChanged();
+    void findInEditor(const QString& searchTerm);
 
 private:
     Ui::MainWindow*     m_main_window;
     XAApp*              m_app;
     XAData*             m_app_data;
     XAEditor*           m_editor;
+    QTextCursor         m_searchCursor;
     XATableView*        m_tableView;
     XAHighlighter_XML*  m_xml_highlighter;
     XATreeDock*         m_tree_dock;

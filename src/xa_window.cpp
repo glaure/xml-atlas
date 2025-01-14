@@ -21,6 +21,7 @@
 #include "ui_xa_theme_options.h"
 #include "xa_app.h"
 #include "xa_editor.h"
+#include "xa_find_dialog.h"
 #include "xa_tableview.h"
 #include "xa_tree_dock.h"
 #include "xa_data.h"
@@ -60,6 +61,10 @@ XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget* parent)
     connect(m_main_window->actionFont, &QAction::triggered, [this]() { setupFont(); });
     connect(m_main_window->actionIndent, &QAction::triggered, [this]() { bool force_option = false; indentDocument(force_option); });
     connect(m_main_window->actionIndent_Options, &QAction::triggered, [this]() { bool force_option = true; indentDocument(force_option); });
+    connect(m_main_window->actionFind, &QAction::triggered, this, &XAMainWindow::onFind);
+    
+    setupShortCuts();
+
 
     setCentralWidget(m_editor);
     setWindowTitle(tr("XML Atlas"));
@@ -69,7 +74,6 @@ XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget* parent)
     onThemeChange();
     updateRecentFileActions();
 }
-
 
 QSize XAMainWindow::sizeHint() const
 {
@@ -166,6 +170,17 @@ void XAMainWindow::setupEditor()
     //connect(m_editor, &XAEditor::textChanged, this, &XAMainWindow::onEditorTextChanged);
 }
 
+void XAMainWindow::setupShortCuts()
+{
+    m_main_window->actionFind->setShortcut(QKeySequence::Find);
+
+    QAction* findNextAction = new QAction(this);
+    findNextAction->setShortcut(QKeySequence(Qt::Key_F3));
+    connect(findNextAction, &QAction::triggered, this, &XAMainWindow::onFindNext);
+    addAction(findNextAction);
+}
+
+
 void XAMainWindow::setupTableView()
 {
     m_tableView = new XATableView(this);
@@ -241,6 +256,28 @@ void XAMainWindow::onThemeChange()
     m_main_window->actionDrill_down->setIcon(theme->getIcon("down-arrow.png"));
     m_main_window->actionDrill_up->setIcon(theme->getIcon("up-arrow.png"));
 
+}
+
+void XAMainWindow::onFind()
+{
+    FindDialog findDialog(this);
+    connect(&findDialog, &FindDialog::findNext, this, &XAMainWindow::onFindNext);
+
+    if (findDialog.exec() == QDialog::Accepted)
+    {
+        QString searchTerm = findDialog.getSearchTerm();
+        findInEditor(searchTerm);
+    }
+}
+
+void XAMainWindow::onFindNext()
+{
+    QString searchTerm = m_searchCursor.selectedText();
+    auto debug = searchTerm.toStdString();
+    if (!searchTerm.isEmpty())
+    {
+        findInEditor(searchTerm);
+    }
 }
 
 void XAMainWindow::setupTheme()
@@ -373,4 +410,30 @@ void XAMainWindow::addRecentFile(const QString& filePath)
     settings.setValue("recentFileList", files);
 
     updateRecentFileActions();
+}
+
+void XAMainWindow::findInEditor(const QString& searchTerm)
+{
+    if (searchTerm.isEmpty())
+    {
+        return;
+    }
+
+    QTextDocument* document = m_editor->document();
+    m_searchCursor = document->find(searchTerm, m_searchCursor);
+
+    auto debug = searchTerm.toStdString();
+
+    if (!m_searchCursor.isNull())
+    {
+        m_editor->setTextCursor(m_searchCursor);
+        QTextCharFormat highlightFormat;
+        highlightFormat.setBackground(Qt::yellow);
+        m_searchCursor.mergeCharFormat(highlightFormat);
+    }
+    else
+    {
+        // If no more matches are found, reset the cursor to the beginning of the document
+        m_searchCursor = QTextCursor(document);
+    }
 }
