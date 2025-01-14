@@ -22,6 +22,7 @@
 class QVBoxLayout;
 class QLabel;
 class QTableWidget;
+class QTableWidgetItem;
 class QScrollArea;
 
 class XATableView : public QWidget
@@ -42,8 +43,10 @@ private:
     void addChildElements(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row);
     void adjustHeight(QTableWidget* table);
     void adjustWidth();
+    void setItemWrapper(QTableWidget* table, int row, int column, QTableWidgetItem* item);
 
     size_t countElements(const pugi::xml_node& node);
+
 
     QVBoxLayout*  m_layout;
     QLabel*       m_table_title;

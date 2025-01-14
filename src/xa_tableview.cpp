@@ -51,6 +51,12 @@ void XATableView::setupLayout()
     m_tablechildren->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     m_tablechildren_title->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
 
+    // Set a smaller font for the tables
+    QFont smallFont = m_tableattributes->font();
+    smallFont.setPointSize(8);
+    m_tableattributes->setFont(smallFont);
+    m_tablechildren->setFont(smallFont);
+
     QWidget* container = new QWidget(this);
     QVBoxLayout* containerLayout = new QVBoxLayout(container);
 
@@ -188,7 +194,7 @@ void XATableView::populateTable(const pugi::xml_node& node)
                     // Add tag name
                     QString tagName = QString::fromStdString(name);
                     QTableWidgetItem* tagItem = new QTableWidgetItem(tagName);
-                    m_tablechildren->setItem(row, col, tagItem);
+                    setItemWrapper(m_tablechildren, row, col, tagItem);
                     col++;
                 }
 
@@ -250,7 +256,7 @@ void XATableView::addAttributeRow(QTableWidget* table, QStringList& headers, con
     int attrCol = headers.indexOf(attrName);
 
     QTableWidgetItem* attrItem = new QTableWidgetItem(attrValue);
-    table->setItem(row, attrCol, attrItem);
+    setItemWrapper(table, row, attrCol, attrItem);
 }
 
 void XATableView::addTextRow(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row)
@@ -271,7 +277,7 @@ void XATableView::addTextRow(QTableWidget* table, QStringList& headers, const pu
     auto col_size = 2 * table->columnWidth(grandChildCol);
     QString elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
     QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-    table->setItem(row, grandChildCol, grandChildItem);
+    setItemWrapper(table, row, grandChildCol, grandChildItem);
 }
 
 void XATableView::addChildElements(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row)
@@ -299,6 +305,8 @@ void XATableView::addChildElements(QTableWidget* table, QStringList& headers, co
     // Add child elements
     for (const pugi::xml_node& child : children)
     {
+        std::string child_name = child.name();
+
         switch (child.type())
         {
         case pugi::node_cdata:
@@ -317,8 +325,7 @@ void XATableView::addChildElements(QTableWidget* table, QStringList& headers, co
             auto col_size = 2 * table->columnWidth(grandChildCol);
             QString elidedChildValue = QString("<![CDATA[%1]]").arg(metrics.elidedText(childValue.trimmed(), Qt::ElideRight, col_size));
             QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-            table->setItem(row, grandChildCol, grandChildItem);
-            return;
+            setItemWrapper(table, row, grandChildCol, grandChildItem);
         } break;
 
         case pugi::node_pcdata:
@@ -336,8 +343,7 @@ void XATableView::addChildElements(QTableWidget* table, QStringList& headers, co
             auto col_size = 2 * table->columnWidth(grandChildCol);
             QString elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
             QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-            table->setItem(row, grandChildCol, grandChildItem);
-            return;
+            setItemWrapper(table, row, grandChildCol, grandChildItem);
         } break;
 
         case pugi::node_element:
@@ -359,7 +365,7 @@ void XATableView::addChildElements(QTableWidget* table, QStringList& headers, co
                 auto col_size = 2 * table->columnWidth(grandChildCol);
                 QString elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
                 QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-                table->setItem(row, grandChildCol, grandChildItem);
+                setItemWrapper(table, row, grandChildCol, grandChildItem);
             }
             else
             {
@@ -374,7 +380,7 @@ void XATableView::addChildElements(QTableWidget* table, QStringList& headers, co
                 auto col_size = 2 * table->columnWidth(grandChildCol);
                 QString elidedChildValue = QString("%2 (%1 occurences) ").arg(element_count.at(child.name())).arg(childName);
                 QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-                table->setItem(row, grandChildCol, grandChildItem);
+                setItemWrapper(table, row, grandChildCol, grandChildItem);
                 return;
             }
         } break;
@@ -403,6 +409,12 @@ void XATableView::adjustWidth()
         m_tablechildren->horizontalHeader()->length());
     
     m_tablechildren->setFixedWidth(maxWidth + m_scrollArea->verticalScrollBar()->width() + 20);
+}
+
+void XATableView::setItemWrapper(QTableWidget* table, int row, int column, QTableWidgetItem* item)
+{
+    qDebug() << "row: " << row << "  col: " << column << " : " << item->text();
+    table->setItem(row, column, item);
 }
 
 size_t XATableView::countElements(const pugi::xml_node& node)
