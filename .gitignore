@@ -52,3 +52,5 @@ build64/
 tmp/
 PKGS/
 *.code-workspace
+
+XML/BoardListing.xml

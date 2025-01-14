@@ -35,12 +35,18 @@ public:
 
 private:
     void setupLayout();
-    void populateAttributeTable(pugi::xml_node node);
-    void populateTable(pugi::xml_node node);
+    void populateAttributeTable(const pugi::xml_node& node);
+    void populateTable(const pugi::xml_node& node);
+    void addAttributeRow(QTableWidget* table, QStringList& headers, const pugi::xml_attribute& attr, int row);
+    void addTextRow(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row);
+    void addChildElements(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row);
     void adjustHeight(QTableWidget* table);
     void adjustWidth();
 
+    size_t countElements(const pugi::xml_node& node);
+
     QVBoxLayout*  m_layout;
+    QLabel*       m_table_title;
     QLabel*       m_tableattribute_title;
     QTableWidget* m_tableattributes;
     QLabel*       m_tablechildren_title;
