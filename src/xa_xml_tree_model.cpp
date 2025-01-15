@@ -117,6 +117,19 @@ QModelIndex XAXMLTreeModel::index(int row, int column,
     return QModelIndex();
 }
 
+QModelIndex XAXMLTreeModel::indexFromItem(XAXMLTreeItem* item) const
+{
+    if (!item || item == m_root_item)
+        return QModelIndex();
+
+    XAXMLTreeItem* parent_item = item->parent();
+    if (!parent_item)
+        return QModelIndex();
+
+    int row = parent_item->children().indexOf(item);
+    return createIndex(row, 0, item);
+}
+
 QModelIndex XAXMLTreeModel::parent(const QModelIndex& index) const
 {
     if (!index.isValid())
@@ -156,7 +169,7 @@ int XAXMLTreeModel::columnCount(const QModelIndex& parent) const
     return m_root_item->columnCount();
 }
 
-XAXMLTreeItem* XAXMLTreeModel::getRoot() const
+XAXMLTreeItem* XAXMLTreeModel::rootItem() const
 {
     return m_root_item;
 }

@@ -26,7 +26,7 @@ class XATableView;
 class XATreeDock;
 class XAData;
 class QTreeView;
-
+class XAXMLTreeItem;
 
 namespace Ui
 {
@@ -73,6 +73,8 @@ private:
     void onEditorTextChanged();
     void findInEditor(const QString& searchTerm);
     void findPreviousInEditor(const QString& searchTerm);
+    void locateInTree();
+    XAXMLTreeItem* findMatchingTreeItem(XAXMLTreeItem* item, int cursorPosition);
 
 private:
     Ui::MainWindow*     m_main_window;

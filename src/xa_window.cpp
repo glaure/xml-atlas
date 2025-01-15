@@ -62,6 +62,7 @@ XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget* parent)
     connect(m_main_window->actionIndent, &QAction::triggered, [this]() { bool force_option = false; indentDocument(force_option); });
     connect(m_main_window->actionIndent_Options, &QAction::triggered, [this]() { bool force_option = true; indentDocument(force_option); });
     connect(m_main_window->actionFind, &QAction::triggered, this, &XAMainWindow::onFind);
+    connect(m_main_window->actionLocate_in_tree, &QAction::triggered, this, &XAMainWindow::locateInTree);
     
     setupShortCuts();
 
@@ -185,6 +186,11 @@ void XAMainWindow::setupShortCuts()
         findPreviousInEditor(m_searchCursor.selectedText());
         });
     addAction(findPreviousAction);
+
+    QAction* locateInTreeAction = new QAction(this);
+    locateInTreeAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
+    connect(locateInTreeAction, &QAction::triggered, this, &XAMainWindow::locateInTree);
+    addAction(locateInTreeAction);
 }
 
 
@@ -468,4 +474,36 @@ void XAMainWindow::findPreviousInEditor(const QString& searchTerm)
         m_searchCursor = QTextCursor(document);
         m_searchCursor.movePosition(QTextCursor::End);
     }
+}
+
+
+void XAMainWindow::locateInTree()
+{
+    int cursorPosition = m_editor->textCursor().position();
+    XAXMLTreeItem* matchingItem = findMatchingTreeItem(m_app_data->getXMLTreeModel()->rootItem(), cursorPosition);
+
+    if (matchingItem)
+    {
+        QModelIndex index = m_app_data->getXMLTreeModel()->indexFromItem(matchingItem);
+        m_tree_view->setCurrentIndex(index);
+        m_tree_view->expand(index);
+    }
+}
+
+XAXMLTreeItem* XAMainWindow::findMatchingTreeItem(XAXMLTreeItem* item, int cursorPosition)
+{
+    if (!item)
+        return nullptr;
+
+    if (item->getOffset() <= cursorPosition && cursorPosition < item->getOffset() + item->data(0).toString().length())
+        return item;
+
+    for (XAXMLTreeItem* child : item->children())
+    {
+        XAXMLTreeItem* matchingChild = findMatchingTreeItem(child, cursorPosition);
+        if (matchingChild)
+            return matchingChild;
+    }
+
+    return nullptr;
 }

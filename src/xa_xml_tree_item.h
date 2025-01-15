@@ -45,6 +45,9 @@ public:
     int childCount() const;
     int columnCount() const;
     
+    const QVector<XAXMLTreeItem*>& children() const;
+    XAXMLTreeItem* parent() const;
+
     QVariant data(int column) const;
     
     int row() const;

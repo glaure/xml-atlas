@@ -66,6 +66,16 @@ int XAXMLTreeItem::columnCount() const
     return 2;
 }
 
+const QVector<XAXMLTreeItem*>& XAXMLTreeItem::children() const
+{
+    return m_child_items;
+}
+
+XAXMLTreeItem* XAXMLTreeItem::parent() const
+{
+    return m_parent_item;
+}
+
 QVariant XAXMLTreeItem::data(int column) const
 {
     if (column < 0 || column >= columnCount())

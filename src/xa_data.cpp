@@ -47,7 +47,7 @@ namespace
             , m_last_node(nullptr)
             , m_last_depth(-1)
         {
-            m_tree_root = m_model->getRoot();
+            m_tree_root = m_model->rootItem();
             m_current_parent = m_tree_root;
             m_last_node = m_current_parent;
         }
