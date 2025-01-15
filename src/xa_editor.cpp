@@ -34,6 +34,8 @@ XAEditor::XAEditor(XAApp* app, QWidget *parent)
 
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
+
+    setUndoRedoEnabled(true);
 }
 
 int XAEditor::lineNumberAreaWidth()

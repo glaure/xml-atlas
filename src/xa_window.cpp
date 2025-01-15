@@ -63,6 +63,8 @@ XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget* parent)
     connect(m_main_window->actionIndent_Options, &QAction::triggered, [this]() { bool force_option = true; indentDocument(force_option); });
     connect(m_main_window->actionFind, &QAction::triggered, this, &XAMainWindow::onFind);
     connect(m_main_window->actionLocate_in_tree, &QAction::triggered, this, &XAMainWindow::locateInTree);
+    connect(m_main_window->actionUndo, &QAction::triggered, this, &XAMainWindow::undo);
+    connect(m_main_window->actionRedo, &QAction::triggered, this, &XAMainWindow::redo);
     
     setupShortCuts();
 
@@ -150,6 +152,15 @@ void XAMainWindow::saveFile(const QString& path)
     }
 }
 
+void XAMainWindow::undo()
+{
+    m_editor->undo();
+}
+
+void XAMainWindow::redo()
+{
+    m_editor->redo();
+}
 
 void XAMainWindow::setupEditor()
 {
@@ -174,6 +185,8 @@ void XAMainWindow::setupEditor()
 void XAMainWindow::setupShortCuts()
 {
     m_main_window->actionFind->setShortcut(QKeySequence::Find);
+    m_main_window->actionUndo->setShortcut(QKeySequence::Undo);
+    m_main_window->actionRedo->setShortcut(QKeySequence::Redo);
 
     QAction* findNextAction = new QAction(this);
     findNextAction->setShortcut(QKeySequence(Qt::Key_F3));
