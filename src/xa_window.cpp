@@ -178,6 +178,13 @@ void XAMainWindow::setupShortCuts()
     findNextAction->setShortcut(QKeySequence(Qt::Key_F3));
     connect(findNextAction, &QAction::triggered, this, &XAMainWindow::onFindNext);
     addAction(findNextAction);
+
+    QAction* findPreviousAction = new QAction(this);
+    findPreviousAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_F3));
+    connect(findPreviousAction, &QAction::triggered, this, [this]() {
+        findPreviousInEditor(m_searchCursor.selectedText());
+        });
+    addAction(findPreviousAction);
 }
 
 
@@ -435,5 +442,30 @@ void XAMainWindow::findInEditor(const QString& searchTerm)
     {
         // If no more matches are found, reset the cursor to the beginning of the document
         m_searchCursor = QTextCursor(document);
+    }
+}
+
+void XAMainWindow::findPreviousInEditor(const QString& searchTerm)
+{
+    if (searchTerm.isEmpty())
+    {
+        return;
+    }
+
+    QTextDocument* document = m_editor->document();
+    m_searchCursor = document->find(searchTerm, m_searchCursor, QTextDocument::FindBackward);
+
+    if (!m_searchCursor.isNull())
+    {
+        m_editor->setTextCursor(m_searchCursor);
+        QTextCharFormat highlightFormat;
+        highlightFormat.setBackground(Qt::yellow);
+        m_searchCursor.mergeCharFormat(highlightFormat);
+    }
+    else
+    {
+        // If no more matches are found, reset the cursor to the end of the document
+        m_searchCursor = QTextCursor(document);
+        m_searchCursor.movePosition(QTextCursor::End);
     }
 }

@@ -72,6 +72,7 @@ private:
     void addRecentFile(const QString& file_path);
     void onEditorTextChanged();
     void findInEditor(const QString& searchTerm);
+    void findPreviousInEditor(const QString& searchTerm);
 
 private:
     Ui::MainWindow*     m_main_window;
