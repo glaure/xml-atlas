@@ -281,115 +281,165 @@ void XATableView::addTextRow(QTableWidget* table, QStringList& headers, const pu
     setItemWrapper(table, row, grandChildCol, grandChildItem);
 }
 
+/**
+ * These are the children of "node" therefore the grandchildren of the selected node
+ */
 void XATableView::addChildElements(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row)
 {
     QFontMetrics metrics(table->font());
+    QString unique_subtags_title("Unique Subtags");
 
     auto children = node.children();
 
+    enum {
+        _ONE_CDATA,
+        _ONE_PCDATA,
+        _ONE_ELEM,
+        _MULTI_EQUAL_ELEM,
+        _MULTI_ELEM,
+    } layout_state;
+
     std::map<std::string, int> element_count;
 
-    // Analyze the elements
+    // Analyze the children
+    struct ElemCount {
+        int cdata_count = 0;
+        int pcdata_count = 0;
+        int elem_count = 0;
+    } elem_count;
+
     for (const pugi::xml_node& child : children)
     {
         switch (child.type())
         {
-        case pugi::node_pcdata:
+        case pugi::node_cdata:
+            elem_count.cdata_count++;
             break;
-
+        case pugi::node_pcdata:
+            elem_count.pcdata_count++;
+            break;
         case pugi::node_element:
+            elem_count.elem_count++;
             element_count[child.name()]++;
             break;
         }
     }
 
-    // Add child elements
-    for (const pugi::xml_node& child : children)
+    if (elem_count.cdata_count > 0 && elem_count.pcdata_count == 0 && elem_count.elem_count == 0)
     {
-        std::string child_name = child.name();
-
-        switch (child.type())
-        {
-        case pugi::node_cdata:
-        {
-            QString childName = "Text";
-            QString childValue = child.text().as_string();
-            childValue.remove('\n');
-            childValue.remove('\r');
-            childValue = childValue.simplified();
-            if (row == 0)
-            {
-                headers << childName;
-                table->setColumnCount(headers.size());
-            }
-            int grandChildCol = headers.indexOf(childName);
-            auto col_size = 2 * table->columnWidth(grandChildCol);
-            QString elidedChildValue = QString("<![CDATA[%1]]").arg(metrics.elidedText(childValue.trimmed(), Qt::ElideRight, col_size));
-            QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-            setItemWrapper(table, row, grandChildCol, grandChildItem);
-        } break;
-
-        case pugi::node_pcdata:
-        {
-            QString childName = "Text";
-            QString childValue = child.text().as_string();
-            childValue.remove('\n');
-            childValue.remove('\r');
-            if (row == 0)
-            {
-                headers << childName;
-                table->setColumnCount(headers.size());
-            }
-            int grandChildCol = headers.indexOf(childName);
-            auto col_size = 2 * table->columnWidth(grandChildCol);
-            QString elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
-            QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-            setItemWrapper(table, row, grandChildCol, grandChildItem);
-        } break;
-
-        case pugi::node_element:
-        {
-            QString childName = child.name();
-
-            if (element_count.at(child.name()) == 1)
-            {
-                QString childValue = child.child_value();
-                childValue.remove('\n');
-                childValue.remove('\r');
-                if (!headers.contains(childName))
-                {
-                    headers << childName;
-                    table->setColumnCount(headers.size());
-                }
-
-                int grandChildCol = headers.indexOf(childName);
-                auto col_size = 2 * table->columnWidth(grandChildCol);
-                QString elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
-                QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-                setItemWrapper(table, row, grandChildCol, grandChildItem);
-            }
-            else
-            {
-                QString childName = child.name();
-                if (!headers.contains(childName))
-                {
-                    headers << childName;
-                    table->setColumnCount(headers.size());
-                }
-
-                int grandChildCol = headers.indexOf(childName);
-                auto col_size = 2 * table->columnWidth(grandChildCol);
-                QString elidedChildValue = QString("%2 (%1 occurences) ").arg(element_count.at(child.name())).arg(childName);
-                QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-                setItemWrapper(table, row, grandChildCol, grandChildItem);
-                return;
-            }
-        } break;
-
-        default:
-            break;
-        }
+        layout_state = _ONE_CDATA;
     }
+    else if (elem_count.cdata_count == 0 && elem_count.pcdata_count > 0 && elem_count.elem_count == 0)
+    {
+        layout_state = _ONE_PCDATA;
+    }
+    else if (elem_count.cdata_count == 0 && elem_count.pcdata_count == 0 && elem_count.elem_count == 1)
+    {
+        layout_state = _ONE_ELEM;
+    }
+    else if (elem_count.elem_count > 1 && element_count.size() == 1)
+    {
+        layout_state = _MULTI_EQUAL_ELEM;
+    }
+    else if (elem_count.elem_count > 1 && element_count.size() > 1)
+    {
+        layout_state = _MULTI_ELEM;
+    }
+    else
+    {
+        return;
+    }
+
+    // Layout rules
+    // ------------
+    // 1. If there is only 1 element with text, its content is shown in a separate row
+    // 2. If there is only 1 element with one "child elemnt", the child element's name is shown in a separate row
+    // 3. If there are multiple identical elements, its name and the number of occurence is shown:
+    //      "Name (x occurrences)"
+    // 4. If there are multiple non-identical elements, their unique number of occurence is shown:
+    //      "x unique subtags"
+
+
+    int grandChildCol = 0;
+    QString elidedChildValue;
+
+    switch (layout_state)
+    {
+    case _ONE_CDATA:
+    {
+        QString childName = "Text";
+        QString childValue = QString("%1").arg(node.first_child().text().as_string()).simplified();
+        grandChildCol = addTableHeader(table, headers, childName, row);
+        auto col_size = 2 * table->columnWidth(grandChildCol);
+        elidedChildValue = QString("<![CDATA[%1]]").arg(metrics.elidedText(childValue, Qt::ElideRight, col_size));
+    } break;
+
+    case _ONE_PCDATA:
+    {
+        QString childName = "Text";
+        QString childValue = QString("%1").arg(node.first_child().text().as_string()).simplified();
+        grandChildCol = addTableHeader(table, headers, childName, row);
+        auto col_size = 2 * table->columnWidth(grandChildCol);
+        elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
+    } break;
+
+    case _ONE_ELEM:
+    {
+        QString childName = unique_subtags_title;
+        QString childValue = QString("%1").arg(node.first_child().name());
+        grandChildCol = addTableHeader(table, headers, childName, row);
+        auto col_size = 2 * table->columnWidth(grandChildCol);
+        elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
+
+    } break;
+
+    case _MULTI_EQUAL_ELEM:
+    {
+        QString childName = unique_subtags_title;
+        QString childValue = QString("%1 (%2 occurrences)")
+            .arg(node.first_child().name())
+            .arg(element_count[node.first_child().name()]);
+        if (!headers.contains(childName))
+        {
+            headers << childName;
+            table->setColumnCount(headers.size());
+        }
+        grandChildCol = headers.indexOf(childName);
+        auto col_size = 2 * table->columnWidth(grandChildCol);
+        elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
+    } break;
+
+    case _MULTI_ELEM:
+    {
+        QString childName = unique_subtags_title;
+        QString childValue = QString("%1 unique subtags").arg(element_count.size());
+        if (!headers.contains(childName))
+        {
+            headers << childName;
+            table->setColumnCount(headers.size());
+        }
+        grandChildCol = headers.indexOf(childName);
+        auto col_size = 2 * table->columnWidth(grandChildCol);
+        elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
+    } break;
+
+    default:
+        return;
+    }
+
+    QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
+    setItemWrapper(table, row, grandChildCol, grandChildItem);
+
+}
+
+int XATableView::addTableHeader(QTableWidget* table, QStringList& headers, const QString& childName, int row)
+{
+    if (row == 0)
+    {
+        headers << childName;
+        table->setColumnCount(headers.size());
+    }
+    return headers.indexOf(childName);
 }
 
 void XATableView::adjustHeight(QTableWidget* table)

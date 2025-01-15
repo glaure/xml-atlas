@@ -44,6 +44,7 @@ private:
     void adjustHeight(QTableWidget* table);
     void adjustWidth();
     void setItemWrapper(QTableWidget* table, int row, int column, QTableWidgetItem* item);
+    int addTableHeader(QTableWidget* table, QStringList& headers, const QString& childName, int row);
 
     size_t countElements(const pugi::xml_node& node);
 
