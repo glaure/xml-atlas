@@ -65,7 +65,10 @@ XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget* parent)
     connect(m_main_window->actionLocate_in_tree, &QAction::triggered, this, &XAMainWindow::locateInTree);
     connect(m_main_window->actionUndo, &QAction::triggered, this, &XAMainWindow::undo);
     connect(m_main_window->actionRedo, &QAction::triggered, this, &XAMainWindow::redo);
-    
+    connect(m_main_window->actionCut, &QAction::triggered, this, &XAMainWindow::cut);
+    connect(m_main_window->actionCopy, &QAction::triggered, this, &XAMainWindow::copy);
+    connect(m_main_window->actionPaste, &QAction::triggered, this, &XAMainWindow::paste);
+
     setupShortCuts();
 
 
@@ -162,6 +165,21 @@ void XAMainWindow::redo()
     m_editor->redo();
 }
 
+void XAMainWindow::cut()
+{
+    m_editor->cut();
+}
+
+void XAMainWindow::copy()
+{
+    m_editor->copy();
+}
+
+void XAMainWindow::paste()
+{
+    m_editor->paste();
+}
+
 void XAMainWindow::setupEditor()
 {
     m_editor = new XAEditor(m_app, this);
@@ -187,6 +205,9 @@ void XAMainWindow::setupShortCuts()
     m_main_window->actionFind->setShortcut(QKeySequence::Find);
     m_main_window->actionUndo->setShortcut(QKeySequence::Undo);
     m_main_window->actionRedo->setShortcut(QKeySequence::Redo);
+    m_main_window->actionCut->setShortcut(QKeySequence::Cut);
+    m_main_window->actionCopy->setShortcut(QKeySequence::Copy);
+    m_main_window->actionPaste->setShortcut(QKeySequence::Paste);
 
     QAction* findNextAction = new QAction(this);
     findNextAction->setShortcut(QKeySequence(Qt::Key_F3));

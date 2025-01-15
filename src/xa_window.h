@@ -48,6 +48,9 @@ public slots:
     void saveFile(const QString& path = QString());
     void undo();
     void redo();
+    void cut();
+    void copy();
+    void paste();
 
     virtual QSize sizeHint() const;
 
