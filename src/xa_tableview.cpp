@@ -16,6 +16,7 @@
  */
 
 #include "xa_tableview.h"
+#include <QDebug>
 #include <QHeaderView>
 #include <QLabel>
 #include <QScrollArea>
