@@ -18,12 +18,16 @@
 #pragma once
 #include <QWidget>
 #include <pugixml.hpp>
+#include <map>
+#include <tuple>
 
 class QVBoxLayout;
 class QLabel;
 class QTableWidget;
 class QTableWidgetItem;
 class QScrollArea;
+
+using ItemOccurenceMap = std::map<std::string, int>;
 
 class XATableView : public QWidget
 {
@@ -39,6 +43,8 @@ private:
     void setupLayout();
     void populateAttributeTable(const pugi::xml_node& node);
     void populateElementTable(const pugi::xml_node& node);
+
+    std::tuple<ItemOccurenceMap, ItemOccurenceMap> countUniqueItems(const pugi::xml_node& node);
 
     void addAttributeRow(QTableWidget* table, QStringList& headers, const pugi::xml_attribute& attr, int row);
     void addTextRow(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row);

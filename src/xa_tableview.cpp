@@ -23,6 +23,7 @@
 #include <QScrollBar>
 #include <QTableWidget>
 #include <QVBoxLayout>
+#include <algorithm>
 
 
 XATableView::XATableView(QWidget* parent)
@@ -168,9 +169,15 @@ void XATableView::populateAttributeTable(const pugi::xml_node& node)
 
 void XATableView::populateElementTable(const pugi::xml_node& node)
 {
+    // preprocess stage: Count unique columns
+    auto [count_tags, count_attrs] = countUniqueItems(node);
+    // count all elements with an occurrence of 1
+    auto unique_elem = std::count_if(count_tags.cbegin(), count_tags.cend(), [](const auto& p) { return p.second == 1; });
+    auto unique_attr = std::count_if(count_attrs.cbegin(), count_attrs.cend(), [](const auto& p) { return p.second == 1; });
+    bool unique_cons = m_num_unique_col <= unique_elem || m_num_unique_col <= unique_attr;
+    const QString header_unique_attr = "Unique Attributes";
 
     m_tablechildren->clear();
-
     m_tablechildren->setRowCount(0);
     m_tablechildren->setColumnCount(1);
 
@@ -196,28 +203,97 @@ void XATableView::populateElementTable(const pugi::xml_node& node)
             std::string name = child.name();
             auto node_type = child.type();
 
-            // XML elements to ignore
-            if (node_type == pugi::node_comment
-                || node_type == pugi::node_pi) continue;
-
             switch (node_type)
             {
             case pugi::node_element:
             {
                 m_tablechildren->insertRow(row);
+                
                 {
-                    // Add tag name
+                    // Add tag name row
                     QString tagName = QString::fromStdString(name);
                     QTableWidgetItem* tagItem = new QTableWidgetItem(tagName);
                     setItemWrapper(m_tablechildren, row, col, tagItem);
                     col++;
                 }
 
-                // Add attributes as separate rows
-                for (const pugi::xml_attribute& attr : child.attributes())
+                // Add attributes 
                 {
-                    addAttributeRow(m_tablechildren, headers, attr, row);
+                    int count_unique_attr = 0;
+                    for (const pugi::xml_attribute& attr : child.attributes())
+                    {
+                        std::string attr_name = attr.name();
+                        if (unique_cons && count_attrs[attr_name] == 1)
+                        {
+                            ++count_unique_attr;
+                        }
+                        else
+                        {
+                            if (!headers.contains(attr_name))
+                            {
+                                headers << QString::fromStdString(attr_name);
+                                m_tablechildren->setColumnCount(headers.size());
+                            }
+                            int attrCol = headers.indexOf(attr_name);
+                            QString attrValue = attr.value();
+                            QTableWidgetItem* attrItem = new QTableWidgetItem(attrValue);
+                            setItemWrapper(m_tablechildren, row, attrCol, attrItem);
+                        }
+                    }
+                    if (count_unique_attr > 0)
+                    {
+                        if (!headers.contains(header_unique_attr))
+                        {
+                            headers << header_unique_attr;
+                            m_tablechildren->setColumnCount(headers.size());
+                        }
+                        int attrCol = headers.indexOf(header_unique_attr);
+                        if (count_unique_attr > 1)
+                        {
+                            QString attrValue = QString("%1 unique attributes")
+                                .arg(count_unique_attr);
+                            QTableWidgetItem* attrItem = new QTableWidgetItem(attrValue);
+                            setItemWrapper(m_tablechildren, row, attrCol, attrItem);
+                        }
+                        else
+                        {
+                            QString attrValue = QString("%1 = \"%2\"")
+                                .arg(child.first_attribute().name()).arg(child.first_attribute().as_string());
+                            QTableWidgetItem* attrItem = new QTableWidgetItem(attrValue);
+                            setItemWrapper(m_tablechildren, row, attrCol, attrItem);
+                        }
+                    }
                 }
+
+                // iterate grand children
+                for (const pugi::xml_node& grand_child : child.children())
+                {
+                    std::string name = child.name();
+                    auto node_type = child.type();
+
+                    switch (node_type)
+                    {
+                    case pugi::node_element:
+                    {
+                        {
+                            // Add tag name row
+                            QString tagName = QString::fromStdString(name);
+                            QTableWidgetItem* tagItem = new QTableWidgetItem(tagName);
+                            setItemWrapper(m_tablechildren, row, col, tagItem);
+                            col++;
+                        }
+                        // count attribute occurrence
+                        //for (const pugi::xml_attribute& attr : child.attributes())
+                        //{
+                        //    count_attrs[attr.name()]++;
+                        //}
+                    } break;
+
+                    default:
+                        break;
+                    }
+                }
+
 
                 //addChildElements(m_tablechildren, headers, child, row);
                 row++;
@@ -232,6 +308,11 @@ void XATableView::populateElementTable(const pugi::xml_node& node)
                 addTextRow(m_tablechildren, headers, child, row);
                 row++;
                 break;
+            case pugi::node_comment:
+                break;
+            case pugi::node_pi:
+                break;
+
             default:
                 break;
             }
@@ -255,6 +336,73 @@ void XATableView::populateElementTable(const pugi::xml_node& node)
 
     // Adjust the width of the container to fit the content
     adjustWidth();
+}
+
+std::tuple<ItemOccurenceMap, ItemOccurenceMap> XATableView::countUniqueItems(const pugi::xml_node& node)
+{
+    ItemOccurenceMap count_tags;
+    ItemOccurenceMap count_attrs;
+
+    // iterate direct children
+    for (const pugi::xml_node& child : node.children())
+    {
+        std::string name = child.name();
+        auto node_type = child.type();
+
+        switch (node_type)
+        {
+        case pugi::node_element:
+        {
+            // count tag occurrence
+            count_tags[name]++;
+
+            // count attribute occurrence
+            for (const pugi::xml_attribute& attr : child.attributes())
+            {
+                count_attrs[attr.name()]++;
+            }
+
+            // iterate grand children
+            for (const pugi::xml_node& grand_child : child.children())
+            {
+                std::string name = child.name();
+                auto node_type = child.type();
+
+                switch (node_type)
+                {
+                case pugi::node_element:
+                {
+                    // count tag occurrence
+                    count_tags[name]++;
+                    
+                    // count attribute occurrence
+                    for (const pugi::xml_attribute& attr : child.attributes())
+                    {
+                        count_attrs[attr.name()]++;
+                    }
+                } break;
+
+                default:
+                    break;
+                }
+            }
+        } break;
+
+        case pugi::node_pcdata:
+            break;
+        case pugi::node_cdata:
+            break;
+        case pugi::node_comment:
+            break;
+        case pugi::node_pi:
+            break;
+        default:
+            break;
+        }
+    }
+
+
+    return { count_tags, count_attrs };
 }
 
 void XATableView::addAttributeRow(QTableWidget* table, QStringList& headers, const pugi::xml_attribute& attr, int row)
