@@ -66,6 +66,7 @@ private:
     void setupTheme();
     void setupFont();
     void setupDefaults();
+    void setupUniqueConsolidation();
     void changeTheme(const QString& selected_theme);
     void updateRecentFileActions();
     void openRecentFile();

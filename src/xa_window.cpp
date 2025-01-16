@@ -19,6 +19,7 @@
 #include "ui_xa_window.h"
 #include "ui_xa_indent_options.h"
 #include "ui_xa_theme_options.h"
+#include "ui_xa_unique_consolidation.h"
 #include "xa_app.h"
 #include "xa_editor.h"
 #include "xa_find_dialog.h"
@@ -53,7 +54,6 @@ XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget* parent)
 
     // setup UI default
     setupDefaults();
-
     setupEditor();
     setupTableView();
 
@@ -63,7 +63,8 @@ XAMainWindow::XAMainWindow(XAApp* app, XAData* app_data, QWidget* parent)
     connect(m_main_window->actionIndent_Options, &QAction::triggered, [this]() { bool force_option = true; indentDocument(force_option); });
     connect(m_main_window->actionFind, &QAction::triggered, this, &XAMainWindow::onFind);
     connect(m_main_window->actionLocate_in_tree, &QAction::triggered, this, &XAMainWindow::locateInTree);
-    
+    connect(m_main_window->actionUnique_consolidation, &QAction::triggered, this, &XAMainWindow::setupUniqueConsolidation);
+
     setupShortCuts();
 
 
@@ -244,7 +245,7 @@ void XAMainWindow::onSelectionChanged(const QModelIndex& index, const QModelInde
 
         // update table view
         //auto& doc = m_app_data->getDocument();
-        m_tableView->setTableRootNode(tree_item->getNode());
+        m_tableView->setTableRootNode(tree_item->getNode(), 2);
     }
 }
 
@@ -361,7 +362,6 @@ void XAMainWindow::indentDocument(bool force_option)
     m_editor->setPlainText(content);
 }
 
-
 void XAMainWindow::setupDefaults()
 {
     QFont font;
@@ -370,6 +370,39 @@ void XAMainWindow::setupDefaults()
     font.setPointSize(9);
 
     m_font = font;
+}
+
+void XAMainWindow::setupUniqueConsolidation()
+{
+    auto table_ui = new Ui::UniqueConsolidation;
+    auto dlg = new QDialog;
+    table_ui->setupUi(dlg);
+
+    QLineEdit* lineEdit = table_ui->uniqueColumns;
+    QIntValidator* validator = new QIntValidator(1, 64, this);
+    lineEdit->setValidator(validator);
+
+    auto& settings = m_app->getSettings();
+    auto uc = settings.value("uniqueColumns", 2).toInt();
+    lineEdit->setText(QString("%1").arg(uc));
+
+    connect(table_ui->reset, &QPushButton::clicked, 
+        [&lineEdit]() {
+            lineEdit->setText("2");
+        });
+
+    auto ret = dlg->exec();
+    if (ret == QDialog::Accepted)
+    {
+        auto uc = lineEdit->text().toUInt() > 64 ? 64 : lineEdit->text().toUInt();
+        settings.setValue("uniqueColumns", uc);
+        if (m_tableView)
+        {
+            m_tableView->setUniqueConsolidation(uc);
+        }
+    }
+
+    delete dlg;
 }
 
 void XAMainWindow::changeTheme(const QString& selected_theme)

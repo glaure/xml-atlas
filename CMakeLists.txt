@@ -50,6 +50,7 @@ set(QT_GUI_FORM_FILES
   qt_ui/xa_indent_options.ui
   qt_ui/xa_tab_options.ui
   qt_ui/xa_theme_options.ui
+  qt_ui/xa_unique_consolidation.ui
   qt_ui/xa_window.ui
 )
 if (${Qt6_FOUND})

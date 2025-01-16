@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<info>
+    <person>
+        <first>John"</first>
+        <last>Smirth</last>
+        <middle>b</middle>
+    </person>
+    <order>
+        <amount>3 lb</amount>
+        <name>Tomatoes</name>
+    </order>
+    <state>
+        <value>New Jersey</value>
+    </state>
+</info>

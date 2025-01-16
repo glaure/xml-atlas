@@ -32,23 +32,28 @@ class XATableView : public QWidget
 public:
     XATableView(QWidget* parent = nullptr);
 
-    void setTableRootNode(pugi::xml_node node);
+    void setTableRootNode(pugi::xml_node node, int num_unique_col);
+    void setUniqueConsolidation(int num_unique_col);
 
 private:
     void setupLayout();
     void populateAttributeTable(const pugi::xml_node& node);
-    void populateTable(const pugi::xml_node& node);
+    void populateElementTable(const pugi::xml_node& node);
+
     void addAttributeRow(QTableWidget* table, QStringList& headers, const pugi::xml_attribute& attr, int row);
     void addTextRow(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row);
     void addChildElements(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row);
     void adjustHeight(QTableWidget* table);
     void adjustWidth();
     void setItemWrapper(QTableWidget* table, int row, int column, QTableWidgetItem* item);
-    int addTableHeader(QTableWidget* table, QStringList& headers, const QString& childName, int row);
-
+    
+    int addTableHeader(QTableWidget* table, QStringList& headers, const QString& childName, int row = 0);
+    void addMultipleChildren(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row);
     size_t countElements(const pugi::xml_node& node);
 
-
+private:
+    pugi::xml_node m_table_root;
+    int           m_num_unique_col;
     QVBoxLayout*  m_layout;
     QLabel*       m_table_title;
     QLabel*       m_tableattribute_title;
