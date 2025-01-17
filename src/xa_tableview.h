@@ -45,18 +45,15 @@ private:
     void populateElementTable(const pugi::xml_node& node);
 
     std::tuple<ItemOccurenceMap, ItemOccurenceMap> countUniqueItems(const pugi::xml_node& node);
-    QString getCellContent(const pugi::xml_node& node);
+    QString getCellContent(const pugi::xml_node& node, int occurrence);
 
-    void addAttributeRow(QTableWidget* table, QStringList& headers, const pugi::xml_attribute& attr, int row);
     void addTextRow(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row);
-    void addChildElements(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row);
+
     void adjustHeight(QTableWidget* table);
     void adjustWidth();
     void setItemWrapper(QTableWidget* table, int row, int column, QTableWidgetItem* item);
-    
-    int addTableHeader(QTableWidget* table, QStringList& headers, const QString& childName, int row = 0);
-    void addMultipleChildren(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row);
-    size_t countElements(const pugi::xml_node& node);
+    size_t countElements(const pugi::xml_node& node) const;
+    size_t countChildren(const pugi::xml_node& node) const;
 
 private:
     pugi::xml_node m_table_root;

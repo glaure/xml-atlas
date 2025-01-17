@@ -297,7 +297,7 @@ void XATableView::populateElementTable(const pugi::xml_node& node)
                                 m_tablechildren->setColumnCount(headers.size());
                             }
                             int tagCol = headers.indexOf(tagName);
-                            auto item = new QTableWidgetItem(getCellContent(grand_child));
+                            auto item = new QTableWidgetItem(getCellContent(grand_child, count_tags[grand_name]));
                             setItemWrapper(m_tablechildren, row, tagCol, item);
                         }
 
@@ -412,7 +412,7 @@ std::tuple<ItemOccurenceMap, ItemOccurenceMap> XATableView::countUniqueItems(con
                 {
                     // count gran children tag occurrence
                     count_tags[gc_name]++;
-                    
+
                     // count attribute occurrence
                     for (const pugi::xml_attribute& attr : grand_child.attributes())
                     {
@@ -444,8 +444,10 @@ std::tuple<ItemOccurenceMap, ItemOccurenceMap> XATableView::countUniqueItems(con
     return { count_tags, count_attrs };
 }
 
-QString XATableView::getCellContent(const pugi::xml_node& node)
+QString XATableView::getCellContent(const pugi::xml_node& node, int occurrence)
 {
+    auto count_children = countChildren(node);
+
     switch (node.type())
     {
     case pugi::node_cdata:
@@ -454,8 +456,32 @@ QString XATableView::getCellContent(const pugi::xml_node& node)
         return node.value();
     case pugi::node_element:
     {
-            // TODO handle other types
-        return node.name();
+        if (count_children == 1)
+        {
+            auto child = node.first_child();
+            switch (child.type())
+            {
+            case pugi::node_cdata:
+                return child.text().as_string();
+            case pugi::node_pcdata:
+                return child.text().as_string();
+            case pugi::node_element:
+                return child.name();
+            }
+        }
+        else if (count_children == 0)
+        {
+            if (occurrence > 1)
+            {
+                return QString("%1 (%2 occurrences)").arg(node.name()).arg(occurrence);
+            }
+            return node.text().as_string();
+        }
+        else
+        {
+            return node.name();
+        }
+        
     } break;
         
     default:
@@ -464,22 +490,6 @@ QString XATableView::getCellContent(const pugi::xml_node& node)
     return {};
 }
 
-void XATableView::addAttributeRow(QTableWidget* table, QStringList& headers, const pugi::xml_attribute& attr, int row)
-{
-    QString attrName = attr.name();
-    QString attrValue = attr.value();
-
-    if (!headers.contains(attrName))
-    {
-        headers << attrName;
-        table->setColumnCount(headers.size());
-    }
-
-    int attrCol = headers.indexOf(attrName);
-
-    QTableWidgetItem* attrItem = new QTableWidgetItem(attrValue);
-    setItemWrapper(table, row, attrCol, attrItem);
-}
 
 void XATableView::addTextRow(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row)
 {
@@ -501,214 +511,6 @@ void XATableView::addTextRow(QTableWidget* table, QStringList& headers, const pu
     QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
     setItemWrapper(table, row, grandChildCol, grandChildItem);
 }
-
-/**
- * These are the children of "node" therefore the grandchildren of the selected node
- */
-void XATableView::addChildElements(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row)
-{
-    QFontMetrics metrics(table->font());
-    QString unique_subtags_title("Unique Subtags");
-
-    auto children = node.children();
-
-    enum {
-        _ONE_CDATA,
-        _ONE_PCDATA,
-        _ONE_ELEM,
-        _MULTI_EQUAL_ELEM,
-        _MULTI_ELEM,
-    } layout_state;
-
-    std::map<std::string, int> element_count;
-
-    // Analyze the children
-    struct ElemCount {
-        int cdata_count = 0;
-        int pcdata_count = 0;
-        int elem_count = 0;
-    } elem_count;
-
-    for (const pugi::xml_node& child : children)
-    {
-        switch (child.type())
-        {
-        case pugi::node_cdata:
-            elem_count.cdata_count++;
-            break;
-        case pugi::node_pcdata:
-            elem_count.pcdata_count++;
-            break;
-        case pugi::node_element:
-            elem_count.elem_count++;
-            element_count[child.name()]++;
-            break;
-        }
-    }
-
-    if (elem_count.cdata_count > 0 && elem_count.pcdata_count == 0 && elem_count.elem_count == 0)
-    {
-        layout_state = _ONE_CDATA;
-    }
-    else if (elem_count.cdata_count == 0 && elem_count.pcdata_count > 0 && elem_count.elem_count == 0)
-    {
-        layout_state = _ONE_PCDATA;
-    }
-    else if (elem_count.cdata_count == 0 && elem_count.pcdata_count == 0 && elem_count.elem_count == 1)
-    {
-        layout_state = _ONE_ELEM;
-    }
-    else if (elem_count.elem_count > 1 && element_count.size() == 1)
-    {
-        layout_state = _MULTI_EQUAL_ELEM;
-    }
-    else if (elem_count.elem_count > 1 && element_count.size() > 1)
-    {
-        layout_state = _MULTI_ELEM;
-    }
-    else
-    {
-        return;
-    }
-
-    // Layout rules
-    // ------------
-    // 1. If there is only 1 element with text, its content is shown in a separate row
-    // 2. If there is only 1 element with one "child elemnt", the child element's name is shown in a separate row
-    // 3. If there are multiple identical elements, its name and the number of occurence is shown:
-    //      "Name (x occurrences)"
-    // 4. If there are multiple non-identical elements, their unique number of occurence is shown:
-    //      "x unique subtags"
-
-
-    switch (layout_state)
-    {
-    case _ONE_CDATA:
-    {
-        QString childName = "Text";
-        QString childValue = QString("%1").arg(node.first_child().text().as_string()).simplified();
-        int grandChildCol = addTableHeader(table, headers, childName, row);
-        auto col_size = 2 * table->columnWidth(grandChildCol);
-        auto elidedChildValue = QString("<![CDATA[%1]]").arg(metrics.elidedText(childValue, Qt::ElideRight, col_size));
-        QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-        setItemWrapper(table, row, grandChildCol, grandChildItem);
-    } break;
-
-    case _ONE_PCDATA:
-    {
-        QString childName = "Text";
-        QString childValue = QString("%1").arg(node.first_child().text().as_string()).simplified();
-        int grandChildCol = addTableHeader(table, headers, childName, row);
-        auto col_size = 2 * table->columnWidth(grandChildCol);
-        auto elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
-        QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-        setItemWrapper(table, row, grandChildCol, grandChildItem);
-    } break;
-
-    case _ONE_ELEM:
-    {
-        QString childName = unique_subtags_title;
-        QString childValue = QString("%1").arg(node.first_child().name());
-        int grandChildCol = addTableHeader(table, headers, childName, row);
-        auto col_size = 2 * table->columnWidth(grandChildCol);
-        auto elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
-        QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-        setItemWrapper(table, row, grandChildCol, grandChildItem);
-    } break;
-
-    case _MULTI_EQUAL_ELEM:
-    {
-        if (true)
-        {
-            addMultipleChildren(table, headers, node, row);
-        }
-        else
-        {
-            QString childName = unique_subtags_title;
-            QString childValue = QString("%1 unique subtags").arg(element_count.size());
-            if (!headers.contains(childName))
-            {
-                headers << childName;
-                table->setColumnCount(headers.size());
-            }
-            int grandChildCol = headers.indexOf(childName);
-            auto col_size = 2 * table->columnWidth(grandChildCol);
-            auto elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
-            QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-            setItemWrapper(table, row, grandChildCol, grandChildItem);
-        }
-    } break;
-
-    case _MULTI_ELEM:
-    {
-        if (true)
-        {
-            addMultipleChildren(table, headers, node, row);
-        }
-        else
-        {
-            QString childName = unique_subtags_title;
-            QString childValue = QString("%1 (%2 occurrences)")
-                .arg(element_count.size())
-                .arg(42);
-            if (!headers.contains(childName))
-            {
-                headers << childName;
-                table->setColumnCount(headers.size());
-            }
-            int grandChildCol = headers.indexOf(childName);
-            auto col_size = 2 * table->columnWidth(grandChildCol);
-            auto elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
-            QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-            setItemWrapper(table, row, grandChildCol, grandChildItem);
-        }
-    } break;
-
-    default:
-        return;
-    }
-
-
-}
-
-int XATableView::addTableHeader(QTableWidget* table, QStringList& headers, const QString& childName, int row)
-{
-    if (row == 0)
-    {
-        headers << childName;
-        table->setColumnCount(headers.size());
-    }
-    auto col = headers.indexOf(childName);
-    Q_ASSERT(col != -1);
-    return col;
-}
-
-void XATableView::addMultipleChildren(QTableWidget* table, QStringList& headers, const pugi::xml_node& node, int row)
-{
-    QFontMetrics metrics(table->font());
-    for (const auto& child : node.children())
-    {
-        auto name = child.name();
-        switch (child.type())
-        {
-        case pugi::node_element:
-        {
-            QString childName = name;
-            QString childValue = QString("%1").arg(child.text().as_string());
-            int grandChildCol = addTableHeader(table, headers, childName);
-            auto col_size = 2 * table->columnWidth(grandChildCol);
-            auto elidedChildValue = metrics.elidedText(childValue, Qt::ElideRight, col_size);
-            QTableWidgetItem* grandChildItem = new QTableWidgetItem(elidedChildValue);
-            setItemWrapper(table, row, grandChildCol, grandChildItem);
-        } break;
-
-        default:
-            Q_ASSERT(false);
-            break;
-        }
-    }
-}
-
 
 void XATableView::adjustHeight(QTableWidget* table)
 {
@@ -736,7 +538,7 @@ void XATableView::setItemWrapper(QTableWidget* table, int row, int column, QTabl
     table->setItem(row, column, item);
 }
 
-size_t XATableView::countElements(const pugi::xml_node& node)
+size_t XATableView::countElements(const pugi::xml_node& node) const
 {
     size_t num = 0;
 
@@ -745,6 +547,27 @@ size_t XATableView::countElements(const pugi::xml_node& node)
         switch (child.type())
         {
         case pugi::node_element:    ++num; break;
+        default: break;
+
+        }
+    }
+
+    return num;
+}
+
+size_t XATableView::countChildren(const pugi::xml_node& node) const
+{
+    size_t num = 0;
+
+    for (const auto& child : node.children())
+    {
+        switch (child.type())
+        {
+        case pugi::node_element:    
+        case pugi::node_pcdata:
+        case pugi::node_cdata:
+            ++num; 
+            break;
         default: break;
 
         }
