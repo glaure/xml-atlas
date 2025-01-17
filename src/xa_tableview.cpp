@@ -229,12 +229,13 @@ void XATableView::populateElementTable(const pugi::xml_node& node)
                         }
                         else
                         {
-                            if (!headers.contains(attr_name))
+                            QString qattr_name = attr.name();
+                            if (!headers.contains(qattr_name))
                             {
-                                headers << QString::fromStdString(attr_name);
+                                headers << qattr_name;
                                 m_tablechildren->setColumnCount(headers.size());
                             }
-                            int attrCol = headers.indexOf(attr_name);
+                            int attrCol = headers.indexOf(qattr_name);
                             QString attrValue = attr.value();
                             QTableWidgetItem* attrItem = new QTableWidgetItem(attrValue);
                             setItemWrapper(m_tablechildren, row, attrCol, attrItem);
