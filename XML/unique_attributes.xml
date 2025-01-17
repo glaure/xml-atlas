@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <info>
-    <person first = "John" last = "Smirth" middle = "b" />
+    <person first = "John" last = "Smith" middle = "b" />
     <order amount = "3 lb" name = "Tomatoes"/>
     <state value = "New Jersey"/>
 </info>

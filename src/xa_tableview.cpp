@@ -273,98 +273,65 @@ void XATableView::populateElementTable(const pugi::xml_node& node)
                 }
 
                 // iterate grand children
-#if 0
+                int count_unique_tags = 0;
                 for (const pugi::xml_node& grand_child : child.children())
                 {
-                    std::string name = grand_child.name();
-                    auto node_type = grand_child.type();
+                    std::string grand_name = grand_child.name();
+                    auto grand_node_type = grand_child.type();
 
-                    switch (node_type)
+                    switch (grand_node_type)
                     {
                     case pugi::node_element:
                     {
+                        // Extend header row
+                        QString tagName = QString::fromStdString(grand_name);
+                        if (unique_cons && count_tags[grand_name] == 1)
                         {
-                            // Add tag name row/col
-                            QString tagName = QString::fromStdString(name);
+                            ++count_unique_tags;
+                        }
+                        else
+                        {
                             if (!headers.contains(tagName))
                             {
                                 headers << tagName;
                                 m_tablechildren->setColumnCount(headers.size());
                             }
-                            QTableWidgetItem* tagItem = new QTableWidgetItem(tagName);
-                            setItemWrapper(m_tablechildren, row, col, tagItem);
-                            col++;
-
+                            int tagCol = headers.indexOf(tagName);
+                            auto item = new QTableWidgetItem(getCellContent(grand_child));
+                            setItemWrapper(m_tablechildren, row, tagCol, item);
                         }
-                        // attribute occurrence
-                        //for (const pugi::xml_attribute& attr : child.attributes())
-                        //{
-                        //    count_attrs[attr.name()]++;
-                        //}
 
-                        // Summarize the XML element's content
-                        {
-                            int count_unique_elem = 0;
-                            for (const pugi::xml_node& grand_grand_child : grand_child.children())
-                            {
-                                std::string gc_name = grand_grand_child.name();
-                                auto gc_node_type = grand_grand_child.type();
-
-                                switch (gc_node_type)
-                                {
-                                case pugi::node_element:
-                                {
-                                    if (unique_cons && count_tags[gc_name] == 1)
-                                    {
-                                        ++count_unique_elem;
-                                    }
-                                    else                                                               
-                                    {
-                                        QString tag_name = grand_grand_child.name();
-                                        if (!headers.contains(tag_name))
-                                        {
-                                            headers << tag_name;
-                                            m_tablechildren->setColumnCount(headers.size());
-                                        }
-                                        int tagCol = headers.indexOf(tag_name);
-                                        QString tagValue = grand_grand_child.text().as_string();
-                                        auto item = new QTableWidgetItem(tagValue);
-                                        setItemWrapper(m_tablechildren, row, tagCol, item);
-                                    }
-                                } break;
-                                }
-                            }
-                            if (count_unique_elem > 0)
-                            {
-                                if (!headers.contains(header_unique_subtags))
-                                {
-                                    headers << header_unique_subtags;
-                                    m_tablechildren->setColumnCount(headers.size());
-                                }
-                                int col = headers.indexOf(header_unique_subtags);
-                                if (count_unique_elem > 1)
-                                {
-                                    QString tagValue = QString("%1 unique subtags")
-                                        .arg(count_unique_elem);
-                                    QTableWidgetItem* item = new QTableWidgetItem(tagValue);
-                                    setItemWrapper(m_tablechildren, row, col, item);
-                                }
-                                else
-                                {
-                                    QString tagValue = QString("%1")
-                                        .arg("ABC");
-                                    QTableWidgetItem* item = new QTableWidgetItem(tagValue);
-                                    setItemWrapper(m_tablechildren, row, col, item);
-                                }
-                            }
-                        }
                     } break;
 
                     default:
                         break;
                     }
                 }
-#endif
+
+                if (count_unique_tags > 0)
+                {
+                    if (!headers.contains(header_unique_subtags))
+                    {
+                        headers << header_unique_subtags;
+                        m_tablechildren->setColumnCount(headers.size());
+                    }
+                    int col = headers.indexOf(header_unique_subtags);
+                    if (count_unique_tags > 1)
+                    {
+                        QString tagValue = QString("%1 unique subtags")
+                            .arg(count_unique_tags);
+                        QTableWidgetItem* item = new QTableWidgetItem(tagValue);
+                        setItemWrapper(m_tablechildren, row, col, item);
+                    }
+                    else
+                    {
+                        QString tagValue = QString("%1")
+                            .arg(QString::fromLatin1(child.first_child().name()));
+                        QTableWidgetItem* item = new QTableWidgetItem(tagValue);
+                        setItemWrapper(m_tablechildren, row, col, item);
+                    }
+
+                }
 
                 //addChildElements(m_tablechildren, headers, child, row);
                 row++;
@@ -436,21 +403,22 @@ std::tuple<ItemOccurenceMap, ItemOccurenceMap> XATableView::countUniqueItems(con
             // iterate grand children
             for (const pugi::xml_node& grand_child : child.children())
             {
-                std::string name = child.name();
-                auto node_type = child.type();
+                std::string gc_name = grand_child.name();
+                auto gc_node_type = grand_child.type();
 
-                switch (node_type)
+                switch (gc_node_type)
                 {
                 case pugi::node_element:
                 {
-                    // count tag occurrence
-                    count_tags[name]++;
+                    // count gran children tag occurrence
+                    count_tags[gc_name]++;
                     
                     // count attribute occurrence
-                    for (const pugi::xml_attribute& attr : child.attributes())
+                    for (const pugi::xml_attribute& attr : grand_child.attributes())
                     {
                         count_attrs[attr.name()]++;
                     }
+
                 } break;
 
                 default:
@@ -474,6 +442,26 @@ std::tuple<ItemOccurenceMap, ItemOccurenceMap> XATableView::countUniqueItems(con
 
 
     return { count_tags, count_attrs };
+}
+
+QString XATableView::getCellContent(const pugi::xml_node& node)
+{
+    switch (node.type())
+    {
+    case pugi::node_cdata:
+        return node.value();
+    case pugi::node_pcdata:
+        return node.value();
+    case pugi::node_element:
+    {
+            // TODO handle other types
+        return node.name();
+    } break;
+        
+    default:
+        break;
+    }
+    return {};
 }
 
 void XATableView::addAttributeRow(QTableWidget* table, QStringList& headers, const pugi::xml_attribute& attr, int row)

@@ -278,8 +278,9 @@ void XAMainWindow::onSelectionChanged(const QModelIndex& index, const QModelInde
         m_editor->markSelectedRange(tree_item->getOffset(), 20);
 
         // update table view
-        //auto& doc = m_app_data->getDocument();
-        m_tableView->setTableRootNode(tree_item->getNode(), 2);
+        auto& settings = m_app->getSettings();
+        auto uc = settings.value("uniqueColumns", 2).toInt();
+        m_tableView->setTableRootNode(tree_item->getNode(), uc);
     }
 }
 
