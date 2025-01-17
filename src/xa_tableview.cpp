@@ -176,6 +176,7 @@ void XATableView::populateElementTable(const pugi::xml_node& node)
     auto unique_attr = std::count_if(count_attrs.cbegin(), count_attrs.cend(), [](const auto& p) { return p.second == 1; });
     bool unique_cons = m_num_unique_col <= unique_elem || m_num_unique_col <= unique_attr;
     const QString header_unique_attr = "Unique Attributes";
+    const QString header_unique_subtags = "Unique Subtags";
 
     m_tablechildren->clear();
     m_tablechildren->setRowCount(0);
@@ -212,6 +213,11 @@ void XATableView::populateElementTable(const pugi::xml_node& node)
                 {
                     // Add tag name row
                     QString tagName = QString::fromStdString(name);
+                    //if (!headers.contains(tagName))
+                    //{
+                    //    headers << tagName;
+                    //    m_tablechildren->setColumnCount(headers.size());
+                    //}
                     QTableWidgetItem* tagItem = new QTableWidgetItem(tagName);
                     setItemWrapper(m_tablechildren, row, col, tagItem);
                     col++;
@@ -267,34 +273,98 @@ void XATableView::populateElementTable(const pugi::xml_node& node)
                 }
 
                 // iterate grand children
+#if 0
                 for (const pugi::xml_node& grand_child : child.children())
                 {
-                    std::string name = child.name();
-                    auto node_type = child.type();
+                    std::string name = grand_child.name();
+                    auto node_type = grand_child.type();
 
                     switch (node_type)
                     {
                     case pugi::node_element:
                     {
                         {
-                            // Add tag name row
+                            // Add tag name row/col
                             QString tagName = QString::fromStdString(name);
+                            if (!headers.contains(tagName))
+                            {
+                                headers << tagName;
+                                m_tablechildren->setColumnCount(headers.size());
+                            }
                             QTableWidgetItem* tagItem = new QTableWidgetItem(tagName);
                             setItemWrapper(m_tablechildren, row, col, tagItem);
                             col++;
+
                         }
-                        // count attribute occurrence
+                        // attribute occurrence
                         //for (const pugi::xml_attribute& attr : child.attributes())
                         //{
                         //    count_attrs[attr.name()]++;
                         //}
+
+                        // Summarize the XML element's content
+                        {
+                            int count_unique_elem = 0;
+                            for (const pugi::xml_node& grand_grand_child : grand_child.children())
+                            {
+                                std::string gc_name = grand_grand_child.name();
+                                auto gc_node_type = grand_grand_child.type();
+
+                                switch (gc_node_type)
+                                {
+                                case pugi::node_element:
+                                {
+                                    if (unique_cons && count_tags[gc_name] == 1)
+                                    {
+                                        ++count_unique_elem;
+                                    }
+                                    else                                                               
+                                    {
+                                        QString tag_name = grand_grand_child.name();
+                                        if (!headers.contains(tag_name))
+                                        {
+                                            headers << tag_name;
+                                            m_tablechildren->setColumnCount(headers.size());
+                                        }
+                                        int tagCol = headers.indexOf(tag_name);
+                                        QString tagValue = grand_grand_child.text().as_string();
+                                        auto item = new QTableWidgetItem(tagValue);
+                                        setItemWrapper(m_tablechildren, row, tagCol, item);
+                                    }
+                                } break;
+                                }
+                            }
+                            if (count_unique_elem > 0)
+                            {
+                                if (!headers.contains(header_unique_subtags))
+                                {
+                                    headers << header_unique_subtags;
+                                    m_tablechildren->setColumnCount(headers.size());
+                                }
+                                int col = headers.indexOf(header_unique_subtags);
+                                if (count_unique_elem > 1)
+                                {
+                                    QString tagValue = QString("%1 unique subtags")
+                                        .arg(count_unique_elem);
+                                    QTableWidgetItem* item = new QTableWidgetItem(tagValue);
+                                    setItemWrapper(m_tablechildren, row, col, item);
+                                }
+                                else
+                                {
+                                    QString tagValue = QString("%1")
+                                        .arg("ABC");
+                                    QTableWidgetItem* item = new QTableWidgetItem(tagValue);
+                                    setItemWrapper(m_tablechildren, row, col, item);
+                                }
+                            }
+                        }
                     } break;
 
                     default:
                         break;
                     }
                 }
-
+#endif
 
                 //addChildElements(m_tablechildren, headers, child, row);
                 row++;
