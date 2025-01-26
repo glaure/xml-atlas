@@ -72,12 +72,9 @@ void XAEditor::markSelectedRange(const XAXMLTreeItem* item)
         selection.format.setBackground(lineColor);
 
         // highlight selection
-        //auto node = item->getNode();
-        //auto offset = node.offset_debug();
         auto offset = findFirstElementPos(item);
         auto last_offset = findEndElementPos(item);
         auto length = last_offset - offset;
-        //auto length = 20;
 
         QTextCursor cursor = textCursor();
         cursor.setPosition(static_cast<int>(offset), QTextCursor::MoveAnchor);
@@ -88,7 +85,10 @@ void XAEditor::markSelectedRange(const XAXMLTreeItem* item)
 
     setExtraSelections(extraSelections);
     if (!extraSelections.isEmpty()) {
-        setTextCursor(extraSelections.first().cursor);
+        QTextCursor cursor = extraSelections.first().cursor;
+        cursor.setPosition(cursor.selectionStart(), QTextCursor::MoveAnchor);
+        setTextCursor(cursor);
+        ensureCursorVisible();
     }
 }
 
@@ -136,6 +136,28 @@ size_t XAEditor::findEndElementPos(const XAXMLTreeItem* item)
     {
     case XAXMLTreeItemType::ELEMENT:
     {
+        auto sibling = node.next_sibling();
+        auto end_offset = sibling.offset_debug();
+        if (sibling)
+        {
+            end_offset = sibling.offset_debug();
+        }
+        else
+        {
+
+        }
+        
+        QString pattern = QStringLiteral("</%1>").arg(QRegularExpression::escape(node.name()));
+        QRegularExpression regex(pattern);
+        
+        QTextDocument* document = this->document();
+        auto cursor = document->find(regex, offset);
+        if (cursor.isNull()) {
+            return 0; // End element not found
+        }
+        end_offset = cursor.selectionEnd(); // Return the end of the match
+
+        return end_offset;
     } break;
 
     case XAXMLTreeItemType::ATTRIBUTE:
