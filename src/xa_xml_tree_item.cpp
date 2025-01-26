@@ -63,7 +63,7 @@ int XAXMLTreeItem::childCount() const
 int XAXMLTreeItem::columnCount() const
 {
     //return m_itemData.count();
-    return 2;
+    return 1;
 }
 
 const QVector<XAXMLTreeItem*>& XAXMLTreeItem::children() const
