@@ -18,6 +18,7 @@
 #pragma once
 
 #include <QPlainTextEdit>
+#include <pugixml.hpp>
 
 class QPaintEvent;
 class QResizeEvent;
@@ -27,6 +28,7 @@ class QWidget;
 class LineNumberArea;
 class XAApp;
 class XATheme;
+class XAXMLTreeItem;
 
 class XAEditor : public QPlainTextEdit
 {
@@ -38,7 +40,7 @@ public:
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
 
-    void markSelectedRange(uint64_t offset, std::size_t length);
+    void markSelectedRange(const XAXMLTreeItem* item);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -47,6 +49,10 @@ private slots:
     void updateLineNumberAreaWidth(int newBlockCount);
     void highlightCurrentLine();
     void updateLineNumberArea(const QRect &rect, int dy);
+
+private:
+    size_t findFirstElementPos(const XAXMLTreeItem* item);
+    size_t findEndElementPos(const XAXMLTreeItem* item);
 
 private:
     QWidget *lineNumberArea;

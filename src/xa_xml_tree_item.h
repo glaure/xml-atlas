@@ -22,12 +22,12 @@
 #include <QVector>
 #include <pugixml.hpp>
 
+
 enum class XAXMLTreeItemType
 {
     ELEMENT,
     ATTRIBUTE
 };
-
 
 
 class XAXMLTreeItem
@@ -55,7 +55,9 @@ public:
 
     uint64_t getOffset() const;
 
-    pugi::xml_node getNode();
+    pugi::xml_node getNode() const;
+    XAXMLTreeItemType getItemType() const;
+    std::string getValue() const;
 private:
 
 private:

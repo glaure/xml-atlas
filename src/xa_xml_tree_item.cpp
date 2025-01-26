@@ -111,7 +111,17 @@ uint64_t XAXMLTreeItem::getOffset() const
     return m_node.offset_debug();
 }
 
-pugi::xml_node XAXMLTreeItem::getNode()
+pugi::xml_node XAXMLTreeItem::getNode() const
 {
     return m_node;
+}
+
+XAXMLTreeItemType XAXMLTreeItem::getItemType() const
+{
+    return m_item_type;
+}
+
+std::string XAXMLTreeItem::getValue() const
+{
+    return m_value;
 }

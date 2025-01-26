@@ -18,8 +18,11 @@
 #include "xa_editor.h"
 #include <QPainter>
 #include <QTextBlock>
+#include <QRegularExpression>
 #include "xa_app.h"
 #include "xa_theme.h"
+#include "xa_xml_tree_item.h"
+#include "pugixml.hpp"
 
 
 XAEditor::XAEditor(XAApp* app, QWidget *parent) 
@@ -57,41 +60,109 @@ void XAEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
 }
 
-void XAEditor::markSelectedRange(uint64_t offset, std::size_t length)
+void XAEditor::markSelectedRange(const XAXMLTreeItem* item)
 {
-    QList<QTextEdit::ExtraSelection> extraSelections = {};
+    QList<QTextEdit::ExtraSelection> extraSelections;
 
     if (!isReadOnly()) {
-        QTextEdit::ExtraSelection selection = {};
+        QTextEdit::ExtraSelection selection;
 
-        //QColor lineColor = QColor(0x264f78);  // dark
-        //QColor lineColor = QColor(0xbbd5fd);    // light
         QColor lineColor = m_theme->getColorTheme() == "dark" ? QColor(0x264f78) : QColor(0xbbd5fd);
 
-
         selection.format.setBackground(lineColor);
-      
-#if 0
-        // highlight selection
-        selection.cursor = textCursor();
-        selection.cursor.setPosition(offset, QTextCursor::MoveAnchor);
-        selection.cursor.setPosition(static_cast<int>(offset + length), QTextCursor::KeepAnchor);
-        selection.cursor.setCharFormat(selection.format);
-        selection.cursor.clearSelection();
-        extraSelections.append(selection);
-#else
-        // highlight complete line
-        selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-        selection.cursor = textCursor();
-        selection.cursor.setPosition(offset, QTextCursor::MoveAnchor);
-        selection.cursor.clearSelection();
-        extraSelections.append(selection);
-#endif
 
+        // highlight selection
+        //auto node = item->getNode();
+        //auto offset = node.offset_debug();
+        auto offset = findFirstElementPos(item);
+        auto last_offset = findEndElementPos(item);
+        auto length = last_offset - offset;
+        //auto length = 20;
+
+        QTextCursor cursor = textCursor();
+        cursor.setPosition(static_cast<int>(offset), QTextCursor::MoveAnchor);
+        cursor.setPosition(static_cast<int>(offset + length), QTextCursor::KeepAnchor);
+        selection.cursor = cursor;
+        extraSelections.append(selection);
     }
 
     setExtraSelections(extraSelections);
-    setTextCursor(extraSelections.first().cursor);
+    if (!extraSelections.isEmpty()) {
+        setTextCursor(extraSelections.first().cursor);
+    }
+}
+
+size_t XAEditor::findFirstElementPos(const XAXMLTreeItem* item)
+{
+    auto node = item->getNode();
+    auto offset = node.offset_debug();
+
+    switch (item->getItemType())
+    {
+    case XAXMLTreeItemType::ELEMENT:
+    {
+        return offset;
+    } break;
+
+    case XAXMLTreeItemType::ATTRIBUTE:
+    {
+        auto node = item->getNode();
+        auto attribute_name = QString::fromStdString(item->getValue());
+        QString pattern = QStringLiteral("\\b%1\\b").arg(QRegularExpression::escape(attribute_name));
+        QRegularExpression regex(pattern);
+
+        QTextDocument* document = this->document();
+        auto cursor = document->find(regex, offset);
+        if (cursor.isNull()) {
+            return 0; // Attribute not found
+        }
+        return cursor.selectionStart(); // Return the start of the match
+
+    } break;
+
+    default:
+        break;
+    }
+
+    return 0;
+}
+
+size_t XAEditor::findEndElementPos(const XAXMLTreeItem* item)
+{
+    auto node = item->getNode();
+    auto offset = node.offset_debug();
+
+    switch (item->getItemType())
+    {
+    case XAXMLTreeItemType::ELEMENT:
+    {
+    } break;
+
+    case XAXMLTreeItemType::ATTRIBUTE:
+    {
+        auto attribute_name = QString::fromStdString(item->getValue());
+        QString pattern = QStringLiteral("\\b%1\\b\\s*=\\s*\"([^\"]*)\"").arg(QRegularExpression::escape(attribute_name));
+        QRegularExpression regex(pattern);
+
+        QTextDocument* document = this->document();
+        auto cursor = document->find(regex, offset);
+        if (cursor.isNull()) {
+            return 0; // Attribute not found
+        }
+
+        // Get the matched text
+        auto match = regex.match(document->toPlainText(), cursor.selectionStart());
+        if (match.hasMatch()) {
+            auto attribute_value = match.captured(1);
+            return cursor.selectionStart() + match.capturedLength(0); // End of the attribute value
+        }
+    } break;
+
+    default:
+        break;
+    }
+
+    return 0;
 }
 
 void XAEditor::updateLineNumberArea(const QRect &rect, int dy)

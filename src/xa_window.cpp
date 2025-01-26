@@ -275,7 +275,13 @@ void XAMainWindow::onSelectionChanged(const QModelIndex& index, const QModelInde
         auto tree_item = reinterpret_cast<XAXMLTreeItem*>(item);
 
         // mark
-        m_editor->markSelectedRange(tree_item->getOffset(), 20);
+        {
+            //auto first = tree_item->getOffset();
+            //auto node = tree_item->getNode();
+            //auto length = node.next_sibling().offset_debug() - first;
+            //m_editor->markSelectedRange(tree_item->getOffset(), length);
+            m_editor->markSelectedRange(tree_item);
+        }
 
         // update table view
         auto& settings = m_app->getSettings();
