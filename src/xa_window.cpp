@@ -385,20 +385,35 @@ void XAMainWindow::setupFont()
 
 void XAMainWindow::indentDocument(bool force_option)
 {
+    // defaults:
     int indent_size = 4;
     int max_attr_per_line = 6;
     bool use_spaces = true;
+
+    auto& settings = m_app->getSettings();
+    max_attr_per_line = settings.value("maxAttrPerLine", max_attr_per_line).toInt();
+    indent_size = settings.value("indentSize", indent_size).toInt();
 
     if (force_option)
     {
         auto indent_ui = new Ui::IndentOptions();
         auto dlg = new QDialog();
         indent_ui->setupUi(dlg);
+
+        indent_ui->indent_size->setText(QString("%1").arg(indent_size));
+        indent_ui->max_attributes->setText(QString("%1").arg(max_attr_per_line));
+
         dlg->exec();
+
+        indent_size = indent_ui->indent_size->text().toInt();
+        max_attr_per_line = indent_ui->max_attributes->text().toInt();
+
+        settings.setValue("maxAttrPerLine", max_attr_per_line);
+        settings.setValue("indentSize", indent_size);
 
         delete dlg;
     }
-    //m_app_data->setContent(m_editor->toPlainText());
+
     auto content = m_app_data->indentDocument(indent_size, max_attr_per_line, use_spaces);
     m_editor->setPlainText(content);
 }
