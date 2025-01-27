@@ -101,7 +101,7 @@ size_t XAEditor::findFirstElementPos(const XAXMLTreeItem* item)
     {
     case XAXMLTreeItemType::ELEMENT:
     {
-        return offset;
+        return offset - 1;
     } break;
 
     case XAXMLTreeItemType::ATTRIBUTE:
@@ -127,6 +127,38 @@ size_t XAEditor::findFirstElementPos(const XAXMLTreeItem* item)
     return 0;
 }
 
+
+class CountElementVisitor : public pugi::xml_tree_walker
+{
+public:
+    CountElementVisitor(const std::string& elem_name) 
+        : m_element_name(elem_name)
+        , m_count(0) 
+    {}
+
+    virtual bool for_each(pugi::xml_node& node)
+    {
+        if (node.type() == pugi::node_element)
+        {
+            if (node.name() == m_element_name)
+            {
+                m_count++;
+            }
+        }
+        return true;
+    }
+
+    size_t getCount() const 
+    { 
+        return m_count; 
+    }
+
+private:
+    std::string m_element_name;
+    int m_count;
+};
+
+
 size_t XAEditor::findEndElementPos(const XAXMLTreeItem* item)
 {
     auto node = item->getNode();
@@ -136,27 +168,38 @@ size_t XAEditor::findEndElementPos(const XAXMLTreeItem* item)
     {
     case XAXMLTreeItemType::ELEMENT:
     {
-        auto sibling = node.next_sibling();
-        auto end_offset = sibling.offset_debug();
-        if (sibling)
+        auto end_offset = offset;
+        QTextDocument* document = this->document();
+
+        auto child_count = std::distance(node.begin(), node.end());
+        if (child_count == 0)
         {
-            end_offset = sibling.offset_debug();
+            QString pattern = QStringLiteral("/>").arg(QRegularExpression::escape(node.name()));
+            QRegularExpression regex(pattern);
+            auto cursor = document->find(regex, end_offset);
+            if (cursor.isNull()) {
+                return 0; // End element not found
+            }
+            end_offset = cursor.selectionEnd(); // Return the end of the match
         }
         else
         {
+            // Count nested child elements with the same name
+            CountElementVisitor visitor(node.name());
+            node.traverse(visitor);
 
-        }
-        
-        QString pattern = QStringLiteral("</%1>").arg(QRegularExpression::escape(node.name()));
-        QRegularExpression regex(pattern);
-        
-        QTextDocument* document = this->document();
-        auto cursor = document->find(regex, offset);
-        if (cursor.isNull()) {
-            return 0; // End element not found
-        }
-        end_offset = cursor.selectionEnd(); // Return the end of the match
+            QString pattern = QStringLiteral("</%1>").arg(QRegularExpression::escape(node.name()));
+            QRegularExpression regex(pattern);
 
+            for (int i = 0; i <= visitor.getCount(); i++)
+            {
+                auto cursor = document->find(regex, end_offset);
+                if (cursor.isNull()) {
+                    return 0; // End element not found
+                }
+                end_offset = cursor.selectionEnd(); // Return the end of the match
+            }
+        }
         return end_offset;
     } break;
 
