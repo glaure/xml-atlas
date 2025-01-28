@@ -1,45 +1,45 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-</qresource>
-<qresource prefix="/icons">
-    <file>images/light/new-doc.png</file>
-    <file>images/light/open-doc.png</file>
-    <file>images/light/save-doc.png</file>
-    <file>images/light/cut.png</file>
-    <file>images/light/copy.png</file>
-    <file>images/light/paste.png</file>
-    <file>images/light/undo.png</file>
-    <file>images/light/redo.png</file>
-    <file>images/light/search.png</file>
-    <file>images/light/location.png</file>
-    <file>images/light/up-arrow.png</file>
-    <file>images/light/down-arrow.png</file>
-    <file>images/light/indent.png</file>
-    <file>images/light/font.png</file>
-    <file>images/light/theme.png</file>
-    <file>images/dark/new-doc.png</file>
-    <file>images/dark/open-doc.png</file>
-    <file>images/dark/save-doc.png</file>
-    <file>images/dark/cut.png</file>
-    <file>images/dark/copy.png</file>
-    <file>images/dark/paste.png</file>
-    <file>images/dark/undo.png</file>
-    <file>images/dark/redo.png</file>
-    <file>images/dark/search.png</file>
-    <file>images/dark/location.png</file>
-    <file>images/dark/up-arrow.png</file>
-    <file>images/dark/down-arrow.png</file>
-    <file>images/dark/indent.png</file>
-    <file>images/dark/font.png</file>
-    <file>images/dark/theme.png</file>
-    <file>images/xmlatlas.ico</file>
-</qresource>
-<qresource prefix="/xml">
-    <file>images/light/element-children.png</file>
-    <file>images/light/element-empty.png</file>
-    <file>images/light/element-text.png</file>
-	<file>images/dark/element-children.png</file>
-	<file>images/dark/element-empty.png</file>
-	<file>images/dark/element-text.png</file>
-</qresource>
+<?xml version="1.0"?>
+<RCC version = "1.0">
+    <qresource/>
+    <qresource prefix = "/icons">
+        <file>images/light/new-doc.png</file>
+        <file>images/light/open-doc.png</file>
+        <file>images/light/save-doc.png</file>
+        <file>images/light/cut.png</file>
+        <file>images/light/copy.png</file>
+        <file>images/light/paste.png</file>
+        <file>images/light/undo.png</file>
+        <file>images/light/redo.png</file>
+        <file>images/light/search.png</file>
+        <file>images/light/location.png</file>
+        <file>images/light/up-arrow.png</file>
+        <file>images/light/down-arrow.png</file>
+        <file>images/light/indent.png</file>
+        <file>images/light/font.png</file>
+        <file>images/light/theme.png</file>
+        <file>images/dark/new-doc.png</file>
+        <file>images/dark/open-doc.png</file>
+        <file>images/dark/save-doc.png</file>
+        <file>images/dark/cut.png</file>
+        <file>images/dark/copy.png</file>
+        <file>images/dark/paste.png</file>
+        <file>images/dark/undo.png</file>
+        <file>images/dark/redo.png</file>
+        <file>images/dark/search.png</file>
+        <file>images/dark/location.png</file>
+        <file>images/dark/up-arrow.png</file>
+        <file>images/dark/down-arrow.png</file>
+        <file>images/dark/indent.png</file>
+        <file>images/dark/font.png</file>
+        <file>images/dark/theme.png</file>
+        <file>images/xmlatlas.ico</file>
+    </qresource>
+    <qresource prefix = "/xml">
+        <file>images/light/element-children.png</file>
+        <file>images/light/element-empty.png</file>
+        <file>images/light/element-text.png</file>
+        <file>images/dark/element-children.png</file>
+        <file>images/dark/element-empty.png</file>
+        <file>images/dark/element-text.png</file>
+    </qresource>
 </RCC>

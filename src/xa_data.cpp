@@ -166,6 +166,16 @@ pugi::xml_parse_result XAData::setContent(const QString& content)
     return parse_result;
 }
 
+void XAData::setFilename(const QString& filename)
+{
+    m_filename = filename;
+}
+
+QString XAData::getFilename() const
+{
+    return m_filename;
+}
+
 QString XAData::indentDocument(int indent_size, int max_attr_per_line, bool use_spaces)
 {
     std::stringstream sbuff;

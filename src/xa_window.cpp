@@ -109,13 +109,18 @@ void XAMainWindow::openFile(const QString& path)
     QString fileName = path;
 
     if (fileName.isNull())
-        fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", "XML Files (*.xml *.XML)");
+        fileName = QFileDialog::getOpenFileName(this, tr("Open File"), ""
+            , "XML Files (*.xml *.XML);; All Files (*)");
 
-    if (!fileName.isEmpty()) {
+    if (!fileName.isEmpty()) 
+    {
         QFile file(fileName);
-        if (file.open(QFile::ReadOnly | QFile::Text)) {
+        if (file.open(QFile::ReadOnly | QFile::Text))
+        {
             auto content = file.readAll();
             auto parse_result = m_app_data->setContent(content);
+            
+            m_app_data->setFilename(fileName);
             m_editor->setPlainText(content);
             m_tree_view->expandAll();
 
@@ -140,7 +145,31 @@ void XAMainWindow::saveFile(const QString& path)
     QString fileName = path;
 
     if (fileName.isNull())
-        fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "", "XML Files (*.xml *.XML)");
+        fileName = QFileDialog::getSaveFileName(this,
+            tr("Save File"), ""
+            , "XML Files (*.xml *.XML);; All Files (*)");
+
+    if (!fileName.isEmpty()) {
+        QFile file(fileName);
+        if (file.open(QFile::WriteOnly | QFile::Text)) {
+            QTextStream out(&file);
+            out << m_editor->toPlainText();
+            file.close();
+            addRecentFile(fileName);
+        }
+        else {
+            QMessageBox::warning(this, tr("Error"), tr("Cannot save file %1:\n%2.").arg(fileName, file.errorString()));
+        }
+    }
+}
+
+void XAMainWindow::saveFileAs()
+{
+    QString fileName;
+    if (fileName.isNull())
+        fileName = QFileDialog::getSaveFileName(this,
+            tr("Save File As"), ""
+            , "XML Files (*.xml *.XML);; All Files (*)");
 
     if (!fileName.isEmpty()) {
         QFile file(fileName);
@@ -251,8 +280,8 @@ void XAMainWindow::setupFileMenu()
 {
     connect(m_main_window->actionNew, &QAction::triggered, this, [this]() { newFile(); });
     connect(m_main_window->actionOpen, &QAction::triggered, this, [this]() { openFile(); });
-    connect(m_main_window->actionSave, &QAction::triggered, this, [this]() { saveFile(); });
-    connect(m_main_window->actionSave_as, &QAction::triggered, this, [this]() { saveFile(); });
+    connect(m_main_window->actionSave, &QAction::triggered, this, [this]() { saveFile( m_app_data->getFilename() ); });
+    connect(m_main_window->actionSave_as, &QAction::triggered, this, [this]() { saveFileAs(); });
     connect(m_main_window->actionExit, &QAction::triggered, qApp, &QApplication::quit);
 
     m_recent_file_separator = m_main_window->menuFile->addSeparator();

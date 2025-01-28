@@ -39,6 +39,9 @@ public:
 
     pugi::xml_parse_result setContent(const QString& content);
 
+    void setFilename(const QString& filename);
+    QString getFilename() const;
+
     QString indentDocument(int indent_size, int max_attr_per_line, bool use_spaces);
 
     pugi::xml_document& getDocument();
@@ -49,4 +52,5 @@ private:
     XAXMLTreeModel*     m_xml_tree_model;
     QString             m_content;
     pugi::xml_document  m_doc;
+    QString             m_filename;
 };
