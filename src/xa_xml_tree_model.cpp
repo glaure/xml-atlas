@@ -45,8 +45,24 @@ QVariant XAXMLTreeModel::data(const QModelIndex& index, int role) const
     case Qt::DisplayRole:
     {
         auto item = static_cast<XAXMLTreeItem*>(index.internalPointer());
+        auto node = item->getNode();
         auto data_value = item->data(index.column());
-        return data_value;
+
+        switch (item->getItemType())
+        {
+        case XAXMLTreeItemType::ERROR:
+            return data_value;
+            break;
+        case XAXMLTreeItemType::ATTRIBUTE:
+        {
+            QString attr_name = data_value.toString();
+            QString attr_value = node.attribute(attr_name.toStdString().c_str()).value();
+            return QString("%1 = \"%2\"").arg(attr_name).arg(attr_value);
+        } break;
+        case XAXMLTreeItemType::ELEMENT:
+            return data_value;
+            break;
+        }
     }
 
     case Qt::DecorationRole:
@@ -56,37 +72,53 @@ QVariant XAXMLTreeModel::data(const QModelIndex& index, int role) const
         static QIcon ic_light_element_empty = QIcon(":/xml/images/light/element-empty.png");
         static QIcon ic_light_element_text = QIcon(":/xml/images/light/element-text.png");
         static QIcon ic_light_error_mark = QIcon(":/xml/images/light/mark.png");
+        static QIcon ic_light_attribute = QIcon(":/xml/images/light/equal.png");
         static QIcon ic_dark_element_children = QIcon(":/xml/images/dark/element-children.png");
         static QIcon ic_dark_element_empty = QIcon(":/xml/images/dark/element-empty.png");
         static QIcon ic_dark_element_text = QIcon(":/xml/images/dark/element-text.png");
-        static QIcon ic_dark_error_mark = QIcon(":/xml/images/light/mark.png");
+        static QIcon ic_dark_error_mark = QIcon(":/xml/images/dark/mark.png");
+        static QIcon ic_dark_attribute = QIcon(":/xml/images/dark/equal.png");
         
         if (m_theme->getColorTheme() == "dark")
         {
-            if (item->getItemType() == XAXMLTreeItemType::ERROR)
+            switch (item->getItemType())
             {
+            case XAXMLTreeItemType::ERROR:
                 return ic_dark_error_mark;
-            }
 
-            switch (item->childCount())
+            case XAXMLTreeItemType::ATTRIBUTE:
+                return ic_dark_attribute;
+
+            case XAXMLTreeItemType::ELEMENT:
             {
-            case 0:  return ic_dark_element_empty;
-            case 1:  return ic_dark_element_text;
-            default: return ic_dark_element_children;
+                switch (item->childCount())
+                {
+                case 0:  return ic_dark_element_empty;
+                case 1:  return ic_dark_element_text;
+                default: return ic_dark_element_children;
+                }
+            } break;
             }
         }
         else
         {
-            if (item->getItemType() == XAXMLTreeItemType::ERROR)
+            switch (item->getItemType())
             {
+            case XAXMLTreeItemType::ERROR:
                 return ic_light_error_mark;
-            }
 
-            switch (item->childCount())
+            case XAXMLTreeItemType::ATTRIBUTE:
+                return ic_light_attribute;
+
+            case XAXMLTreeItemType::ELEMENT:
             {
-            case 0:  return ic_light_element_empty;
-            case 1:  return ic_light_element_text;
-            default: return ic_light_element_children;
+                switch (item->childCount())
+                {
+                case 0:  return ic_light_element_empty;
+                case 1:  return ic_light_element_text;
+                default: return ic_light_element_children;
+                }
+            } break;
             }
         }
     }

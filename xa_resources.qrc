@@ -40,10 +40,12 @@
         <file>images/light/element-children.png</file>
         <file>images/light/element-empty.png</file>
         <file>images/light/element-text.png</file>
+        <file>images/light/equal.png</file>
         <file>images/light/mark.png</file>
         <file>images/dark/element-children.png</file>
         <file>images/dark/element-empty.png</file>
         <file>images/dark/element-text.png</file>
+        <file>images/dark/equal.png</file>
         <file>images/dark/mark.png</file>
     </qresource>
 </RCC>
