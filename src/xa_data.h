@@ -37,12 +37,12 @@ public:
 
     XAXMLTreeModel* getXMLTreeModel() const;
 
-    void setContent(const QString& content);
+    pugi::xml_parse_result setContent(const QString& content);
 
     QString indentDocument(int indent_size, int max_attr_per_line, bool use_spaces);
 
     pugi::xml_document& getDocument();
-private:
+
     void buildTreeModelFromContent();
 
 private:

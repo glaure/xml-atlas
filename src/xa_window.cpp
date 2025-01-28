@@ -115,7 +115,7 @@ void XAMainWindow::openFile(const QString& path)
         QFile file(fileName);
         if (file.open(QFile::ReadOnly | QFile::Text)) {
             auto content = file.readAll();
-            m_app_data->setContent(content);
+            auto parse_result = m_app_data->setContent(content);
             m_editor->setPlainText(content);
             m_tree_view->expandAll();
 
@@ -198,7 +198,8 @@ void XAMainWindow::setupEditor()
     m_tree_dock->setWidget(m_tree_view);
     addDockWidget(Qt::DockWidgetArea::LeftDockWidgetArea, m_tree_dock);
     
-    //connect(m_editor, &XAEditor::textChanged, this, &XAMainWindow::onEditorTextChanged);
+    // Connect the textChanged signal to the slot
+    connect(m_editor, &XAEditor::textChanged, this, &XAMainWindow::onEditorTextChanged);
 }
 
 void XAMainWindow::setupShortCuts()
@@ -239,9 +240,11 @@ void XAMainWindow::setupTableView()
 
 void XAMainWindow::onEditorTextChanged()
 {
-    //QString xmlContent = m_editor->toPlainText();
-    //m_tableView->setXmlContent(xmlContent);
-    //auto& doc = m_app_data->getDocument();
+    QString xmlContent = m_editor->toPlainText();
+    auto parse_result = m_app_data->setContent(xmlContent);
+    m_app_data->buildTreeModelFromContent();
+    m_tree_view->reset();
+    m_tree_view->expandAll();
 }
 
 void XAMainWindow::setupFileMenu()

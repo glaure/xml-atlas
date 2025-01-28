@@ -61,6 +61,7 @@ protected slots:
     void onThemeChange();
     void onFind();
     void onFindNext();
+    void onEditorTextChanged();
 
 private:
     void setupEditor();
@@ -76,7 +77,6 @@ private:
     void updateRecentFileActions();
     void openRecentFile();
     void addRecentFile(const QString& file_path);
-    void onEditorTextChanged();
     void findInEditor(const QString& searchTerm);
     void findPreviousInEditor(const QString& searchTerm);
     void locateInTree();

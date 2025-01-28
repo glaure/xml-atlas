@@ -144,11 +144,11 @@ XAXMLTreeModel* XAData::getXMLTreeModel() const
     return m_xml_tree_model;
 }
 
-void XAData::setContent(const QString& content)
+pugi::xml_parse_result XAData::setContent(const QString& content)
 {
     m_content = content;
-    m_xml_tree_model->clear();
-    buildTreeModelFromContent();
+    auto parse_result = m_doc.load_string(content.toStdString().c_str());
+    return parse_result;
 }
 
 QString XAData::indentDocument(int indent_size, int max_attr_per_line, bool use_spaces)
@@ -172,15 +172,11 @@ pugi::xml_document& XAData::getDocument()
 
 void XAData::buildTreeModelFromContent()
 {
-    auto parse_result = m_doc.load_buffer(m_content.toLatin1(), m_content.size(), pugi::parse_full);
-    if (parse_result.status == pugi::status_ok)
-    {
-        XmlTreeBuilder tb(m_xml_tree_model);
+    m_xml_tree_model->clear();
 
-        m_xml_tree_model->beginFillModel();
-        m_doc.traverse(tb);
-        m_xml_tree_model->endFillModel();
-        
-        //m_xml_tree_model->updateAll();
-    }
+    XmlTreeBuilder tb(m_xml_tree_model);
+
+    m_xml_tree_model->beginFillModel();
+    m_doc.traverse(tb);
+    m_xml_tree_model->endFillModel();
 }
