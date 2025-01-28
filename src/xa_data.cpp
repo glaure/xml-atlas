@@ -21,6 +21,7 @@
 #include "xa_xml_writer.h"
 #include <sstream>
 #include <vector>
+#include <QDebug>
 
 namespace
 {
@@ -30,18 +31,19 @@ namespace
         const auto& attributes = node.attributes();
         for (const auto& attr : attributes)
         {
-            item->appendChild(new XAXMLTreeItem{ attr.name(), 
-                node, 
-                XAXMLTreeItemType::ATTRIBUTE, 
-                item});
+            item->appendChild(new XAXMLTreeItem{ attr.name(),
+                node,
+                XAXMLTreeItemType::ATTRIBUTE,
+                item });
         }
     }
 
     class XmlTreeBuilder : public pugi::xml_tree_walker
     {
     public:
-        XmlTreeBuilder(XAXMLTreeModel* model)
+        XmlTreeBuilder(XAXMLTreeModel* model, const pugi::xml_parse_result& parse_result)
             : m_model(model)
+            , m_parse_result(parse_result)
             , m_tree_root(nullptr)
             , m_current_parent(nullptr)
             , m_last_node(nullptr)
@@ -60,7 +62,8 @@ namespace
 
         // Callback that is called for each node traversed
         bool for_each(pugi::xml_node& node) override
-        {
+        {                
+
             switch (node.type())
             {
             case pugi::node_element: {
@@ -109,18 +112,30 @@ namespace
             }
             }
 
-            
-
             return true;
         }
 
         // Callback that is called when traversal ends
         bool end(pugi::xml_node& node) override
         {
+            //qDebug() << node.offset_debug() << " : " << m_parse_result.offset << "  " << m_parse_result.description();
+
+            if (m_parse_result.status != pugi::status_ok)
+            {
+                m_current_parent = m_last_node;
+                auto new_node = new XAXMLTreeItem(m_parse_result.description(),
+                    node,
+                    XAXMLTreeItemType::ERROR,
+                    m_current_parent);
+                m_current_parent->appendChild(new_node);
+                m_last_node = new_node;
+            }
+
             return true;
         }
     private:
         XAXMLTreeModel* m_model;
+        pugi::xml_parse_result m_parse_result;
         XAXMLTreeItem* m_tree_root;
         XAXMLTreeItem* m_current_parent;
         XAXMLTreeItem* m_last_node;
@@ -170,11 +185,11 @@ pugi::xml_document& XAData::getDocument()
     return m_doc;
 }
 
-void XAData::buildTreeModelFromContent()
+void XAData::buildTreeModelFromContent(const pugi::xml_parse_result& parse_result)
 {
     m_xml_tree_model->clear();
 
-    XmlTreeBuilder tb(m_xml_tree_model);
+    XmlTreeBuilder tb(m_xml_tree_model, parse_result);
 
     m_xml_tree_model->beginFillModel();
     m_doc.traverse(tb);

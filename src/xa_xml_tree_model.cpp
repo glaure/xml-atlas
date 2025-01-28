@@ -61,6 +61,11 @@ QVariant XAXMLTreeModel::data(const QModelIndex& index, int role) const
         
         if (m_theme->getColorTheme() == "dark")
         {
+            if (item->getItemType() == XAXMLTreeItemType::ERROR)
+            {
+                return {};
+            }
+
             switch (item->childCount())
             {
             case 0:  return ic_dark_element_empty;
@@ -70,6 +75,11 @@ QVariant XAXMLTreeModel::data(const QModelIndex& index, int role) const
         }
         else
         {
+            if (item->getItemType() == XAXMLTreeItemType::ERROR)
+            {
+                return {};
+            }
+
             switch (item->childCount())
             {
             case 0:  return ic_light_element_empty;

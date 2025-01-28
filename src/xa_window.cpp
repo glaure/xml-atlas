@@ -242,7 +242,7 @@ void XAMainWindow::onEditorTextChanged()
 {
     QString xmlContent = m_editor->toPlainText();
     auto parse_result = m_app_data->setContent(xmlContent);
-    m_app_data->buildTreeModelFromContent();
+    m_app_data->buildTreeModelFromContent(parse_result);
     m_tree_view->reset();
     m_tree_view->expandAll();
 }

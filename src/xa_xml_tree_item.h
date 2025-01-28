@@ -26,7 +26,8 @@
 enum class XAXMLTreeItemType
 {
     ELEMENT,
-    ATTRIBUTE
+    ATTRIBUTE,
+    ERROR
 };
 
 

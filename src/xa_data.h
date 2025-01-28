@@ -43,7 +43,7 @@ public:
 
     pugi::xml_document& getDocument();
 
-    void buildTreeModelFromContent();
+    void buildTreeModelFromContent(const pugi::xml_parse_result& parse_result);
 
 private:
     XAXMLTreeModel*     m_xml_tree_model;
