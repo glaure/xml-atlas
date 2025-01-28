@@ -55,15 +55,17 @@ QVariant XAXMLTreeModel::data(const QModelIndex& index, int role) const
         static QIcon ic_light_element_children = QIcon(":/xml/images/light/element-children.png");
         static QIcon ic_light_element_empty = QIcon(":/xml/images/light/element-empty.png");
         static QIcon ic_light_element_text = QIcon(":/xml/images/light/element-text.png");
+        static QIcon ic_light_error_mark = QIcon(":/xml/images/light/mark.png");
         static QIcon ic_dark_element_children = QIcon(":/xml/images/dark/element-children.png");
         static QIcon ic_dark_element_empty = QIcon(":/xml/images/dark/element-empty.png");
         static QIcon ic_dark_element_text = QIcon(":/xml/images/dark/element-text.png");
+        static QIcon ic_dark_error_mark = QIcon(":/xml/images/light/mark.png");
         
         if (m_theme->getColorTheme() == "dark")
         {
             if (item->getItemType() == XAXMLTreeItemType::ERROR)
             {
-                return {};
+                return ic_dark_error_mark;
             }
 
             switch (item->childCount())
@@ -77,7 +79,7 @@ QVariant XAXMLTreeModel::data(const QModelIndex& index, int role) const
         {
             if (item->getItemType() == XAXMLTreeItemType::ERROR)
             {
-                return {};
+                return ic_light_error_mark;
             }
 
             switch (item->childCount())
