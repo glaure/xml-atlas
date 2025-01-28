@@ -338,7 +338,7 @@ void XAMainWindow::onThemeChange()
 
     m_main_window->actionIndent->setIcon(theme->getIcon("indent.png"));
     m_main_window->actionFind->setIcon(theme->getIcon("search.png"));
-    m_main_window->actionLocate_in_tree->setIcon(theme->getIcon("location.png"));
+    m_main_window->actionLocate_in_tree->setIcon(theme->getIcon("sync.png"));
 
     m_main_window->actionDrill_down->setIcon(theme->getIcon("down-arrow.png"));
     m_main_window->actionDrill_up->setIcon(theme->getIcon("up-arrow.png"));
@@ -616,8 +616,22 @@ XAXMLTreeItem* XAMainWindow::findMatchingTreeItem(XAXMLTreeItem* item, int curso
     if (!item)
         return nullptr;
 
-    if (item->getOffset() <= cursorPosition && cursorPosition < item->getOffset() + item->data(0).toString().length())
-        return item;
+    auto offset = item->getOffset();
+
+    switch (item->getItemType())
+    {
+    case XAXMLTreeItemType::ELEMENT:
+        if (offset != -1 &&
+            (cursorPosition >= offset && cursorPosition < (offset + strlen(item->getNode().name()))))
+        {
+            return item;
+        }
+        break;
+    case XAXMLTreeItemType::ATTRIBUTE:
+        break;
+    case XAXMLTreeItemType::ERROR:
+        break;
+    }
 
     for (XAXMLTreeItem* child : item->children())
     {

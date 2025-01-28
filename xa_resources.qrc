@@ -17,6 +17,7 @@
         <file>images/light/indent.png</file>
         <file>images/light/font.png</file>
         <file>images/light/theme.png</file>
+        <file>images/light/sync.png</file>
         <file>images/dark/new-doc.png</file>
         <file>images/dark/open-doc.png</file>
         <file>images/dark/save-doc.png</file>
@@ -32,6 +33,7 @@
         <file>images/dark/indent.png</file>
         <file>images/dark/font.png</file>
         <file>images/dark/theme.png</file>
+        <file>images/dark/sync.png</file>
         <file>images/xmlatlas.ico</file>
     </qresource>
     <qresource prefix = "/xml">
