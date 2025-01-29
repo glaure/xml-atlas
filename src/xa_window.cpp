@@ -618,27 +618,54 @@ XAXMLTreeItem* XAMainWindow::findMatchingTreeItem(XAXMLTreeItem* item, int curso
 
     auto offset = item->getOffset();
 
-    switch (item->getItemType())
+    // overshoot while looking
+    if (offset != -1 && offset > cursorPosition)
     {
-    case XAXMLTreeItemType::ELEMENT:
-        if (offset != -1 &&
-            (cursorPosition >= offset && cursorPosition < (offset + strlen(item->getNode().name()))))
-        {
-            return item;
-        }
-        break;
-    case XAXMLTreeItemType::ATTRIBUTE:
-        break;
-    case XAXMLTreeItemType::ERROR:
-        break;
+        return nullptr;
     }
 
-    for (XAXMLTreeItem* child : item->children())
+    // guess the matching children as good as possible
+    auto children = item->children();
+    XAXMLTreeItem* last_child = nullptr;
+    uint64_t last_child_offset = -1;
+    for (XAXMLTreeItem* child : children)
+    {
+        auto child_offset = child->getOffset();
+
+        if (last_child != nullptr)
+        {
+            if (last_child_offset <= cursorPosition
+                && child_offset > cursorPosition)
+            {
+                XAXMLTreeItem* matchingChild = findMatchingTreeItem(last_child, cursorPosition);
+                if (matchingChild)
+                    return matchingChild;
+            }
+        }
+        else
+        {
+            if (child != nullptr && child_offset >= cursorPosition)
+            {
+                XAXMLTreeItem* matchingChild = findMatchingTreeItem(child, cursorPosition);
+                if (matchingChild)
+                    return matchingChild;
+            }
+        }
+
+        last_child = child;
+        last_child_offset = child_offset;
+    }
+
+    
+    // couldnt guess so brute force it in the next level
+    for (XAXMLTreeItem* child : children)
     {
         XAXMLTreeItem* matchingChild = findMatchingTreeItem(child, cursorPosition);
         if (matchingChild)
             return matchingChild;
     }
 
-    return nullptr;
+    // TODO deeper Attribute selection
+
+    return item;
 }
