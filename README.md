@@ -1,4 +1,11 @@
 # xml-atlas
+
+> **This project is no longer developed.** It has been rewritten in Rust as
+> **[XML Atlas](https://github.com/glaure/xml-atlas-rs)**: much faster on large files (a
+> 300 MiB file opens in under a second), with tree, grid and text views, editing that keeps
+> every other byte of the file, XPath, and installers for Windows, Linux and macOS. Please
+> use and report issues there. This repository is kept for reference.
+
 XML viewer editor project
 
 
